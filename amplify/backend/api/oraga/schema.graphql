@@ -1,0 +1,8 @@
+type GameServerProcess
+  @model
+  @auth(rules: [{ allow: public, provider: apiKey }]) {
+  id: ID!
+  type: String!
+  message: String!
+  playerId: String!
+}

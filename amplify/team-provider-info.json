@@ -1,0 +1,20 @@
+{
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-oraga-prod-a24fa-authRole",
+      "UnauthRoleArn": "arn:aws:iam::699754982536:role/amplify-oraga-prod-a24fa-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::699754982536:role/amplify-oraga-prod-a24fa-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-oraga-prod-a24fa-deployment",
+      "UnauthRoleName": "amplify-oraga-prod-a24fa-unauthRole",
+      "StackName": "amplify-oraga-prod-a24fa",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:699754982536:stack/amplify-oraga-prod-a24fa/56d625e0-4e5f-11f0-8225-0a0da064c97f",
+      "AmplifyAppId": "dz39qwd6phaad"
+    },
+    "categories": {
+      "api": {
+        "oraga": {}
+      }
+    }
+  }
+}
