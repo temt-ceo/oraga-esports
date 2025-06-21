@@ -66,7 +66,7 @@
   .content {
     width: 97vw;
     display: flex;
-    margin: 40px 0 20px 0;
+    margin: 120px 0 20px 0;
     overflow: scroll;
     color: white;
     font-size: 22px;
@@ -102,4 +102,3 @@
     }
   }
   </style>
-  
