@@ -3,6 +3,8 @@
   import { Mesh, Sprite, track } from 'svelte-pixi'
   import Contents from './Contents.svelte'
 
+  export let screenWidth;
+
   const uniforms = {
     uSampler2: PIXI.Texture.from('/public/assets/bg_mesh.jpg'),
     time: 0,
@@ -59,8 +61,8 @@
 </script>
 
 <Mesh
-  x={256}
-  y={256}
+  x={screenWidth / 2}
+  y={screenWidth / 2}
   scale={3.5}
   {geometry}
   {shader}
@@ -78,4 +80,5 @@
 <Contents
   mouseX={$mouseX}
   mouseY={$mouseY}
+  screenWidth={screenWidth}
 />

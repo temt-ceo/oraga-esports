@@ -8,6 +8,7 @@
   export let enemySpeed = 2.0
   export let position
   export let started
+  export let screenWidth;
 
   //=========
   let { app } = getApp()
@@ -22,26 +23,26 @@
     let random = Math.random()
     switch (edge) {
       case 0: // top
-        spawnPoint.x = app?.screen.width * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
+        spawnPoint.x = screenWidth * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
         spawnPoint.y = -1 * distance * enemyRadius
         break;
       case 1: // right
-        spawnPoint.x = app?.screen.width + distance * enemyRadius
-        spawnPoint.y = app?.screen.height * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
+        spawnPoint.x = screenWidth + distance * enemyRadius
+        spawnPoint.y = screenWidth * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
         break;
       case 2: // bottom
-        spawnPoint.x = app?.screen.width * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
-        spawnPoint.y = app?.screen.height + distance * enemyRadius
+        spawnPoint.x = screenWidth * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
+        spawnPoint.y = screenWidth + distance * enemyRadius
         break;
       default: // left
         spawnPoint.x = -1 * distance * enemyRadius
-        spawnPoint.y = app?.screen.height * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
+        spawnPoint.y = screenWidth * random + (random < 0.5 ? -1 : 1) * distance * enemyRadius * random
         break;
     }
     return spawnPoint;
   }
   let r = randomSpawnPoint();
-  let enemyType = r.x < -1 * enemyRadius ? '1' : r.x > app?.screen.width + enemyRadius ? '2' : '3'
+  let enemyType = r.x < -1 * enemyRadius ? '1' : r.x > screenWidth + enemyRadius ? '2' : '3'
 </script>
 
 <Ticker
@@ -50,13 +51,13 @@
     if (!started) return
     if (position.x == null || position.y == null) {
       r = randomSpawnPoint()
-      enemyType = r.x < app?.screen.width / 5 ? '1' : r.x > app?.screen.width * 4 / 5 ? '2' : '3'
+      enemyType = r.x < screenWidth / 5 ? '1' : r.x > screenWidth * 4 / 5 ? '2' : '3'
       position.x = r.x
       position.y = r.y
       return
     }
     let e = new Victor(r.x, r.y);
-    let s = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
+    let s = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
     if (e.distance(s) < playerRadius) {
       if (frame % 5 == 0) {
         damage++

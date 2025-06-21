@@ -7,6 +7,7 @@
 
   export let mouseX = 0;
   export let mouseY = 0;
+  export let screenWidth;
 
   //=========
   let { app } = getApp()
@@ -17,8 +18,8 @@
   let damageCtr = 0
   let gameCtr = false
   let angle = Math.atan2(
-      mouseY - app?.screen.height / 2,
-      mouseX - app?.screen.width / 2
+      mouseY - screenWidth / 2,
+      mouseX - screenWidth / 2
     ) - Math.PI / 4
   const zombiePositions = {
     1: {x: 0, y: 0}, 2: {x: 0, y: 0}, 3: {x: 0, y: 0}, 4: {x: 0, y: 0}, 5: {x: 0, y: 0}, 6: {x: 0, y: 0}, 7: {x: 0, y: 0}, 8: {x: 0, y: 0}, 
@@ -35,15 +36,15 @@
   let angle5 = 0
   let tappedX = null
   let tappedY = null
-  let r = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
-  let r2 = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
-  let r3 = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
-  let r4 = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
-  let r5 = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
-  const s = new Victor(app?.screen.width / 2 - playerRadius, app?.screen.height / 2 - playerRadius);
+  let r = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
+  let r2 = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
+  let r3 = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
+  let r4 = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
+  let r5 = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
+  const s = new Victor(screenWidth / 2 - playerRadius, screenWidth / 2 - playerRadius);
 
   function shooting(v1, v2, v3, v4, v5) {
-    if (v1 != null && r.distance(s) < 370) { // ≒ √２ * app?.screen.width / 2
+    if (v1 != null && r.distance(s) < 370) { // ≒ √２ * screenWidth / 2
       r.x = r.x + v1.x
       r.y = r.y + v1.y
     } else {
@@ -125,8 +126,8 @@
     enemySpeed = 2 + Math.floor(frame / 300) * 0.05
     if (mouseX != 0 && mouseY != 0) {
       angle = Math.atan2(
-        mouseY - app?.screen.height / 2 + playerRadius / 2,
-        mouseX - app?.screen.width / 2 + playerRadius / 2
+        mouseY - screenWidth / 2 + playerRadius / 2,
+        mouseX - screenWidth / 2 + playerRadius / 2
       )
       if (tappedX != mouseX && tappedY != mouseY) {
         if (angle1 == 0) {
@@ -160,29 +161,29 @@
   <Sprite x={r4.x} y={r4.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
   <Sprite x={r5.x} y={r5.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
 
-  <Player angle={angle}  bind:damage={damageCtr} bind:started={gameCtr} />
-  <Zombie distance={2} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[1]} bind:started={gameCtr} />
-  <Zombie distance={6} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[2]} bind:started={gameCtr} />
-  <Zombie distance={8} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[3]} bind:started={gameCtr} />
-  <Zombie distance={10} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[4]} bind:started={gameCtr} />
-  <Zombie distance={12} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[5]} bind:started={gameCtr} />
-  <Zombie distance={15} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[6]} bind:started={gameCtr} />
-  <Zombie distance={18} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[7]} bind:started={gameCtr} />
-  <Zombie distance={20} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[8]} bind:started={gameCtr} />
-  <Zombie distance={24} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[9]} bind:started={gameCtr} />
-  <Zombie distance={27} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[10]} bind:started={gameCtr} />
-  <Zombie distance={30} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[11]} bind:started={gameCtr} />
-  <Zombie distance={31} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[12]} bind:started={gameCtr} />
-  <Zombie distance={32} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[13]} bind:started={gameCtr} />
-  <Zombie distance={33} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[14]} bind:started={gameCtr} />
-  <Zombie distance={35} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[15]} bind:started={gameCtr} />
-  <Zombie distance={37} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[16]} bind:started={gameCtr} />
-  <Zombie distance={40} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[17]} bind:started={gameCtr} />
-  <Zombie distance={41} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[18]} bind:started={gameCtr} />
-  <Zombie distance={42} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[19]} bind:started={gameCtr} />
-  <Zombie distance={43} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[20]} bind:started={gameCtr} />
-  <Zombie distance={44} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[21]} bind:started={gameCtr} />
-  <Zombie distance={45} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[22]} bind:started={gameCtr} />
-  <Zombie distance={46} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[23]} bind:started={gameCtr} />
+  <Player angle={angle}  bind:damage={damageCtr} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={2} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[1]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={6} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[2]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={8} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[3]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={10} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[4]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={12} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[5]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={15} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[6]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={18} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[7]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={20} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[8]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={24} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[9]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={27} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[10]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={30} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[11]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={31} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[12]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={32} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[13]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={33} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[14]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={35} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[15]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={37} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[16]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={40} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[17]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={41} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[18]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={42} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[19]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={43} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[20]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={44} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[21]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={45} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[22]} bind:started={gameCtr} screenWidth={screenWidth} />
+  <Zombie distance={46} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[23]} bind:started={gameCtr} screenWidth={screenWidth} />
 
 </Ticker>
