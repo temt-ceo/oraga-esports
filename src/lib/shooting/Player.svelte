@@ -1,6 +1,11 @@
 <script>
   import * as PIXI from 'pixi.js'
   import { Sprite, Graphics, Text, Ticker, getApp } from 'svelte-pixi'
+  import { generateClient } from 'aws-amplify/api';
+  import { createGameServerProcess } from '../../graphql/mutations';
+  import * as subscriptions from '../../graphql/subscriptions';
+
+  const client = generateClient();
 
   export let angle = Math.PI
   export let damage = 0
@@ -17,37 +22,83 @@
   let dead = false
   let remainTime = 60
   let countdown = 3
-  let timeoutCtrl
-  let timeoutCtrl2
+  let timerCtrl1
+  let timerCtrl2
   let btnClicked = false
 
+  const createSub = client
+  .graphql({ query: subscriptions.onCreateGameServerProcess })
+  .subscribe({
+    next: ({ data }) => console.log(data),
+    error: (error) => console.warn(error)
+  });
+
   function gameStart() {
-    clearInterval(timeoutCtrl)
+    clearInterval(timerCtrl1)
     started = true
-    timeoutCtrl2 = setInterval(() => remainTime--, 1000)
+    timerCtrl2 = setInterval(() => remainTime--, 1000)
   }
 
   function startBtnClicked() {
     if (!btnClicked) {
-      timeoutCtrl = setInterval(() => countdown--, 1500)
+      timerCtrl1 = setInterval(() => countdown--, 1500)
       setTimeout(gameStart, 5500)
       btnClicked = true
     }
-  }  
+  }
+
+  async function onGameLose() {
+    clearInterval(timerCtrl2)
+    started = false
+
+    const query = {
+      type: 'Test',
+      message: 'Test',
+      playerId: 'Test',
+    };
+
+    /* create a todo */
+    await client.graphql({
+      query: createGameServerProcess,
+      variables: {
+        input: query
+      }
+    });
+  }
+
+  async function onGameWon() {
+    clearInterval(timerCtrl2)
+    started = false
+
+    const query = {
+      type: 'Test',
+      message: 'Test',
+      playerId: 'Test',
+    };
+
+    /* create a todo */
+    await client.graphql({
+      query: createGameServerProcess,
+      variables: {
+        input: query
+      }
+    });
+  }
 </script>
 
 <Ticker
   on:tick={(ev) => {
     health = maxHealth - damage
     barWidth = (health / maxHealth) * intialBarWidth
-    if (health <= 0) {
-      dead = true
-      started = false
-      clearInterval(timeoutCtrl2)
-    }
-    if (remainTime == 0 && timeoutCtrl2) {
-      clearInterval(timeoutCtrl2)
-      started = false
+    if (started) {
+      if (health <= 0) {
+        onGameLose()
+        dead = true
+        started = false
+        clearInterval(timerCtrl2)
+      } else if (remainTime == 0 && timerCtrl2) {
+        onGameWon()
+      }
     }
   }}
 >
