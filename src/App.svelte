@@ -1,9 +1,9 @@
 <script>
-  import Home from './lib/Home.svelte'
   import Shooting from './lib/Shooting.svelte'
+  import { Amplify } from 'aws-amplify';
+  import config from './amplifyconfiguration.json';
 
-  export let url = ''
-  console.log(url)
+  Amplify.configure(config);
 </script>
 
   {#if location.href.endsWith('/')}
@@ -12,11 +12,13 @@
         <h1 class="title">Oraga eSports</h1>
         <div class="content">
           <p class="game-icon">
-            <a href="/shooting"><img src="/public/assets/Shooting.png" /></a>
+            <a href="/shooting">
+              <img src="/public/assets/Shooting.png" alt="Shooting" />
+            </a>
             Shooting<br>
           </p>
           <p class="game-icon">
-            <a><img src="/public/assets/MMO RPG.png" /></a>
+            <img src="/public/assets/MMO RPG.png" alt="MMO RPG" />
             MMO RPG (Coming Soon!)
           </p>
         </div>

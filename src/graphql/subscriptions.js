@@ -1,19 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateByPlayer = /* GraphQL */ `
-  subscription OnCreateByPlayer($playerId: String!) {
-    onCreateByPlayer(playerId: $playerId) {
-      id
-      type
-      message
-      playerId
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
 export const onCreateGameServerProcess = /* GraphQL */ `
   subscription OnCreateGameServerProcess(
     $filter: ModelSubscriptionGameServerProcessFilterInput
