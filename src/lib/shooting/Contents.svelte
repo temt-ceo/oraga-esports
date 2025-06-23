@@ -155,11 +155,11 @@
   }}
 >
 
-  <Sprite x={r.x} y={r.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
-  <Sprite x={r2.x} y={r2.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
-  <Sprite x={r3.x} y={r3.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
-  <Sprite x={r4.x} y={r4.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
-  <Sprite x={r5.x} y={r5.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/public/assets/shooting/star.png')} />
+  <Sprite x={r.x} y={r.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
+  <Sprite x={r2.x} y={r2.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
+  <Sprite x={r3.x} y={r3.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
+  <Sprite x={r4.x} y={r4.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
+  <Sprite x={r5.x} y={r5.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
 
   <Player angle={angle}  bind:damage={damageCtr} bind:started={gameCtr} screenWidth={screenWidth} />
   <Zombie distance={2} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[1]} bind:started={gameCtr} screenWidth={screenWidth} />

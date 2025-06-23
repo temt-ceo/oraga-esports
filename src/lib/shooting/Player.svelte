@@ -108,7 +108,7 @@
     height={96}
     x={screenWidth / 2 - 20}
     y={screenWidth / 2 - 16}
-    texture={PIXI.Texture.from('/public/assets/shooting/elf.png')}
+    texture={PIXI.Texture.from('/assets/shooting/elf.png')}
     anchor={0.5}
     rotation={angle - Math.PI}
     eventMode={'static'}
@@ -158,7 +158,7 @@
     height={30}
     x={started ? -999 : screenWidth - margin * 3}
     y={screenWidth - margin * 2}
-    texture={PIXI.Texture.from('/public/assets/coin_insert_button.png')}
+    texture={PIXI.Texture.from('/assets/coin_insert_button.png')}
     anchor={0.5}
     rotation={angle - Math.PI}
     eventMode={'static'}

@@ -76,6 +76,6 @@
     height={96}
     x={r.x}
     y={r.y}
-    texture={PIXI.Texture.from('/public/assets/shooting/zombie' + enemyType + '.png')}
+    texture={PIXI.Texture.from('/assets/shooting/zombie' + enemyType + '.png')}
   />
 </Ticker>

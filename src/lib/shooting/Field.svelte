@@ -6,7 +6,7 @@
   export let screenWidth;
 
   const uniforms = {
-    uSampler2: PIXI.Texture.from('/public/assets/bg_mesh.jpg'),
+    uSampler2: PIXI.Texture.from('/assets/bg_mesh.jpg'),
     time: 0,
   }
 
@@ -74,7 +74,7 @@
   height={40}
   x={-10}
   y={-5}
-  texture={PIXI.Texture.from('/public/assets/oraga_logo.png')}
+  texture={PIXI.Texture.from('/assets/oraga_logo.png')}
   />
 
 <Contents
