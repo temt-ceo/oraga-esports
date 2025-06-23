@@ -25,8 +25,10 @@
             <span class="cinzel">1. Win the game. </span><br>
             <span class="cinzel">2. The game prize is sent to your wallet automatically in realtime. </span><br>
             <span class="cinzel">3. Sell it at crypt exchange.</span><br>
-            <p class="bodoni">
-              If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br><br>
+            <p class="bodoni theme1">
+              If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br>
+            </p>
+            <p class="description">
               Example: The game fee is 1.1 $FLOW. If someone anywhere in the world won the game immediately before you played, your prize will be 1 $FLOW. This prize will be paid out immediately after you win the game. <br>
               If there were 150 game losers worldwide before you played, the prize paid to you will be 150 $FLOW.<br>
             </p>
@@ -44,9 +46,9 @@
 <style>
   :global(body) {
       width: 100vw;
-      height: 90vh;
+      height: 93vh;
       margin: 0;
-      padding-top: 2.5rem;
+      padding-top: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -78,19 +80,25 @@
   }
 
   p.bodoni {
-    font-size: 16px;
     line-height: 1.2;
+    &.theme1 {
+      font-size: 13px;
+    }
+  }
 
+  .description {
+    font-size: 14px;
+    line-height: 1.1;
   }
 
   .section {
-    height: 90vh;
+    height: 93vh;
     background: rgba(11, 4, 35, 1);
     border-radius: 30px;
     border: 2px solid rgba(255, 255, 5, 0.7);
     overflow: hidden;
     &.shooting {
-      height: 80vh;
+      height: 83vh;
       padding-top: 100px;
       margin-top: 20px;
     }
@@ -108,7 +116,7 @@
   .game-collection {
     min-width: 350px;
     max-width: 40vw;
-    height: 70vh;
+    height: 75vh;
     margin: 0 30px;
     overflow: scroll;
     color: white;
