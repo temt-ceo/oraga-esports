@@ -20,11 +20,13 @@
               <img src="/assets/Shooting.png" alt="Shooting" />
             </a>
             <br>
-            Category: <span class="allura">Shooting</span><br>
+            <p class="paragraph">
+              Category: <span class="allura">Shooting</span><br>
+            </p>
             <span class="cinzel">How to play:</span><br>
-            <span class="cinzel">1. Win the game. </span><br>
-            <span class="cinzel">2. The game prize is sent to your wallet automatically in realtime. </span><br>
-            <span class="cinzel">3. Sell it at crypt exchange.</span><br>
+            <span class="cinzel li">1. Win the game. </span><br>
+            <span class="cinzel li">2. The game prize is sent to your wallet automatically in realtime. </span><br>
+            <span class="cinzel li">3. Sell it at crypt exchange.</span><br>
             <p class="bodoni theme1">
               If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br>
             </p>
@@ -36,7 +38,9 @@
           <div class="game-collection">
             <img src="/assets/MMO RPG.png" alt="MMO RPG" />
             <br>
-            Category: <span class="allura">MMO RPG</span> (Coming Soon!)<br>
+            <p class="paragraph">
+              Category: <span class="allura">MMO RPG</span> (Coming Soon!)<br>
+            </p>
           </div>
         </div>
       </div>
@@ -48,13 +52,12 @@
       width: 100vw;
       height: 95vh;
       margin: 0;
-      padding-top: 1.5rem;
+      padding-top: 1.0rem;
       display: flex;
       align-items: center;
       justify-content: center;
       background-image: url('/assets/453d816d7d25d5a4aa075a8c64c79818.jpg');
       background-repeat: repeat;
-      animation: bg 45s linear infinite;
   }
   
   h1, h2, h3, h4, h5{
@@ -62,6 +65,10 @@
     margin: 0;
     padding: 10px;
     color: rgba(255, 64, 129, 0.7);
+  }
+
+  .paragraph {
+    margin: 10px 0;
   }
 
   .allura {
@@ -72,7 +79,9 @@
   .cinzel {
     font-family: 'Cinzel';
     font-size: 16px;
-    padding-left: 10px;
+    &.li {
+      padding-left: 10px;
+    }
   }
 
   .bodoni {
@@ -82,12 +91,12 @@
   p.bodoni {
     line-height: 1.2;
     &.theme1 {
-      font-size: 13px;
+      font-size: 14px;
     }
   }
 
   .description {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.1;
   }
 
@@ -98,16 +107,15 @@
     border: 2px solid rgba(255, 255, 5, 0.7);
     overflow: hidden;
     &.shooting {
-      height: 83vh;
-      padding-top: 100px;
-      margin-top: 20px;
+      padding-top: 10px;
+      margin-top: 10px;
     }
   }
 
   .content {
     width: 97vw;
     display: flex;
-    margin: 30px 0 20px 0;
+    margin-top: 50px;
     overflow: scroll;
     color: white;
     font-size: 22px;
@@ -127,6 +135,10 @@
   }
 
   @media screen and (min-width: 700px) {
+    :global(body) {
+      animation: bg 45s linear infinite;
+    }
+
     .section.shooting {
       width: 90vw;
       max-width: 1300px;

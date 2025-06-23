@@ -149,7 +149,7 @@
   <Text
     x={screenWidth * 0.5 + margin * 5}
     y={screenWidth - barHeight - margin}
-    text={`Last ${remainTime} Sec.`}
+    text={`Last ${remainTime} s.`}
     style={{ fill: 'white' }}
     anchor={0.5}
   />
