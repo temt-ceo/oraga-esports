@@ -46,7 +46,7 @@
 <style>
   :global(body) {
       width: 100vw;
-      height: 93vh;
+      height: 95vh;
       margin: 0;
       padding-top: 1.5rem;
       display: flex;
@@ -107,7 +107,7 @@
   .content {
     width: 97vw;
     display: flex;
-    margin: 50px 0 20px 0;
+    margin: 30px 0 20px 0;
     overflow: scroll;
     color: white;
     font-size: 22px;
