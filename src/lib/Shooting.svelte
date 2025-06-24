@@ -11,7 +11,7 @@
 </script>
 
 <div class="game-screen">
-  <div>
+  <div class="right-pane">
     <p class="current_prize">
       Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="prize">2</span><span class="unit">($FLOW)</span>
     </p>
@@ -65,6 +65,7 @@
 
   .current_prize {
     font-size: 27px;
+    margin-top: 10px;
     margin-left: 10px;
     font-family: 'Libre Bodoni';
     & img {
@@ -114,6 +115,10 @@
     & .prize {
       font-size: 32px;
     }
+  }
+
+  .right-pane {
+    margin-right: 5px;
   }
 
   @media screen and (min-width: 700px) {

@@ -11,53 +11,57 @@
       <Shooting />
     </section>
   {:else}
-    <section class="section">
-      <div class="game-screen">
-        <h1 class="title">Oraga eSports</h1>
-        <div class="content">
-          <div class="game-collection">
-            <a href="/shooting">
-              <img src="/assets/Shooting.png" alt="Shooting" />
-            </a>
-            <br>
-            <p class="paragraph">
-              Category: <span class="allura">Shooting</span><br>
-            </p>
-            <span class="cinzel">How to play:</span><br>
-            <span class="cinzel li">1. Win the game. </span><br>
-            <span class="cinzel li">2. The game prize is sent to your wallet automatically in realtime. </span><br>
-            <span class="cinzel li">3. Sell it at crypt exchange.</span><br>
-            <p class="bodoni theme1">
-              If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br>
-            </p>
-            <p class="description">
-              Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. This prize will be paid out immediately after you win the game. <br>
-              If there were 150 game losers worldwide before you played, the prize paid to you will be ₣150.<br>
-            </p>
-          </div>
-          <div class="game-collection">
-            <img src="/assets/MMO RPG.png" alt="MMO RPG" />
-            <br>
-            <p class="paragraph">
-              Category: <span class="allura">MMO RPG</span> (Coming Soon!)<br>
-            </p>
-          </div>
+  <section class="section">
+    <div class="game-screen">
+      <h1 class="title">Oraga eSports</h1>
+      <div class="content">
+        <div class="game-collection">
+          <a href="/shooting">
+            <img src="/assets/Shooting.png" alt="Shooting" />
+          </a>
+          <br>
+          <p class="paragraph">
+            Category: <span class="allura">Shooting</span><br>
+          </p>
+          <span class="cinzel">How to play:</span><br>
+          <span class="cinzel li">1. Win the game. </span><br>
+          <span class="cinzel li">2. The game prize is sent to your wallet automatically in realtime. </span><br>
+          <span class="cinzel li">3. Sell it at crypt exchange.</span>
+          <p class="bodoni theme1">
+            If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br>
+          </p>
+          <p class="description">
+            Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. This prize will be paid out immediately after you win the game. <br>
+            If there were 150 game losers worldwide before you played, the prize paid to you will be ₣150.<br>
+          </p>
+        </div>
+        <div class="game-collection">
+          <img src="/assets/MMO RPG.png" alt="MMO RPG" />
+          <br>
+          <p class="paragraph">
+            Category: <span class="allura">MMO RPG</span> (Coming Soon!)<br>
+          </p>
         </div>
       </div>
-    </section>
+    </div>
+    <p class="paragraph sign">
+      <span class="allura">Powered by </span><img src="/assets/flow_logo.avif" alt="flow logo" /> Flow blockchain.<br>
+      Copyright © 2025 Tokyo EM Technology. All rights reserved.
+    </p>
+  </section>
   {/if}
 
 <style>
   :global(body) {
-      width: 100vw;
-      height: 95vh;
-      margin: 0;
-      padding-top: 1.0rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-image: url('/assets/453d816d7d25d5a4aa075a8c64c79818.jpg');
-      background-repeat: repeat;
+    width: 100vw;
+    height: 100%;
+    margin: 0;
+    padding-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('/assets/453d816d7d25d5a4aa075a8c64c79818.jpg');
+    background-repeat: repeat;
   }
   
   h1, h2, h3, h4, h5{
@@ -69,11 +73,32 @@
 
   .paragraph {
     margin: 10px 0;
+
+    &.sign {
+      height: 30px;
+      /* margin-bottom: 1%; */
+      background-color: black;
+      padding-top: 10px;
+      font-size: 11px !important;
+      color: white;
+      line-height: 0.8;
+      position: fixed;
+      bottom: 23px;
+      right: 30px;
+      & .allura {
+        font-size: 24px !important;
+      }
+
+      & img {
+        width: 15px;
+      }
+    }
   }
 
   .allura {
     font-family: 'Allura';
     font-size: 35px;
+    color: white;
   }
 
   .cinzel {
@@ -98,24 +123,30 @@
   .description {
     font-size: 15px;
     line-height: 1.1;
+    margin-bottom: 0;
   }
 
   .section {
-    height: 93vh;
+    height: 99vh;
     background: rgba(11, 4, 35, 1);
+    overflow-y: scroll !important;
     border-radius: 30px;
     border: 2px solid rgba(255, 255, 5, 0.7);
     overflow: hidden;
     &.shooting {
       padding: 10px 0 0 2px;
-      margin: 10px 1vw 0 1vw;
+      margin: 0 1vw;
     }
+  }
+
+  .game-screen {
+    height: 77vh;
   }
 
   .content {
     width: 97vw;
     display: flex;
-    margin-top: 50px;
+    margin-top: 60px;
     overflow: scroll;
     color: white;
     font-size: 22px;
@@ -125,7 +156,7 @@
     min-width: 320px;
     max-width: 75vw;
     height: 75vh;
-    margin: 0 30px;
+    margin: 0 40px;
     overflow: scroll;
     color: white;
     line-height: 0.9;
@@ -137,6 +168,12 @@
   @media screen and (min-width: 700px) {
     :global(body) {
       animation: bg 45s linear infinite;
+      height: 95vh;
+      padding-top: 1.0rem;
+    }
+
+    .section {
+      height: 93vh;
     }
 
     .section.shooting {
@@ -147,6 +184,10 @@
       justify-content: center;
       padding-top: 10px;
       margin-top: 10px;
+    }
+
+    .content {
+      margin-top: 30zpx;
     }
 
     .game-collection {
