@@ -31,8 +31,8 @@
               If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br>
             </p>
             <p class="description">
-              Example: The game fee is 1.1 $FLOW. If someone anywhere in the world won the game immediately before you played, your prize will be 1 $FLOW. This prize will be paid out immediately after you win the game. <br>
-              If there were 150 game losers worldwide before you played, the prize paid to you will be 150 $FLOW.<br>
+              Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. This prize will be paid out immediately after you win the game. <br>
+              If there were 150 game losers worldwide before you played, the prize paid to you will be ₣150.<br>
             </p>
           </div>
           <div class="game-collection">
@@ -107,8 +107,8 @@
     border: 2px solid rgba(255, 255, 5, 0.7);
     overflow: hidden;
     &.shooting {
-      padding-top: 10px;
-      margin-top: 10px;
+      padding: 10px 0 0 2px;
+      margin: 10px 1vw 0 1vw;
     }
   }
 
@@ -122,8 +122,8 @@
   }
 
   .game-collection {
-    min-width: 350px;
-    max-width: 40vw;
+    min-width: 320px;
+    max-width: 75vw;
     height: 75vh;
     margin: 0 30px;
     overflow: scroll;
@@ -147,6 +147,10 @@
       justify-content: center;
       padding-top: 10px;
       margin-top: 10px;
+    }
+
+    .game-collection {
+      max-width: 40vw;
     }
   }
 

@@ -147,16 +147,16 @@
     anchor={0.5}
   />
   <Text
-    x={screenWidth * 0.5 + margin * 5}
+    x={screenWidth * 0.5 + margin * 3}
     y={screenWidth - barHeight - margin}
-    text={`Last ${remainTime} s.`}
+    text={`Last ${remainTime}s`}
     style={{ fill: 'white' }}
     anchor={0.5}
   />
   <Sprite
     width={87}
     height={30}
-    x={started ? -999 : screenWidth - margin * 3}
+    x={started || remainTime == 0 ? -999 : screenWidth - margin * 3}
     y={screenWidth - margin * 2}
     texture={PIXI.Texture.from('/assets/coin_insert_button.png')}
     anchor={0.5}
