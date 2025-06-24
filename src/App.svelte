@@ -21,18 +21,17 @@
           </a>
           <br>
           <p class="paragraph">
-            Category: <span class="allura">Shooting</span><br>
+            Category: <span class="allura">Shooting</span><span class="current_prize">(Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />2)</span><br>
           </p>
           <span class="cinzel">How to play:</span><br>
           <span class="cinzel li">1. Win the game. </span><br>
           <span class="cinzel li">2. The game prize is sent to your wallet automatically in realtime. </span><br>
           <span class="cinzel li">3. Sell it at crypt exchange.</span>
           <p class="bodoni theme1">
-            If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your linked wallet. This is a prize, and it is paid out from the accumulated amount when there were no previous game winners.<br>
+            If you survive for one minute in this game, $FLOW (crypto) will be paid directly to your wallet. And it is paid out from the accumulated amount when there were no previous game winners.<br>
           </p>
           <p class="description">
-            Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. This prize will be paid out immediately after you win the game. <br>
-            If there were 150 game losers worldwide before you played, the prize paid to you will be ₣150.<br>
+            Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. If there were 150 game losers worldwide before you played, the prize paid to you will be ₣151.<br><br><br><br>
           </p>
         </div>
         <div class="game-collection">
@@ -75,16 +74,16 @@
     margin: 10px 0;
 
     &.sign {
-      height: 30px;
-      width: 340;
+      height: 37px;
+      width: 335px;
       margin-bottom: 0;
-      background-color: black;
-      padding-top: 10px;
+      background-color: rgba(11, 4, 35, 1);
+      padding-top: 2px;
+      padding-bottom: 10px;
       font-size: 11px !important;
       color: white;
-      line-height: 0.8;
       position: absolute;
-      bottom: 28px;
+      bottom: 0%;
       right: 38px;
       & .allura {
         font-size: 24px !important;
@@ -96,6 +95,16 @@
     }
   }
 
+  .current_prize {
+    font-size: 14px;
+    padding-left: 6px;
+    font-family: 'Libre Bodoni';
+    & img {
+      width: 16px !important;
+      vertical-align: sub;
+    }
+  }
+
   .allura {
     font-family: 'Allura';
     font-size: 35px;
@@ -104,7 +113,8 @@
 
   .cinzel {
     font-family: 'Cinzel';
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 0.6;
     &.li {
       padding-left: 10px;
     }
@@ -122,13 +132,13 @@
   }
 
   .description {
-    font-size: 15px;
+    font-size: 14.5px;
     line-height: 1.1;
     margin-bottom: 0;
   }
 
   .section {
-    height: 99vh;
+    height: 95vh;
     background: rgba(11, 4, 35, 1);
     overflow-y: scroll !important;
     border-radius: 30px;
@@ -146,8 +156,9 @@
 
   .content {
     width: 97vw;
+    max-height: 70vh;
     display: flex;
-    margin-top: 60px;
+    margin: 55px auto;
     overflow: scroll;
     color: white;
     font-size: 22px;
@@ -155,9 +166,9 @@
 
   .game-collection {
     min-width: 320px;
-    max-width: 75vw;
-    height: 75vh;
-    margin: 0 40px;
+    max-width: 72vw;
+    height: 70vh;
+    margin: 0 45px 0 35px;
     overflow: scroll;
     color: white;
     line-height: 0.9;
@@ -188,11 +199,15 @@
     }
 
     .content {
-      margin-top: 30zpx;
+      margin-top: 30px;
     }
 
     .game-collection {
       max-width: 40vw;
+    }
+
+    .paragraph.sign {
+      bottom: 6%;
     }
   }
 

@@ -15,7 +15,7 @@
   let { app } = getApp()
   const margin = 16
   const barHeight = 16
-  const intialBarWidth = screenWidth * 0.5 - 2 * margin
+  const intialBarWidth = screenWidth * 0.5 - 3 * margin
   const maxHealth = 100
   let health = maxHealth - damage
   let barWidth = (health / maxHealth) * intialBarWidth
@@ -147,8 +147,8 @@
     anchor={0.5}
   />
   <Text
-    x={screenWidth * 0.5 + margin * 3}
-    y={screenWidth - barHeight - margin}
+    x={screenWidth * 0.5 + margin * 2}
+    y={screenWidth - barHeight - margin / 2}
     text={`Last ${remainTime}s`}
     style={{ fill: 'white' }}
     anchor={0.5}
@@ -157,7 +157,7 @@
     width={87}
     height={30}
     x={started || remainTime == 0 ? -999 : screenWidth - margin * 3}
-    y={screenWidth - margin * 2}
+    y={screenWidth - margin * 1.5}
     texture={PIXI.Texture.from('/assets/coin_insert_button.png')}
     anchor={0.5}
     rotation={angle - Math.PI}

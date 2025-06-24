@@ -2,18 +2,47 @@
   import { onMount} from 'svelte'
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
+  import { config, authenticate, unauthenticate, currentUser } from '@onflow/fcl';
+  import { getBalance } from '../../flow_blockchain/scripts';
+  import flowJSON from '../../flow_blockchain/flow.json';
+  import Dialog from './Dialog.svelte';
 
   let app
+
+  config({
+    'flow.network': 'emulator',
+    'accessNode.api': 'http://localhost:8888',
+    'discovery.wallet': 'http://localhost:8701/fcl/authn',
+  }).load({ flowJSON });
+
+  let flowBalance;
+  let modal;
+  currentUser.subscribe(async (user) => {
+    if (user.addr) {
+      flowBalance = await getBalance(user.addr);
+    } else {
+      modal.showModal();
+    }
+  });
 
   onMount(() => { 
     app.renderer.render(app.stage)
   })
 </script>
 
+<Dialog bind:dialog={modal}>
+	<button on:click={() => {
+    authenticate()
+    modal.close()
+  }}>SignIn</button>
+</Dialog>
+
 <div class="game-screen">
   <div class="right-pane">
     <p class="current_prize">
-      Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="prize">2</span><span class="unit">($FLOW)</span>
+      Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />
+      <span class="prize">2</span>
+      <span class="unit">($FLOW)</span>
     </p>
     <p class="catch">Stay alive for one minute!</p>
   </div>
@@ -30,7 +59,7 @@
 
     <div>
       <p class="allura">
-        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">1.2</span>
+        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">{Math.trunc(flowBalance * 100) / 100}</span>
       </p>
 
       <p class="cinzel">
@@ -49,7 +78,37 @@
 </div>
 
 <style>
-  .game-screen {
+	dialog {
+		padding: 30px;
+		border-radius: 10px;
+		background-color: rgb(132 225 188);
+		text-align: right;
+	}
+
+	dialog > div {
+		margin-bottom: 15px;
+	}
+
+	dialog > div.title {
+		text-align: center;
+	}
+
+	dialog > :global(button) {
+		width: 100px;
+		height: 30px;
+		margin: 3px;
+	}
+
+	input {
+		padding: 5px;
+	}
+
+	.note {
+		color: orange;
+		font-size: 10px;
+	}
+
+ .game-screen {
     height: 95%;
     margin-bottom: 5px;
     overflow: scroll;
@@ -58,7 +117,7 @@
 
   .catch {
     color: white;
-    font-size: 25px;
+    font-size: 26px;
     margin-left: 10px;
     margin-top: 10px;
     font-weight: 700;
@@ -90,8 +149,7 @@
   }
 
   .allura {
-    margin-top: 8px;
-    margin-left: 5px;
+    margin: 8px 5px 0 5px;
     font-family: 'Allura';
     font-size: 35px;
 
