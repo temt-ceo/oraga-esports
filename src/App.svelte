@@ -76,15 +76,16 @@
 
     &.sign {
       height: 30px;
-      /* margin-bottom: 1%; */
+      width: 340;
+      margin-bottom: 0;
       background-color: black;
       padding-top: 10px;
       font-size: 11px !important;
       color: white;
       line-height: 0.8;
-      position: fixed;
-      bottom: 23px;
-      right: 30px;
+      position: absolute;
+      bottom: 28px;
+      right: 38px;
       & .allura {
         font-size: 24px !important;
       }

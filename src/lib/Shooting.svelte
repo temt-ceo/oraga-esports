@@ -60,13 +60,13 @@
     color: white;
     font-size: 25px;
     margin-left: 10px;
+    margin-top: 10px;
     font-weight: 700;
   }
 
   .current_prize {
     font-size: 27px;
-    margin-top: 10px;
-    margin-left: 10px;
+    margin: 10px;
     font-family: 'Libre Bodoni';
     & img {
       width: 30px;
