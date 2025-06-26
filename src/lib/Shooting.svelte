@@ -90,15 +90,15 @@
 </div>
 
 <Dialog bind:dialog={modal}>
-	<div>You need a crypto wallet.<br>(You can sign out anytime)</div>
-	<button on:click={() => {
+  <div>You need a crypto wallet.<br>(You can sign out anytime)</div>
+  <button on:click={() => {
     authenticate()
     modal.close()
   }}>SignIn</button>
 </Dialog>
 
 <Dialog bind:dialog={modal2}>
-	<div>Please provide your name (nickname) so that we can keep a record of you on the blockchain.</div>
+  <div>Please provide your name (nickname) so that we can keep a record of you on the blockchain.</div>
   <br>
   <input bind:value={playerName} placeholder="Player" type="text" />
   <button on:click={async () => {
@@ -111,9 +111,9 @@
 </Dialog>
 
 <style>
-	input {
-		padding: 5px;
-	}
+  input {
+    padding: 5px;
+  }
 
  .game-screen {
     height: 95%;
