@@ -1,31 +1,48 @@
-access(all) contract Counter {
+import "FlowToken"
+import "FungibleToken"
 
-    access(all) var count: Int
+access(all) contract OragaESports {
 
-    // Event to be emitted when the counter is incremented
-    access(all) event CounterIncremented(newCount: Int)
+  access(self) var totalCount: UInt
+  access(self) let GamerFlowTokenVault: {UInt: Capability<&{FungibleToken.Receiver}>}
 
-    // Event to be emitted when the counter is decremented
-    access(all) event CounterDecremented(newCount: Int)
+  access(all) event GamerCreatted(gamer_id: UInt)
 
-    init() {
-        self.count = 0
+  access(all) resource Gamer {
+    access(all) let gamer_id: UInt
+    access(all) let nickname: String
+
+    init(nickname: String) {
+      OragaESports.totalCount = OragaESports.totalCount + 1
+      self.gamer_id = OragaESports.totalCount
+      self.nickname = nickname
+      emit GamerCreatted(gamer_id: self.gamer_id)
     }
 
-    // Public function to increment the counter
-    access(all) fun increment() {
-        self.count = self.count + 1
-        emit CounterIncremented(newCount: self.count)
-    }
+    // access(all) fun insert_coin(payment: @FlowToken.Vault) {
+    //   pre {
+    //     payment.balance == 1.0: "payment is not 1FLOW coin."
+    //     OragaESports.gamerList[self.gamer_id] != nil: "CyberScoreStruct not found."
+    //   }
+    //   OragaESports.FlowTokenVault.borrow()!.deposit(from: <- payment)
+    //   if let cyberScore = OragaESports.gamerList[self.gamer_id] {
+    //     cyberScore.set_cyber_energy(new_value: cyberScore.cyber_energy + 100)
+    //     OragaESports.gamerList[self.gamer_id] = cyberScore
+    //   }
+    // }
+  }
 
-    // Public function to decrement the counter
-    access(all) fun decrement() {
-        self.count = self.count - 1
-        emit CounterDecremented(newCount: self.count)
-    }
+  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @OragaESports.Gamer {
+    let gamer <- create Gamer(nickname: nickname)
 
-    // Public function to get the current count
-    view access(all) fun getCount(): Int {
-        return self.count
+    if (OragaESports.GamerFlowTokenVault[gamer.gamer_id] == nil) {
+      OragaESports.GamerFlowTokenVault[gamer.gamer_id] = flow_vault_receiver
     }
+    return <- gamer
+  }
+
+  init() {
+    self.totalCount = 0
+    self.GamerFlowTokenVault = {}
+  }
 }

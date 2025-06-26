@@ -2,8 +2,9 @@
   import { onMount} from 'svelte'
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
-  import { config, authenticate, unauthenticate, currentUser } from '@onflow/fcl';
-  import { getBalance } from '../../flow_blockchain/scripts';
+  import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
+  import { getBalance, isRegistered } from '../../flow_blockchain/scripts';
+  import { createGamer } from '../../flow_blockchain/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
   import Dialog from './Dialog.svelte';
 
@@ -16,26 +17,41 @@
   }).load({ flowJSON });
 
   let flowBalance;
+  let hasResource;
+  let playerName;
   let modal;
+  let modal2;
+  let gameUser
   currentUser.subscribe(async (user) => {
+    gameUser = user
     if (user.addr) {
       flowBalance = await getBalance(user.addr);
+      hasResource = await isRegistered(user.addr);
+      if (!hasResource) {
+        console.log('Not registered.')
+        modal2.showModal();
+      }
     } else {
+      console.log('Not login.')
       modal.showModal();
     }
   });
+
+  async function funcCreatePlayer(playerName) {
+		await createGamer(playerName);
+	};
+
+  setInterval(async () => {
+    if (gameUser?.addr) {
+      hasResource = await isRegistered(gameUser.addr);
+      console.log(hasResource);
+    }
+  }, 1500);
 
   onMount(() => { 
     app.renderer.render(app.stage)
   })
 </script>
-
-<Dialog bind:dialog={modal}>
-	<button on:click={() => {
-    authenticate()
-    modal.close()
-  }}>SignIn</button>
-</Dialog>
 
 <div class="game-screen">
   <div class="right-pane">
@@ -77,35 +93,30 @@
   </div>
 </div>
 
+<Dialog bind:dialog={modal}>
+	<div>You need a crypto wallet.<br>(You can sign out anytime)</div>
+	<button on:click={() => {
+    authenticate()
+    modal.close()
+  }}>SignIn</button>
+</Dialog>
+
+<Dialog bind:dialog={modal2}>
+	<div>Please provide your name (nickname) so that we can keep a record of you on the blockchain.</div>
+  <br>
+  <input bind:value={playerName} placeholder="Player" type="text" />
+  <button on:click={async () => {
+    modal2.close()
+    const txId = await createGamer(playerName ?? 'Game Player');
+    tx(txId).subscribe((res) => {
+      console.log(`tx status: ${res}`);
+    });
+  }}>Set name</button>
+</Dialog>
+
 <style>
-	dialog {
-		padding: 30px;
-		border-radius: 10px;
-		background-color: rgb(132 225 188);
-		text-align: right;
-	}
-
-	dialog > div {
-		margin-bottom: 15px;
-	}
-
-	dialog > div.title {
-		text-align: center;
-	}
-
-	dialog > :global(button) {
-		width: 100px;
-		height: 30px;
-		margin: 3px;
-	}
-
 	input {
 		padding: 5px;
-	}
-
-	.note {
-		color: orange;
-		font-size: 10px;
 	}
 
  .game-screen {

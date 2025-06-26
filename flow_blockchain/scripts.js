@@ -17,3 +17,16 @@ export const getBalance = async function (address) {
   });
   return result;
 };
+
+export const isRegistered = async function (address) {
+  const result = await query({
+    cadence: `
+    import "OragaESports"
+    access(all) fun main(address: Address): &OragaESports.Gamer? {
+        return getAccount(address).capabilities.get<&OragaESports.Gamer>(/public/OragaESportsGamer).borrow()
+    }
+    `,
+    args: (arg, t) => [arg(address, t.Address)],
+  });
+  return result;
+};
