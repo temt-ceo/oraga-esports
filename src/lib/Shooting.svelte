@@ -37,10 +37,6 @@
     }
   });
 
-  async function funcCreatePlayer(playerName) {
-		await createGamer(playerName);
-	};
-
   setInterval(async () => {
     if (gameUser?.addr) {
       hasResource = await isRegistered(gameUser.addr);
