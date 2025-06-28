@@ -76,7 +76,7 @@
 
     <div>
       <p class="allura">
-        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">{Math.trunc(flowBalance * 1000) / 1000}</span>
+        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">{flowBalance > 0 ? (Math.trunc(flowBalance * 1000) / 1000) : ''}</span>
       </p>
 
       <p class="cinzel">
@@ -103,9 +103,9 @@
 </Dialog>
 
 <Dialog bind:dialog={modal2}>
-  <div>Please provide your name (nickname) so that we can keep a record of you on the blockchain.</div>
+  <div>Please provide your name (nickname)<br>so that we can keep a record of you on the blockchain.</div>
   <br>
-  <input bind:value={playerName} placeholder="Player" type="text" />
+  <input bind:value={playerName} placeholder="Game Player" type="text" />
   <button on:click={async () => {
     modal2.close()
     const txId = await createGamer(playerName ?? 'Game Player');
@@ -113,6 +113,9 @@
       console.log('tx status:', res);
     });
   }}>Set name</button>
+  <div>
+    <a on:click={unauthenticate} href="/">Sign Out</a>
+  </div>
 </Dialog>
 
 <style>

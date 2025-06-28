@@ -8,12 +8,14 @@
 
 <style>
 	dialog {
-		margin-left: 13vw;
-		margin-right: 13vw;
 		padding: 30px;
 		border-radius: 10px;
 		background-color: rgb(132 225 188);
 		text-align: right;
+	}
+
+	dialog > :global(div) {
+		text-align: left;
 	}
 
 	dialog > :global(button) {

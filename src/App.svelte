@@ -63,7 +63,7 @@
     background-repeat: repeat;
   }
   
-  h1, h2, h3, h4, h5{
+  h1 {
     text-align: center;
     margin: 0;
     padding: 10px;
@@ -75,19 +75,18 @@
 
     &.sign {
       height: 37px;
-      width: 340px;
+      width: 86vw;
       margin-bottom: 0;
-      padding-top: 2px;
-      padding-left: 5px;
-      padding-bottom: 10px;
-      font-size: 11px !important;
+      padding: 2px 5px 10px;
+      font-size: 11px;
       color: white;
       background-color: rgba(11, 4, 35, 1);
       position: absolute;
-      bottom: 4%;
+      left: 7%;
+      bottom: 0;
       right: 38px;
       & .allura {
-        font-size: 24px !important;
+        font-size: 24px;
       }
 
       & img {
