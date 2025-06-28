@@ -21,7 +21,7 @@
 	dialog > :global(button) {
 		width: 100px;
 		height: 30px;
-		margin: 3px;
+		margin-top: 15px;
 		border-radius: 6px;
 		color: dodgerblue;
 	}

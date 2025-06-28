@@ -84,7 +84,6 @@
       position: absolute;
       left: 7%;
       bottom: 0;
-      right: 38px;
       & .allura {
         font-size: 24px;
       }
@@ -165,7 +164,7 @@
   }
 
   .game-collection {
-    min-width: 320px;
+    min-width: 300px;
     max-width: 72vw;
     height: 70vh;
     margin: 0 45px 0 35px;
@@ -208,6 +207,7 @@
 
     .paragraph.sign {
       bottom: 6%;
+      right: 5vw;
     }
   }
 

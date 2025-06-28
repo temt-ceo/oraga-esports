@@ -88,7 +88,8 @@
       </p>
 
       <p class="cinzel">
-        <a on:click={unauthenticate} href="/">Sign Out</a>
+        <a on:click={unauthenticate} href="/">Sign Out</a><br><br>
+        Character design by <a href="https://uzi-material.com/">Masara</a>
       </p>
     </div>
   </div>
