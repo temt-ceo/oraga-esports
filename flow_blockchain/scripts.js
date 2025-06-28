@@ -21,12 +21,26 @@ export const getBalance = async function (address) {
 export const isRegistered = async function (address) {
   const result = await query({
     cadence: `
-    import "OragaESports"
-    access(all) fun main(address: Address): &OragaESports.Gamer? {
-        return getAccount(address).capabilities.get<&OragaESports.Gamer>(/public/OragaESportsGamer).borrow()
+    import "TestnetTest2"
+
+    access(all) fun main(address: Address): &TestnetTest2.Gamer? {
+        return getAccount(address).capabilities.get<&TestnetTest2.Gamer>(/public/TestnetTest2Gamer).borrow()
     }
     `,
     args: (arg, t) => [arg(address, t.Address)],
+  });
+  return result;
+};
+
+export const getGamersInfo = async function () {
+  const result = await query({
+    cadence: `
+    import "TestnetTest2"
+
+    access(all) fun main(): TestnetTest2.GamersInfo {
+      return TestnetTest2.getGamersInfo()
+    }
+    `,
   });
   return result;
 };

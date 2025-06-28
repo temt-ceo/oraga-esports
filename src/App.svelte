@@ -75,15 +75,16 @@
 
     &.sign {
       height: 37px;
-      width: 335px;
+      width: 340px;
       margin-bottom: 0;
-      background-color: rgba(11, 4, 35, 1);
       padding-top: 2px;
+      padding-left: 5px;
       padding-bottom: 10px;
       font-size: 11px !important;
       color: white;
+      background-color: rgba(11, 4, 35, 1);
       position: absolute;
-      bottom: 0%;
+      bottom: 4%;
       right: 38px;
       & .allura {
         font-size: 24px !important;

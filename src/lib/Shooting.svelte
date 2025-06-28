@@ -3,7 +3,7 @@
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
   import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
-  import { getBalance, isRegistered } from '../../flow_blockchain/scripts';
+  import { getBalance, isRegistered, getGamersInfo } from '../../flow_blockchain/scripts';
   import { createGamer } from '../../flow_blockchain/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
   import Dialog from './Dialog.svelte';
@@ -11,9 +11,11 @@
   let app
 
   config({
-    'flow.network': 'emulator',
-    'accessNode.api': 'http://localhost:8888',
-    'discovery.wallet': 'http://localhost:8701/fcl/authn',
+    'flow.network': 'testnet',
+    'accessNode.api': 'https://rest-testnet.onflow.org',
+    'discovery.wallet': 'https://wallet-v2-dev.blocto.app/-/flow/authn',
+    'app.detail.title': 'Oraga eSports',
+    'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
   }).load({ flowJSON });
 
   let flowBalance;
@@ -21,7 +23,9 @@
   let playerName;
   let modal;
   let modal2;
-  let gameUser
+  let gameUser;
+  let currentSituation;
+
   currentUser.subscribe(async (user) => {
     gameUser = user
     if (user.addr) {
@@ -40,8 +44,9 @@
   setInterval(async () => {
     if (gameUser?.addr) {
       hasResource = await isRegistered(gameUser.addr);
-      console.log(hasResource);
     }
+    currentSituation = await getGamersInfo();
+    console.log(currentSituation);
   }, 1500);
 
   onMount(() => { 
@@ -53,7 +58,7 @@
   <div class="right-pane">
     <p class="current_prize">
       Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />
-      <span class="prize">2</span>
+      <span class="prize">{(parseInt(currentSituation?.currentPrize ?? 0)) + 1}</span>
       <span class="unit">($FLOW)</span>
     </p>
     <p class="catch">Stay alive for one minute!</p>
@@ -71,7 +76,7 @@
 
     <div>
       <p class="allura">
-        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">{Math.trunc(flowBalance * 100) / 100}</span>
+        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">{Math.trunc(flowBalance * 1000) / 1000}</span>
       </p>
 
       <p class="cinzel">
@@ -83,7 +88,7 @@
       </p>
 
       <p class="cinzel">
-        <a href="/">Sign Out</a>
+        <a on:click={unauthenticate} href="/">Sign Out</a>
       </p>
     </div>
   </div>
@@ -105,7 +110,7 @@
     modal2.close()
     const txId = await createGamer(playerName ?? 'Game Player');
     tx(txId).subscribe((res) => {
-      console.log(`tx status: ${res}`);
+      console.log('tx status:', res);
     });
   }}>Set name</button>
 </Dialog>

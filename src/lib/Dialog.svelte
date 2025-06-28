@@ -8,8 +8,8 @@
 
 <style>
 	dialog {
-		margin-left: 15vw;
-		margin-right: 15vw;
+		margin-left: 13vw;
+		margin-right: 13vw;
 		padding: 30px;
 		border-radius: 10px;
 		background-color: rgb(132 225 188);
