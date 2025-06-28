@@ -75,14 +75,14 @@
 
     &.sign {
       height: 37px;
-      width: 86vw;
+      width: 88vw;
       margin-bottom: 0;
       padding: 2px 5px 10px;
       font-size: 11px;
       color: white;
       background-color: rgba(11, 4, 35, 1);
       position: absolute;
-      left: 7%;
+      left: 6%;
       bottom: 0;
       & .allura {
         font-size: 24px;
@@ -208,6 +208,15 @@
     .paragraph.sign {
       bottom: 6%;
       right: 5vw;
+    }
+  }
+
+  @media screen and (max-width: 380px) {
+    .game-collection {
+      margin-left: 15px;
+    }
+    .game-collection > img {
+      width: 270px;
     }
   }
 
