@@ -1,17 +1,17 @@
 <script>
   import * as PIXI from 'pixi.js'
   import Victor from 'victor'
-  import { Sprite, Ticker, getApp } from 'svelte-pixi'
+  import { Sprite, Ticker } from 'svelte-pixi'
 
   export let distance = 0
   export let damage = 0
   export let enemySpeed = 2.0
   export let position
   export let started
+  export let gameReset
   export let screenWidth;
 
   //=========
-  let { app } = getApp()
 
   const enemyRadius = 48;
   const playerRadius = 48 * 1.2
@@ -48,6 +48,13 @@
 <Ticker
   on:tick={(ev) => {
     frame++
+    if (gameReset) {
+      r = randomSpawnPoint()
+      enemyType = r.x < screenWidth / 5 ? '1' : r.x > screenWidth * 4 / 5 ? '2' : '3'
+      position.x = r.x
+      position.y = r.y
+      return
+    }
     if (!started) return
     if (position.x == null || position.y == null) {
       r = randomSpawnPoint()
@@ -76,6 +83,6 @@
     height={96}
     x={r.x}
     y={r.y}
-    texture={PIXI.Texture.from('/public/assets/shooting/zombie' + enemyType + '.png')}
+    texture={PIXI.Texture.from('/assets/shooting/zombie' + enemyType + '.png')}
   />
 </Ticker>

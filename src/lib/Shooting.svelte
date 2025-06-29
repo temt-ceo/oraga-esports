@@ -2,41 +2,255 @@
   import { onMount} from 'svelte'
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
+  import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
+  import { getBalance, isRegistered, getGamersInfo } from '../../flow_blockchain/scripts';
+  import { createGamer } from '../../flow_blockchain/transactions'
+  import flowJSON from '../../flow_blockchain/flow.json';
+  import Dialog from './Dialog.svelte';
 
   let app
+
+  config({
+    'flow.network': 'testnet',
+    'accessNode.api': 'https://rest-testnet.onflow.org',
+    'discovery.wallet': 'https://wallet-v2-dev.blocto.app/-/flow/authn',
+    'app.detail.title': 'Oraga eSports',
+    'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
+  }).load({ flowJSON });
+
+  let flowBalance;
+  let havingResource;
+  let playerName;
+  let modal;
+  let modal2;
+  let gameUser;
+  let currentSituation;
+
+  currentUser.subscribe(async (user) => {
+    gameUser = user
+    if (user.addr) {
+      flowBalance = await getBalance(user.addr);
+      havingResource = await isRegistered(user.addr);
+      if (!havingResource) {
+        console.log('Not registered.')
+        modal2.showModal();
+      }
+    } else {
+      console.log('Not login.')
+      modal.showModal();
+    }
+  });
+
+  setInterval(async () => {
+    if (gameUser?.addr) {
+      flowBalance = await getBalance(gameUser.addr);
+      havingResource = await isRegistered(gameUser.addr);
+      // console.log('User Info', havingResource)
+    }
+    currentSituation = await getGamersInfo();
+    console.log(currentSituation);
+  }, 1500);
 
   onMount(() => { 
     app.renderer.render(app.stage)
   })
 </script>
+
 <div class="game-screen">
-  <p class="catch">Stay alive for one minute!</p>
-  <a href="/">Homeへ</a>
+  {#if havingResource}
+    <p class="paragraph sticky">
+      <span class="allura">Hello,</span>{havingResource?.nickname}
+      <span class="total-prize">( Total prize won:
+        ₣ <span class="cinzel balance">{currentSituation?.prizeWinners[havingResource?.gamerId] ?? 0}</span>
+      )</span>
+    </p>
+  {/if}
+  <div class="right-pane">
+    <p class="current_prize">
+      Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />
+      <span class="prize">{(parseInt(currentSituation?.currentPrize ?? 0)) + 1}</span>
+      <span class="unit">($FLOW)</span>
+    </p>
+    <p class="catch">Stay alive for one minute!</p>
+  </div>
+
+  <div class="main-screen">
+    <Application
+      width={screen.width > 512 ? 512 : screen.width * 0.96}
+      height={screen.width > 512 ? 512 : screen.width * 0.96}
+      backgroundColor="0x5c812f"
+      bind:instance={app}
+      antialias>
+      <Field screenWidth={screen.width > 512 ? 512 : screen.width * 0.96}/>
+    </Application>
+
+    <div>
+      <p class="allura">
+        Your Balance: <img src="/assets/flow_fire.png" alt="$FLOW" /><span class="flow_balance">{flowBalance > 0 ? (Math.trunc(flowBalance * 1000) / 1000) : ''}</span>
+      </p>
+
+      <p class="cinzel">
+        <a href="/">Back to Home</a>
+      </p>
+
+      <p class="bodoni">
+        <img src="/assets/tip_jar.png" alt="$FLOW" /> <span class="prize">2</span> ($FLOW) has been donated for free play. <button>Tipping</button>
+      </p>
+
+      <p class="cinzel">
+        {#if gameUser?.addr}
+          <a on:click={unauthenticate} href="/">Sign Out</a>
+        {:else}
+          <button on:click={authenticate}>Sign In</button>
+        {/if}
+        <br><br>
+        Character design by <a href="https://uzi-material.com/">Masara</a>
+      </p>
+    </div>
+  </div>
 </div>
 
-<Application
-  width={screen.width > 512 ? 512 : screen.width}
-  height={screen.width > 512 ? 512 : screen.width}
-  backgroundColor="0x5c812f"
-  bind:instance={app}
-  antialias>
-  <Field screenWidth={screen.width > 512 ? 512 : screen.width}/>
-</Application>
+<Dialog bind:dialog={modal}>
+  <div>You need a crypto wallet.<br>(You can sign out anytime)</div>
+  <button on:click={() => {
+    authenticate()
+    modal.close()
+  }}>SignIn</button>
+</Dialog>
+
+<Dialog bind:dialog={modal2}>
+  <div>Please provide your name (nickname)<br>so that we can keep a record of you on the blockchain.</div>
+  <br>
+  <input bind:value={playerName} placeholder="Game Player" type="text" />
+  <button on:click={async () => {
+    modal2.close()
+    const txId = await createGamer(playerName ?? 'Game Player');
+    tx(txId).subscribe((res) => {
+      console.log('tx status:', res);
+    });
+  }}>Set name</button>
+  <div>
+    <a on:click={unauthenticate} href="/">Sign Out</a>
+  </div>
+</Dialog>
 
 <style>
-  .game-screen {
-    margin: 0 15px 15px 0;
+  input {
+    padding: 5px;
+  }
+
+ .game-screen {
+    height: 95%;
+    margin-bottom: 5px;
+    overflow: scroll;
+    color: white;
   }
 
   .catch {
     color: white;
-    font-size: 25px;
+    font-size: 26px;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-weight: 700;
+  }
+
+  .current_prize {
+    font-size: 27px;
+    margin: 0 10px 10px;
+    font-family: 'Libre Bodoni';
+    & img {
+      width: 30px;
+      vertical-align: sub;
+    }
+  }
+
+  .prize {
+    color: rgba(255, 64, 129, 0.7);
+    font-size: 48px;
+  }
+
+  .unit {
+    color: rgba(255, 64, 129, 0.7);
+    font-size: 22px;
+  }
+
+  .cinzel {
+    font-size: 20px;
+    font-family: 'Cinzel';
+  }
+
+  .allura {
+    margin: 8px 5px 0 5px;
+    font-family: 'Allura';
+    font-size: 35px;
+
+    & img {
+      width: 30px;
+      vertical-align: sub;
+    }
+  }
+
+  .bodoni {
+    margin-left: 5px;
+    font-family: 'Libre Bodoni';
+
+    & img {
+      width: 20px;
+      vertical-align: sub;
+      background-color: slategrey;
+      padding: 0 3px;
+    }
+
+    & .prize {
+      font-size: 32px;
+    }
+  }
+
+  .right-pane {
+    margin-right: 5px;
+  }
+
+  p.sticky {
+    position: sticky;
+    margin-bottom: 0;
+    top: 0;
+    background: rgba(11, 4, 35, 1);
+
+    & img {
+      width: 13px;
+    }
+  }
+
+  p.sticky  .balance {
+    font-size: 18px;
+  }
+
+  p.sticky .total-prize {
+    font-size: 13px;
   }
 
   @media screen and (min-width: 700px) {
+    .game-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-screen {
+      max-width: 520px;
+      margin-top: 200px;
+    }
+
     .catch {
       font-size: 35px;
-      width: 200px;
+      width: 300px;
+      text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 380px) {
+    .catch {
+      font-size: 20px;
     }
   }
 

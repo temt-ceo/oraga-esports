@@ -1,9 +1,13 @@
 <script>
   import * as PIXI from 'pixi.js'
-  import { Sprite, Graphics, Text, Ticker, getApp } from 'svelte-pixi'
+  import { authenticate, currentUser, tx } from '@onflow/fcl';
+  import { getBalance, isRegistered, getGamersInfo } from '../../../flow_blockchain/scripts';
+  import { insertCoin } from '../../../flow_blockchain/transactions'
+   import { Sprite, Graphics, Text, Ticker } from 'svelte-pixi'
   import { generateClient } from 'aws-amplify/api';
   import { createGameServerProcess } from '../../graphql/mutations';
   import * as subscriptions from '../../graphql/subscriptions';
+  import Dialog from './../Dialog.svelte';
 
   const client = generateClient();
 
@@ -11,11 +15,11 @@
   export let damage = 0
   export let started
   export let screenWidth;
+  export let gameReset
 
-  let { app } = getApp()
   const margin = 16
   const barHeight = 16
-  const intialBarWidth = screenWidth * 0.5 - 2 * margin
+  const intialBarWidth = screenWidth * 0.5 - 3 * margin
   const maxHealth = 100
   let health = maxHealth - damage
   let barWidth = (health / maxHealth) * intialBarWidth
@@ -25,6 +29,8 @@
   let timerCtrl1
   let timerCtrl2
   let btnClicked = false
+  let coinInserted = false
+  let modal
 
   const createSub = client
   .graphql({ query: subscriptions.onCreateGameServerProcess })
@@ -39,17 +45,31 @@
     timerCtrl2 = setInterval(() => remainTime--, 1000)
   }
 
-  function startBtnClicked() {
+  async function startBtnClicked() {
     if (!btnClicked) {
-      timerCtrl1 = setInterval(() => countdown--, 1500)
-      setTimeout(gameStart, 5500)
+      gameReset = true
       btnClicked = true
+      modal.showModal()
+      let txId = await insertCoin()
+      gameReset = false
+      tx(txId).subscribe((res) => {
+        console.log('tx status:', res);
+        if (!res.errorMessage && res.statusString == 'SEALED') {
+          // Transaction is sealed. Start the game.
+          coinInserted = true
+          timerCtrl1 = setInterval(() => countdown--, 1500)
+          setTimeout(gameStart, 5500)
+        }
+      });
     }
   }
 
   async function onGameLose() {
     clearInterval(timerCtrl2)
     started = false
+    btnClicked = false
+    countdown = 3
+    coinInserted = false
 
     const query = {
       type: 'Test',
@@ -69,6 +89,9 @@
   async function onGameWon() {
     clearInterval(timerCtrl2)
     started = false
+    btnClicked = false
+    countdown = 3
+    coinInserted = false
 
     const query = {
       type: 'Test',
@@ -108,7 +131,7 @@
     height={96}
     x={screenWidth / 2 - 20}
     y={screenWidth / 2 - 16}
-    texture={PIXI.Texture.from('/public/assets/shooting/elf.png')}
+    texture={PIXI.Texture.from('/assets/shooting/elf.png')}
     anchor={0.5}
     rotation={angle - Math.PI}
     eventMode={'static'}
@@ -135,33 +158,49 @@
   <Text
     x={started || !btnClicked ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.2}
-    text={`${countdown == 0 ? (dead ? 'Game Over' : '') : countdown}`}
+    text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted ? countdown : 'Please wait..')}`}
     style={{ fill: 'grey', fontSize: 65 }}
     anchor={0.5}
   />
   <Text
     x={started ? -999 : screenWidth * (0.5) - margin}
     y={screenWidth * 0.5 - margin}
-    text={`${countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : ''}`}
+    text={coinInserted && countdown > 0 ? 'Coin Inserted. Ready..!!' : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
     style={{ fill: '#FF4081', fontSize: 40 }}
     anchor={0.5}
   />
   <Text
-    x={screenWidth * 0.5 + margin * 5}
-    y={screenWidth - barHeight - margin}
-    text={`Last ${remainTime} Sec.`}
+    x={screenWidth * 0.5 + margin * 2}
+    y={screenWidth - barHeight - margin / 2}
+    text={`Last ${remainTime}s`}
     style={{ fill: 'white' }}
     anchor={0.5}
   />
   <Sprite
     width={87}
     height={30}
-    x={started ? -999 : screenWidth - margin * 3}
-    y={screenWidth - margin * 2}
-    texture={PIXI.Texture.from('/public/assets/coin_insert_button.png')}
+    x={started || remainTime == 0 ? -999 : screenWidth - margin * 3}
+    y={screenWidth - margin * 1.5}
+    texture={PIXI.Texture.from('/assets/coin_insert_button.png')}
     anchor={0.5}
     rotation={angle - Math.PI}
     eventMode={'static'}
     on:click={startBtnClicked}
   />
 </Ticker>
+
+<div class="game-player">
+  <Dialog bind:dialog={modal}>
+    <div>You need to accept the transaction on the wallet. Game fee is only ₣1.1!</div>
+    <button on:click={() => modal.close()}>Please click here first.</button>
+    </Dialog>
+</div>
+
+<style>
+  .game-player :global(dialog) {
+    margin-top: 0;
+    & button {
+      width: 200px;
+    }
+  }
+</style>
