@@ -122,6 +122,7 @@
   on:tick={(ev) => {
     delta = ev.detail
     frame++
+    if (gameReset) enemySpeed = 2.5;
     if (!gameCtr) return
 
     enemySpeed = 2 + Math.floor(frame / 300) * 0.05

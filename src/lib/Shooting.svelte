@@ -48,7 +48,7 @@
       // console.log('User Info', havingResource)
     }
     currentSituation = await getGamersInfo();
-    console.log(currentSituation);
+    // console.log(currentSituation);
   }, 1500);
 
   onMount(() => { 
