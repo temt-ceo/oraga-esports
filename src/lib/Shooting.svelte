@@ -19,7 +19,7 @@
   }).load({ flowJSON });
 
   let flowBalance;
-  let hasResource;
+  let havingResource;
   let playerName;
   let modal;
   let modal2;
@@ -30,8 +30,8 @@
     gameUser = user
     if (user.addr) {
       flowBalance = await getBalance(user.addr);
-      hasResource = await isRegistered(user.addr);
-      if (!hasResource) {
+      havingResource = await isRegistered(user.addr);
+      if (!havingResource) {
         console.log('Not registered.')
         modal2.showModal();
       }
@@ -43,7 +43,9 @@
 
   setInterval(async () => {
     if (gameUser?.addr) {
-      hasResource = await isRegistered(gameUser.addr);
+      flowBalance = await getBalance(gameUser.addr);
+      havingResource = await isRegistered(gameUser.addr);
+      // console.log('User Info', havingResource)
     }
     currentSituation = await getGamersInfo();
     console.log(currentSituation);
@@ -55,6 +57,14 @@
 </script>
 
 <div class="game-screen">
+  {#if havingResource}
+    <p class="paragraph sticky">
+      <span class="allura">Hello,</span>{havingResource?.nickname}
+      <span class="total-prize">( Total prize won:
+        ₣ <span class="cinzel balance">{currentSituation?.prizeWinners[havingResource?.gamerId] ?? 0}</span>
+      )</span>
+    </p>
+  {/if}
   <div class="right-pane">
     <p class="current_prize">
       Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />
@@ -88,7 +98,12 @@
       </p>
 
       <p class="cinzel">
-        <a on:click={unauthenticate} href="/">Sign Out</a><br><br>
+        {#if gameUser?.addr}
+          <a on:click={unauthenticate} href="/">Sign Out</a>
+        {:else}
+          <button on:click={authenticate}>Sign In</button>
+        {/if}
+        <br><br>
         Character design by <a href="https://uzi-material.com/">Masara</a>
       </p>
     </div>
@@ -141,7 +156,7 @@
 
   .current_prize {
     font-size: 27px;
-    margin: 10px;
+    margin: 0 10px 10px;
     font-family: 'Libre Bodoni';
     & img {
       width: 30px;
@@ -195,6 +210,25 @@
     margin-right: 5px;
   }
 
+  p.sticky {
+    position: sticky;
+    margin-bottom: 0;
+    top: 0;
+    background: rgba(11, 4, 35, 1);
+
+    & img {
+      width: 13px;
+    }
+  }
+
+  p.sticky  .balance {
+    font-size: 18px;
+  }
+
+  p.sticky .total-prize {
+    font-size: 13px;
+  }
+
   @media screen and (min-width: 700px) {
     .game-screen {
       display: flex;
@@ -211,6 +245,12 @@
       font-size: 35px;
       width: 300px;
       text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 380px) {
+    .catch {
+      font-size: 20px;
     }
   }
 

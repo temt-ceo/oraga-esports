@@ -99,7 +99,7 @@ access(all) contract TestnetTest2 {
       }
       if let challenged = TestnetTest2.gamersInfo.tryingPrize[self.gamerId] {
         if (challenged > 0) {
-          panic("You are now playing the game. Payment is not accepted.")
+          panic("You are now on playing the game. Payment is not accepted.")
         }
       }
       TestnetTest2.gamersInfo.setTryingPrize(gamerId: self.gamerId)

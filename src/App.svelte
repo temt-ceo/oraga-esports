@@ -164,7 +164,7 @@
   }
 
   .game-collection {
-    min-width: 300px;
+    min-width: 330px;
     max-width: 72vw;
     height: 70vh;
     margin: 0 45px 0 35px;
@@ -213,6 +213,7 @@
 
   @media screen and (max-width: 380px) {
     .game-collection {
+      min-width: 300px;
       margin-left: 15px;
     }
     .game-collection > img {

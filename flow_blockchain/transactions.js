@@ -30,3 +30,33 @@ export const createGamer = async function (nickname) {
   console.log(txId);
   return txId;
 };
+
+export const insertCoin = async function () {
+  const txId = await mutate({
+    cadence: `
+      import "TestnetTest2"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction() {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let payment <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: 1.1) as! @FlowToken.Vault
+
+          let gamer = signer.storage.borrow<&TestnetTest2.Gamer>(from: /storage/TestnetTest2Gamer)
+              ?? panic("Could not borrow reference to the Owner's Gamer Resource.")
+          gamer.insert_coin(payment: <- payment)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
