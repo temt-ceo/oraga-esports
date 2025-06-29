@@ -14,7 +14,7 @@
   let frame = 0
   let delta = 0
   let playerRadius = 48
-  let enemySpeed = 2.5;
+  let enemySpeed = 3.5;
   let damageCtr = 0
   let gameReset = false
   let gameCtr = false
@@ -122,10 +122,10 @@
   on:tick={(ev) => {
     delta = ev.detail
     frame++
-    if (gameReset) enemySpeed = 2.5;
+    if (gameReset) frame = 0;
     if (!gameCtr) return
 
-    enemySpeed = 2 + Math.floor(frame / 300) * 0.05
+    enemySpeed = 3 + Math.floor(frame / 300) * 0.1
     if (mouseX != 0 && mouseY != 0) {
       angle = Math.atan2(
         mouseY - screenWidth / 2 + playerRadius / 2,

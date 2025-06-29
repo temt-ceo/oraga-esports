@@ -1,0 +1,16 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@onflow/fcl": "^1.19.0",
+    "elliptic": "^6.6.1",
+    "sha3": "^2.1.4"
+  }
+}

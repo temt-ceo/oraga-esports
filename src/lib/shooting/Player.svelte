@@ -31,7 +31,7 @@
   const margin = 16
   const barHeight = 16
   const intialBarWidth = screenWidth * 0.5 - 3 * margin
-  const maxHealth = 100
+  const maxHealth = 50
   let health = maxHealth - damage
   let barWidth = (health / maxHealth) * intialBarWidth
   let dead = false
@@ -86,7 +86,7 @@
     coinInserted = false
 
     const query = {
-      type: 'shooting-game-outcome',
+      type: 'shooting_game_outcome',
       message: 'false',
       playerId: 'Test',
     };
@@ -107,7 +107,7 @@
     coinInserted = false
 
     const query = {
-      type: 'shooting-game-outcome',
+      type: 'shooting_game_outcome',
       message: 'true',
       playerId: 'Test',
     };
@@ -165,35 +165,35 @@
     x={started ? -999 : screenWidth * (0.7)}
     y={margin}
     text={`Click the Button to Start`}
-    style={{ fill: 'white', fontSize: 20 }}
+    style={{ fill: 'white', fontSize: 16 }}
     anchor={0.5}
   />
   <Text
     x={started || !btnClicked ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.2}
     text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted ? countdown : 'Please wait..')}`}
-    style={{ fill: 'grey', fontSize: 65 }}
+    style={{ fill: 'grey', fontSize: 48 }}
     anchor={0.5}
   />
   <Text
     x={dead ? screenWidth * (0.5) - margin * 0.5 : -999}
     y={screenWidth * 0.2}
     text={'Game Over'}
-    style={{ fill: 'grey', fontSize: 65 }}
+    style={{ fill: 'grey', fontSize: 48 }}
     anchor={0.5}
   />
   <Text
     x={started ? -999 : screenWidth * (0.5) - margin}
     y={screenWidth * 0.5 - margin}
     text={coinInserted && countdown > 0 ? 'Coin Inserted. Ready..!!' : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
-    style={{ fill: '#FF4081', fontSize: 40 }}
+    style={{ fill: '#FF4081', fontSize: 30 }}
     anchor={0.5}
   />
   <Text
     x={screenWidth * 0.5 + margin * 2}
     y={screenWidth - barHeight - margin / 2}
     text={`Last ${remainTime}s`}
-    style={{ fill: 'white' }}
+    style={{ fill: 'white', fontSize: 18 }}
     anchor={0.5}
   />
   <Sprite

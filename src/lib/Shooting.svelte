@@ -98,15 +98,14 @@
       </p>
 
       <p class="cinzel">
-        {#if gameUser?.addr}
-          <a on:click={unauthenticate} href="/">Sign Out</a>
-        {:else}
-          <button on:click={authenticate}>Sign In</button>
-        {/if}
-        <br><br>
         Character design by <a href="https://uzi-material.com/">Masara</a>
       </p>
-    </div>
+      {#if gameUser?.addr}
+        <a on:click={unauthenticate} href="/">Sign Out</a>
+      {:else}
+        <button on:click={authenticate}>Sign In</button>
+      {/if}
+</div>
   </div>
 </div>
 
@@ -149,14 +148,14 @@
   .catch {
     color: white;
     font-size: 26px;
-    margin-left: 10px;
+    margin: 0 0 14px 10px;
     margin-top: 10px;
     font-weight: 700;
   }
 
   .current_prize {
     font-size: 27px;
-    margin: 0 10px 10px;
+    margin: 0 10px 8px;
     font-family: 'Libre Bodoni';
     & img {
       width: 30px;
@@ -180,7 +179,7 @@
   }
 
   .allura {
-    margin: 8px 5px 0 5px;
+    margin: 0 5px;
     font-family: 'Allura';
     font-size: 35px;
 
@@ -208,6 +207,15 @@
 
   .right-pane {
     margin-right: 5px;
+  }
+
+  p.paragraph {
+    margin-top: 4px;
+    padding-left: 5px;
+
+    & > .allura {
+      font-size: 21px;
+    }
   }
 
   p.sticky {
