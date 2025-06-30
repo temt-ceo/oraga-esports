@@ -17,10 +17,21 @@
   export let screenWidth;
   export let gameReset
 
+  let gameUser
+  let havingResource
+  currentUser.subscribe(async (user) => {
+    gameUser = user
+    if (user.addr) {
+      havingResource = await isRegistered(user.addr);
+    } else {
+      gameUser = null
+    }
+  });
+
   const margin = 16
   const barHeight = 16
   const intialBarWidth = screenWidth * 0.5 - 3 * margin
-  const maxHealth = 100
+  const maxHealth = 50
   let health = maxHealth - damage
   let barWidth = (health / maxHealth) * intialBarWidth
   let dead = false
@@ -47,8 +58,12 @@
 
   async function startBtnClicked() {
     if (!btnClicked) {
+      dead = false
+      countdown = 3
+      remainTime = 60
       gameReset = true
       btnClicked = true
+      damage = 0
       modal.showModal()
       let txId = await insertCoin()
       gameReset = false
@@ -68,13 +83,12 @@
     clearInterval(timerCtrl2)
     started = false
     btnClicked = false
-    countdown = 3
     coinInserted = false
 
     const query = {
-      type: 'Test',
-      message: 'Test',
-      playerId: 'Test',
+      type: 'shooting_game_outcome',
+      message: 'false',
+      playerId: havingResource?.gamerId,
     };
 
     /* create a todo */
@@ -90,13 +104,12 @@
     clearInterval(timerCtrl2)
     started = false
     btnClicked = false
-    countdown = 3
     coinInserted = false
 
     const query = {
-      type: 'Test',
-      message: 'Test',
-      playerId: 'Test',
+      type: 'shooting_game_outcome',
+      message: 'true',
+      playerId: havingResource?.gamerId,
     };
 
     /* create a todo */
@@ -152,28 +165,35 @@
     x={started ? -999 : screenWidth * (0.7)}
     y={margin}
     text={`Click the Button to Start`}
-    style={{ fill: 'white', fontSize: 20 }}
+    style={{ fill: 'white', fontSize: 16 }}
     anchor={0.5}
   />
   <Text
     x={started || !btnClicked ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.2}
     text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted ? countdown : 'Please wait..')}`}
-    style={{ fill: 'grey', fontSize: 65 }}
+    style={{ fill: 'grey', fontSize: 48 }}
+    anchor={0.5}
+  />
+  <Text
+    x={dead ? screenWidth * (0.5) - margin * 0.5 : -999}
+    y={screenWidth * 0.2}
+    text={'Game Over'}
+    style={{ fill: 'grey', fontSize: 48 }}
     anchor={0.5}
   />
   <Text
     x={started ? -999 : screenWidth * (0.5) - margin}
     y={screenWidth * 0.5 - margin}
     text={coinInserted && countdown > 0 ? 'Coin Inserted. Ready..!!' : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
-    style={{ fill: '#FF4081', fontSize: 40 }}
+    style={{ fill: '#FF4081', fontSize: 30 }}
     anchor={0.5}
   />
   <Text
     x={screenWidth * 0.5 + margin * 2}
     y={screenWidth - barHeight - margin / 2}
     text={`Last ${remainTime}s`}
-    style={{ fill: 'white' }}
+    style={{ fill: 'white', fontSize: 18 }}
     anchor={0.5}
   />
   <Sprite
@@ -189,12 +209,27 @@
   />
 </Ticker>
 
+{#if gameUser && havingResource}
 <div class="game-player">
   <Dialog bind:dialog={modal}>
     <div>You need to accept the transaction on the wallet. Game fee is only ₣1.1!</div>
     <button on:click={() => modal.close()}>Please click here first.</button>
-    </Dialog>
+  </Dialog>
 </div>
+{:else if !gameUser}
+  <div class="game-player">
+    <Dialog bind:dialog={modal}>
+      <div>You need a crypto wallet.<br>Please sign in the wallet.</div>
+      <button on:click={() => modal.close()}>Please click here first.</button>
+    </Dialog>
+  </div>
+{:else if !havingResource}
+  <div class="game-player">
+    <Dialog bind:dialog={modal}>
+      <div>You are still not registered as a game player on the blockchain.<br>Please reload the browser screen.</div>
+    </Dialog>
+  </div>
+{/if}
 
 <style>
   .game-player :global(dialog) {
