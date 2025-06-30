@@ -1,7 +1,7 @@
 import "FlowToken"
 import "FungibleToken"
 
-access(all) contract TestnetTest2 {
+access(all) contract TestnetTest3 {
 
   access(self) var totalCount: UInt
   access(self) let GamerFlowTokenVault: {UInt: Capability<&{FungibleToken.Receiver}>}
@@ -114,30 +114,30 @@ access(all) contract TestnetTest2 {
       pre {
         payment.balance == 1.1: "payment is not 1.1FLOW coin."
       }
-      if let challenged = TestnetTest2.gamersInfo.tryingPrize[self.gamerId] {
+      if let challenged = TestnetTest3.gamersInfo.tryingPrize[self.gamerId] {
         if (challenged > 0) {
           panic("You are now on playing the game. Payment is not accepted.")
         }
       }
-      TestnetTest2.gamersInfo.setTryingPrize(gamerId: self.gamerId)
-      TestnetTest2.FlowTokenVault.borrow()!.deposit(from: <- payment)
+      TestnetTest3.gamersInfo.setTryingPrize(gamerId: self.gamerId)
+      TestnetTest3.FlowTokenVault.borrow()!.deposit(from: <- payment)
     }
 
     init(nickname: String) {
-      TestnetTest2.totalCount = TestnetTest2.totalCount + 1
-      self.gamerId = TestnetTest2.totalCount
+      TestnetTest3.totalCount = TestnetTest3.totalCount + 1
+      self.gamerId = TestnetTest3.totalCount
       self.nickname = nickname
       self.freePlayed = false
-      TestnetTest2.gamersInfo.setPrizeWinners(gamerId: self.gamerId, prize: 0, nickname: nickname)
+      TestnetTest3.gamersInfo.setPrizeWinners(gamerId: self.gamerId, prize: 0, nickname: nickname)
       emit GamerCreatted(gamerId: self.gamerId)
     }
   }
 
-  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @TestnetTest2.Gamer {
+  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @TestnetTest3.Gamer {
     let gamer <- create Gamer(nickname: nickname)
 
-    if (TestnetTest2.GamerFlowTokenVault[gamer.gamerId] == nil) {
-      TestnetTest2.GamerFlowTokenVault[gamer.gamerId] = flow_vault_receiver
+    if (TestnetTest3.GamerFlowTokenVault[gamer.gamerId] == nil) {
+      TestnetTest3.GamerFlowTokenVault[gamer.gamerId] = flow_vault_receiver
     }
     return <- gamer
   }
@@ -150,17 +150,17 @@ access(all) contract TestnetTest2 {
     ** Save the Gamer's shooting game outcome
     */
     access(all) fun shootingGameOutcome(gamerId: UInt, outcome: Bool) {
-      let prizePaid = TestnetTest2.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: outcome)
+      let prizePaid = TestnetTest3.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: outcome)
       if (prizePaid > 0) {
         // Pay the prize.
-        let reward <- TestnetTest2.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
-        TestnetTest2.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
+        let reward <- TestnetTest3.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
+        TestnetTest3.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
       }
     }
   }
 
   init() {
-    self.account.storage.save( <- create Admin(), to: /storage/TestnetTest2Admin) // grant admin resource
+    self.account.storage.save( <- create Admin(), to: /storage/TestnetTest3Admin) // grant admin resource
     self.totalCount = 0
     self.GamerFlowTokenVault = {}
     self.FlowTokenVault = self.account.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)

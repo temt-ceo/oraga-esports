@@ -27,6 +27,11 @@
       gameUser = null
     }
   });
+  setInterval(async () => {
+    if (gameUser?.addr) {
+      havingResource = await isRegistered(gameUser.addr);
+    }
+  }, 3000);
 
   const margin = 16
   const barHeight = 16

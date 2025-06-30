@@ -1,6 +1,6 @@
 {
   "contracts": {
-    "TestnetTest2": {
+    "TestnetTest3": {
       "source": "cadence/contracts/OragaESports.cdc",
       "aliases": {
         "testing": "0000000000000007"
@@ -9,10 +9,10 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["TestnetTest2"]
+      "emulator-account": ["TestnetTest3"]
     },
     "testnet": {
-      "testnet-account": ["TestnetTest2"]
+      "testnet-account": ["TestnetTest3"]
     }
   },
   "networks": {
