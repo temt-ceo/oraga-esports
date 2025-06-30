@@ -88,7 +88,7 @@
     const query = {
       type: 'shooting_game_outcome',
       message: 'false',
-      playerId: 'Test',
+      playerId: havingResource?.gamerId,
     };
 
     /* create a todo */
@@ -109,7 +109,7 @@
     const query = {
       type: 'shooting_game_outcome',
       message: 'true',
-      playerId: 'Test',
+      playerId: havingResource?.gamerId,
     };
 
     /* create a todo */

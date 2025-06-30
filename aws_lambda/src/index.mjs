@@ -1,11 +1,16 @@
-const fs = require("fs");
-const { config, mutate, tx } = require("@onflow/fcl");
-const { SHA3 } = require("sha3");
+import fs from "node:fs";
+import path from "node:path";
+import { config, sansPrefix, withPrefix, mutate, tx } from "@onflow/fcl";
+import { SHA3 } from "sha3";
+import pkg from "elliptic";
+const { ec: EC } = pkg;
+const ec = new EC("secp256k1");
 
 export const handler = async (event) => {
   console.log("Event", JSON.stringify(event, 3));
-  const input = event.variables?.input || {};
-  let player_id = input.playerId ? parseInt(input.playerId) : 0;
+  const input = event.input || {};
+  let gamerId = input.playerId ? parseInt(input.playerId) : 0;
+  let message = input.message ? JSON.parse(input.message) : {};
   let transaction = "";
 
   if (input.type === "shooting_game_outcome") {
@@ -13,8 +18,10 @@ export const handler = async (event) => {
       import TestnetTest2 from 0x975b04756864e9ea
 
       transaction(gamerId: UInt, outcome: Bool) {
-        prepare(signer: &Account) {
-          gamer.insert_coin(gamerId: gamerId, outcome: outcome)
+        prepare(signer: auth(BorrowValue) &Account) {
+          let admin = signer.storage.borrow<&TestnetTest2.Admin>(from: /storage/TestnetTest2Admin)
+            ?? panic("Could not borrow reference to the Administrator Resource.")
+          admin.shootingGameOutcome(gamerId: gamerId, outcome: outcome)
         }
         execute {
           log("success")
@@ -29,79 +36,102 @@ export const handler = async (event) => {
   });
 
   let txId;
-	try {
+  try {
+    var IT_KEY_ID = 0;
+    if (fs.existsSync("/tmp/sequence.txt")) {
+      IT_KEY_ID = parseInt(
+        fs.readFileSync("/tmp/sequence.txt", { encoding: "utf8" })
+      );
+    } else {
+      IT_KEY_ID = 10;
+    }
+    IT_KEY_ID = !IT_KEY_ID || IT_KEY_ID >= 10 ? 0 : IT_KEY_ID + 1;
+    fs.writeFileSync("/tmp/sequence.txt", IT_KEY_ID.toString());
+    console.log("IT_KEY_ID", IT_KEY_ID);
 
-		var KEY_ID_IT = 0;
-		if (fs.existsSync('/tmp/sequence.txt')) {
-			KEY_ID_IT = parseInt(fs.readFileSync('/tmp/sequence.txt', { encoding: 'utf8' }));
-		} else {
-			KEY_ID_IT = new Date().getMilliseconds() % 10;
-		}
-		KEY_ID_IT = !KEY_ID_IT || KEY_ID_IT >= 10 ? 0 : KEY_ID_IT + 1;
-		fs.writeFileSync('/tmp/sequence.txt', KEY_ID_IT.toString());
-		console.log('KEY_ID_IT', KEY_ID_IT);
+    const PRIVATE_KEY = fs.readFileSync("testnet-account.pkey", "utf8");
+    const ADDRESS = "0x975b04756864e9ea";
+    const KEY_ID = 0;
 
-    const EC = require('elliptic').ec;
-		const ec = new EC('p256');
-
-		// CHANGE THESE THINGS FOR YOU
-		const PRIVATE_KEY = fs.readFileSync('testnet-account.pkey', { encoding: 'utf8' });
-		const ADDRESS = '0x975b04756864e9ea';
-		const KEY_ID = 0;
+    const hash = (message) => {
+      const sha = new SHA3(256);
+      sha.update(Buffer.from(message, "hex"));
+      return sha.digest();
+    };
 
     const sign = (message) => {
-			const key = ec.keyFromPrivate(Buffer.from(PRIVATE_KEY, 'hex'));
-			const sig = key.sign(hash(message)); // hashMsgHex -> hash
-			const n = 32;
-			const r = sig.r.toArrayLike(Buffer, 'be', n);
-			const s = sig.s.toArrayLike(Buffer, 'be', n);
-			return Buffer.concat([r, s]).toString('hex');
-		};
-		const hash = (message) => {
-			const sha = new SHA3(256);
-			sha.update(Buffer.from(message, 'hex'));
-			return sha.digest();
-		};
+      const key = ec.keyFromPrivate(Buffer.from(PRIVATE_KEY, "hex"));
+      const sig = key.sign(hash(message)); // hashMsgHex -> hash
+      const n = 32;
+      const r = sig.r.toArrayLike(Buffer, "be", n);
+      const s = sig.s.toArrayLike(Buffer, "be", n);
+      return Buffer.concat([r, s]).toString("hex");
+    };
 
-		async function authorizationFunction(account) {
-			return {
-				...account,
-				tempId: `${ADDRESS}-${KEY_ID}`,
-				addr: fcl.sansPrefix(ADDRESS),
-				keyId: Number(KEY_ID),
-				signingFunction: async (signable) => {
-					return {
-						addr: fcl.withPrefix(ADDRESS),
-						keyId: Number(KEY_ID),
-						signature: sign(signable.message)
-					};
-				}
-			};
-		}
-		async function authorizationFunctionProposer(account) {
-			return {
-				...account,
-				tempId: `${ADDRESS}-${KEY_ID_IT}`,
-				addr: fcl.sansPrefix(ADDRESS),
-				keyId: Number(KEY_ID_IT),
-				signingFunction: async (signable) => {
-					return {
-						addr: fcl.withPrefix(ADDRESS),
-						keyId: Number(KEY_ID_IT),
-						signature: sign(signable.message)
-					};
-				}
-			};
-		}
+    async function authFunction(account) {
+      return {
+        ...account,
+        tempId: `${ADDRESS}-${KEY_ID}`,
+        addr: sansPrefix(ADDRESS),
+        keyId: Number(KEY_ID),
+        signingFunction: async (signable) => {
+          return {
+            addr: withPrefix(ADDRESS),
+            keyId: Number(KEY_ID),
+            signature: sign(signable.message),
+          };
+        },
+      };
+    }
+    async function authFunctionForProposer(account) {
+      return {
+        ...account,
+        tempId: `${ADDRESS}-${IT_KEY_ID}`,
+        addr: sansPrefix(ADDRESS),
+        keyId: Number(IT_KEY_ID),
+        signingFunction: async (signable) => {
+          return {
+            addr: withPrefix(ADDRESS),
+            keyId: Number(IT_KEY_ID),
+            signature: sign(signable.message),
+          };
+        },
+      };
+    }
 
-    let message = input.message ? JSON.parse(input.message) : {};
-
-  return {
-    id: new Date().getTime(),
-    type: "This is from Lambda(zipped)",
-    message: "This is from Lambda(zipped)",
-    playerId: "This is from Lambda(zipped)",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+    console.log("transaction", transaction, input);
+    if (input.type === "shooting_game_outcome") {
+      const outcome = message == "true" || message == true;
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [arg(gamerId, t.UInt), arg(outcome, t.Bool)],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[shooting_game_outcome] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    }
+    return {
+      id: new Date().getTime(),
+      type: input.type || "",
+      message: `${input.message} , txId: ${txId}`,
+      playerId: gamerId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  } catch (error) {
+    return {
+      id: new Date().getTime(),
+      type: "E:" + input.type,
+      message: error.toString(),
+      playerId: gamerId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
 };

@@ -160,7 +160,7 @@ access(all) contract TestnetTest2 {
   }
 
   init() {
-    self.account.storage.save( <- create Admin(), to: /storage/OragaESportsAdmin) // grant admin resource
+    self.account.storage.save( <- create Admin(), to: /storage/TestnetTest2Admin) // grant admin resource
     self.totalCount = 0
     self.GamerFlowTokenVault = {}
     self.FlowTokenVault = self.account.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
