@@ -3,10 +3,12 @@
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
   import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
-  import { getBalance, isRegistered, getGamersInfo } from '../../flow_blockchain/scripts';
+  import { getBalance, isRegistered } from '../../flow_blockchain/scripts';
   import { createGamer } from '../../flow_blockchain/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
   import Dialog from './Dialog.svelte';
+
+  export let currentSituation;
 
   let app
 
@@ -19,12 +21,11 @@
   }).load({ flowJSON });
 
   let flowBalance;
-  let havingResource;
   let playerName;
   let modal;
   let modal2;
   let gameUser;
-  let currentSituation;
+  let havingResource;
 
   currentUser.subscribe(async (user) => {
     gameUser = user
@@ -47,8 +48,6 @@
       havingResource = await isRegistered(gameUser.addr);
       // console.log('User Info', havingResource)
     }
-    currentSituation = await getGamersInfo();
-    // console.log(currentSituation);
   }, 1500);
 
   onMount(() => { 
@@ -61,14 +60,14 @@
     <p class="paragraph sticky">
       <span class="allura">Hello,</span>{havingResource?.nickname}
       <span class="total-prize">( Total prize won:
-        ₣ <span class="cinzel balance">{currentSituation?.prizeWinners[havingResource?.gamerId] ?? 0}</span>
+        ₣ <span class="cinzel balance">{currentSituation?.prizeWinners[havingResource?.gamerId]?.prize ?? 0}</span>
       )</span>
     </p>
   {/if}
   <div class="right-pane">
     <p class="current_prize">
       Current Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />
-      <span class="prize">{(parseInt(currentSituation?.currentPrize ?? 0)) + 1}</span>
+      <span class="prize">{!currentSituation?.currentPrize ? '-' : parseInt(currentSituation?.currentPrize) + 1}</span>
       <span class="unit">($FLOW)</span>
     </p>
     <p class="catch">Stay alive for one minute!</p>
@@ -81,7 +80,12 @@
       backgroundColor="0x5c812f"
       bind:instance={app}
       antialias>
-      <Field screenWidth={screen.width > 512 ? 512 : screen.width * 0.96}/>
+      <Field
+        screenWidth={screen.width > 512 ? 512 : screen.width * 0.96}
+        havingResource={havingResource}
+        gameUser={gameUser}
+        currentPrize={!currentSituation?.currentPrize ? '-' : parseInt(currentSituation?.currentPrize) + 1}
+      />
     </Application>
 
     <div>
@@ -94,7 +98,7 @@
       </p>
 
       <p class="bodoni">
-        <img src="/assets/tip_jar.png" alt="$FLOW" /> <span class="prize">2</span> ($FLOW) has been donated for free play. <button>Tipping</button>
+        <img src="/assets/tip_jar.png" alt="$FLOW" /> <span class="prize">{currentSituation?.tipJarBalance ? parseInt(currentSituation?.tipJarBalance) : '-'}</span> ($FLOW) has been donated for free play. <button>Tipping</button>
       </p>
 
       <p class="cinzel">

@@ -8,6 +8,9 @@
   export let mouseX = 0;
   export let mouseY = 0;
   export let screenWidth;
+  export let havingResource;
+  export let gameUser;
+  export let currentPrize;
 
   //=========
   let { app } = getApp()
@@ -163,7 +166,16 @@
   <Sprite x={r4.x} y={r4.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
   <Sprite x={r5.x} y={r5.y} width={bulletRadius * 3.5} height={bulletRadius * 3} texture={PIXI.Texture.from('/assets/shooting/star.png')} />
 
-  <Player angle={angle}  bind:damage={damageCtr} bind:started={gameCtr} bind:gameReset={gameReset} screenWidth={screenWidth} />
+  <Player
+    angle={angle}
+    bind:damage={damageCtr}
+    bind:started={gameCtr}
+    bind:gameReset={gameReset}
+    screenWidth={screenWidth}
+    havingResource={havingResource}
+    gameUser={gameUser}
+    currentPrize={currentPrize}
+  />
   <Zombie distance={2} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[1]} started={gameCtr} screenWidth={screenWidth} gameReset={gameReset} />
   <Zombie distance={6} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[2]} started={gameCtr} screenWidth={screenWidth} gameReset={gameReset} />
   <Zombie distance={8} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[3]} started={gameCtr} screenWidth={screenWidth} gameReset={gameReset} />

@@ -1,7 +1,6 @@
 <script>
   import * as PIXI from 'pixi.js'
-  import { authenticate, currentUser, tx } from '@onflow/fcl';
-  import { getBalance, isRegistered, getGamersInfo } from '../../../flow_blockchain/scripts';
+  import { tx } from '@onflow/fcl';
   import { insertCoin } from '../../../flow_blockchain/transactions'
    import { Sprite, Graphics, Text, Ticker } from 'svelte-pixi'
   import { generateClient } from 'aws-amplify/api';
@@ -16,22 +15,9 @@
   export let started
   export let screenWidth;
   export let gameReset
-
-  let gameUser
-  let havingResource
-  currentUser.subscribe(async (user) => {
-    gameUser = user
-    if (user.addr) {
-      havingResource = await isRegistered(user.addr);
-    } else {
-      gameUser = null
-    }
-  });
-  setInterval(async () => {
-    if (gameUser?.addr) {
-      havingResource = await isRegistered(gameUser.addr);
-    }
-  }, 3000);
+  export let havingResource
+  export let gameUser
+  export let currentPrize
 
   const margin = 16
   const barHeight = 16
@@ -47,11 +33,29 @@
   let btnClicked = false
   let coinInserted = false
   let modal
+  let notificationModal
+  let notificationMessage
 
   const createSub = client
   .graphql({ query: subscriptions.onCreateGameServerProcess })
   .subscribe({
-    next: ({ data }) => console.log(data),
+    next: ({ data }) => {
+      console.log(data.onCreateGameServerProcess)
+      if (data.onCreateGameServerProcess?.type == 'shooting_game_outcome') {
+        const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
+        const outcome = res[0]
+        const txId = res[1]
+        if (outcome == 'false') {
+          notificationMessage = `Prize money rises! ₣ ${currentPrize} ==> ${currentPrize + 1}`
+          notificationModal.showModal()
+          tx(txId).subscribe((res) => {
+            if (!res.errorMessage && res.statusString == 'SEALED') {
+              notificationModal.close()
+            }
+          });
+        }
+      }
+    },
     error: (error) => console.warn(error)
   });
 
@@ -79,6 +83,9 @@
           coinInserted = true
           timerCtrl1 = setInterval(() => countdown--, 1500)
           setTimeout(gameStart, 5500)
+        } else if (res.errorMessage) {
+          notificationMessage = "Sorry transaction failed. But Don't worry, your money is not decreased. It's safe blockchain system."
+          notificationModal.showModal()
         }
       });
     }
@@ -215,12 +222,12 @@
 </Ticker>
 
 {#if gameUser && havingResource}
-<div class="game-player">
-  <Dialog bind:dialog={modal}>
-    <div>You need to accept the transaction on the wallet. Game fee is only ₣1.1!</div>
-    <button on:click={() => modal.close()}>Please click here first.</button>
-  </Dialog>
-</div>
+  <div class="game-player">
+    <Dialog bind:dialog={modal}>
+      <div>You need to accept the transaction on the wallet. Game fee is only ₣1.1!</div>
+      <button on:click={() => modal.close()}>Please click here first.</button>
+    </Dialog>
+  </div>
 {:else if !gameUser}
   <div class="game-player">
     <Dialog bind:dialog={modal}>
@@ -235,6 +242,11 @@
     </Dialog>
   </div>
 {/if}
+<div class="game-player notification">
+  <Dialog bind:dialog={notificationModal}>
+    <div>{notificationMessage}</div>
+  </Dialog>
+</div>
 
 <style>
   .game-player :global(dialog) {
@@ -242,5 +254,16 @@
     & button {
       width: 200px;
     }
+  }
+
+  .notification :global(dialog) {
+    font-weight: 700;
+    font-family: 'Libre Bodoni';
+    color: rgba(255, 64, 129, 0.7);
+    background-color: rgba(11, 4, 35, 1);
+		border-color: dodgerblue;
+    border-width: 4px;
+    padding: 5px 30px;
+    font-size: 24px;
   }
 </style>

@@ -14,11 +14,11 @@ export const handler = async (event) => {
 
   if (input.type === "shooting_game_outcome") {
     transaction = `
-      import TestnetTest3 from 0x975b04756864e9ea
+      import TestnetTest5 from 0x975b04756864e9ea
 
       transaction(gamerId: UInt, outcome: Bool) {
         prepare(signer: auth(BorrowValue) &Account) {
-          let admin = signer.storage.borrow<&TestnetTest3.Admin>(from: /storage/TestnetTest3Admin)
+          let admin = signer.storage.borrow<&TestnetTest5.Admin>(from: /storage/TestnetTest5Admin)
             ?? panic("Could not borrow reference to the Administrator Resource.")
           admin.shootingGameOutcome(gamerId: gamerId, outcome: outcome)
         }

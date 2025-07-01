@@ -21,10 +21,10 @@ export const getBalance = async function (address) {
 export const isRegistered = async function (address) {
   const result = await query({
     cadence: `
-    import "TestnetTest3"
+    import "TestnetTest5"
 
-    access(all) fun main(address: Address): &TestnetTest3.Gamer? {
-        return getAccount(address).capabilities.get<&TestnetTest3.Gamer>(/public/TestnetTest3Gamer).borrow()
+    access(all) fun main(address: Address): &TestnetTest5.Gamer? {
+        return getAccount(address).capabilities.get<&TestnetTest5.Gamer>(/public/TestnetTest5Gamer).borrow()
     }
     `,
     args: (arg, t) => [arg(address, t.Address)],
@@ -35,10 +35,10 @@ export const isRegistered = async function (address) {
 export const getGamersInfo = async function () {
   const result = await query({
     cadence: `
-    import "TestnetTest3"
+    import "TestnetTest5"
 
-    access(all) fun main(): TestnetTest3.GamersInfo {
-      return TestnetTest3.getGamersInfo()
+    access(all) fun main(): TestnetTest5.GamersInfo {
+      return TestnetTest5.getGamersInfo()
     }
     `,
   });

@@ -4,6 +4,9 @@
   import Contents from './Contents.svelte'
 
   export let screenWidth;
+  export let havingResource;
+  export let gameUser;
+  export let currentPrize;
 
   const uniforms = {
     uSampler2: PIXI.Texture.from('/assets/bg_mesh.jpg'),
@@ -81,4 +84,7 @@
   mouseX={$mouseX}
   mouseY={$mouseY}
   screenWidth={screenWidth}
+  havingResource={havingResource}
+  gameUser={gameUser}
+  currentPrize={currentPrize}
 />

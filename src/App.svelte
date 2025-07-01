@@ -2,13 +2,30 @@
   import Shooting from './lib/Shooting.svelte'
   import { Amplify } from 'aws-amplify';
   import config from './amplifyconfiguration.json';
+  import * as fcl from '@onflow/fcl';
+  import flowJSON from '../flow_blockchain/flow.json';
+  import { getGamersInfo } from '../flow_blockchain/scripts';
 
   Amplify.configure(config);
+  let currentSituation;
+  fcl.config({
+    'flow.network': 'testnet',
+    'accessNode.api': 'https://rest-testnet.onflow.org',
+    'discovery.wallet': 'https://wallet-v2-dev.blocto.app/-/flow/authn',
+    'app.detail.title': 'Oraga eSports',
+    'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
+  }).load({ flowJSON });
+
+  setInterval(async () => {
+    currentSituation = await getGamersInfo();
+    console.log(currentSituation)
+  }, 1500);
+
 </script>
 
   {#if location.href.includes('/shooting')}
     <section class="section shooting">
-      <Shooting />
+      <Shooting currentSituation={currentSituation} />
     </section>
   {:else}
   <section class="section">
@@ -21,7 +38,7 @@
           </a>
           <br>
           <p class="paragraph">
-            Category: <span class="allura">Shooting</span><span class="current_prize">(Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />2)</span><br>
+            Category: <span class="allura">Shooting</span><span class="current_prize">(Prize: <img src="/assets/flow_fire.png" alt="$FLOW" />{!currentSituation?.currentPrize ? '-' : parseInt(currentSituation?.currentPrize) + 1})</span><br>
           </p>
           <span class="cinzel">How to play:</span><br>
           <span class="cinzel li">1. Win the game. </span><br>
