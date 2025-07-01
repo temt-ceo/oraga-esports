@@ -60,3 +60,37 @@ export const insertCoin = async function () {
   console.log(txId);
   return txId;
 };
+
+export const tipping = async function (amount) {
+  console.log(99999, amount, Number.isFinite(amount));
+  const txId = await mutate({
+    cadence: `
+      import "TestnetTest5"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction(amount: UFix64) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          pre {
+            amount == 1.0 || amount == 5.0: "tip is not 1.0FLOW or 5.0FLOW."
+          }
+          let tip <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: amount) as! @FlowToken.Vault
+
+          let gamer = signer.storage.borrow<&TestnetTest5.Gamer>(from: /storage/TestnetTest5Gamer)
+              ?? panic("Could not borrow reference to the Owner's Gamer Resource.")
+          gamer.tipping(tip: <- tip)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [arg(amount, t.UFix64)],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
