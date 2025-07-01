@@ -1,7 +1,7 @@
 import "FlowToken"
 import "FungibleToken"
 
-access(all) contract TestnetTest2 {
+access(all) contract TestnetTest5 {
 
   access(self) var totalCount: UInt
   access(self) let GamerFlowTokenVault: {UInt: Capability<&{FungibleToken.Receiver}>}
@@ -9,13 +9,16 @@ access(all) contract TestnetTest2 {
   access(self) let gamersInfo: GamersInfo
 
   access(all) event GamerCreatted(gamerId: UInt)
+  access(all) event WonThePrize(gamerId: UInt, amount: UFix64)
 
   // [Struct] GamersInfo
   access(all) struct GamersInfo {
     access(contract) var currentPrize: UInt
     access(contract) var tryingPrize: {UInt: UInt}
+    access(contract) var lastTimePlayed: {UInt: UFix64?}
     access(contract) var prizeWinners: {UInt: GamerPrizeInfo}
-    access(contract) var tipJarBalance: UInt
+    access(contract) var freePlayCount: {UInt: UInt8}
+    access(contract) var tipJarBalance: UFix64
 
     access(contract) fun setCurrentPrize(added: UInt, gamerId: UInt, paid: Bool): UInt {
       if (paid == false) {
@@ -41,20 +44,12 @@ access(all) contract TestnetTest2 {
 
     access(contract) fun unsetTryingPrize(gamerId: UInt) {
       self.tryingPrize[gamerId] = 0
+      self.lastTimePlayed[gamerId] = nil
     }
 
     access(contract) fun setTryingPrize(gamerId: UInt) {
       self.tryingPrize[gamerId] = self.currentPrize
-    }
-
-    access(contract) fun setTipJarBalance(value: UInt, tipped: Bool) {
-      if (tipped) {
-        self.tipJarBalance = self.tipJarBalance + value
-      } else if (self.tipJarBalance - value > 0) {
-        self.tipJarBalance = self.tipJarBalance - value
-      } else {
-        self.tipJarBalance = 0
-      }
+      self.lastTimePlayed[gamerId] = getCurrentBlock().timestamp
     }
 
     access(contract) fun setPrizeWinners(gamerId: UInt, prize: UInt, nickname: String?) {
@@ -66,16 +61,34 @@ access(all) contract TestnetTest2 {
         self.prizeWinners[gamerId] = prizeWinnerInfo
       } else {
         if (nickname != nil) {
-          self.prizeWinners[gamerId] = GamerPrizeInfo(prize: prize, gamerId: gamerId, nickname: nickname!)
+          self.prizeWinners[gamerId] = GamerPrizeInfo(prize: prize, gamerId: gamerId, nickname: nickname!, totalCount: prize > 0 ? 1 : 0)
         }
+      }
+    }
+
+    access(contract) fun setFreePlayCount(gamerId: UInt) {
+      self.freePlayCount[gamerId] = self.freePlayCount[gamerId] == nil ? 1 : (self.freePlayCount[gamerId]! + 1)
+    }
+
+    access(contract) fun setTipJarBalance(amount: UFix64) {
+      self.tipJarBalance = self.tipJarBalance + amount
+    }
+
+    access(contract) fun useTipJarBalance() {
+      if (self.tipJarBalance > 0.0) {
+        self.tipJarBalance = self.tipJarBalance - 1.0
+      } else {
+        panic("Sorry, tip jar is empty..")
       }
     }
 
     init() {
       self.currentPrize = 0
       self.tryingPrize = {}
+      self.lastTimePlayed = {}
       self.prizeWinners = {}
-      self.tipJarBalance = 0
+      self.freePlayCount = {}
+      self.tipJarBalance = 0.0
     }
   }
 
@@ -93,11 +106,11 @@ access(all) contract TestnetTest2 {
       self.totalCount = self.totalCount + 1
     }
 
-    init(prize: UInt, gamerId: UInt, nickname: String) {
+    init(prize: UInt, gamerId: UInt, nickname: String, totalCount: UInt) {
       self.prize = prize
       self.gamerId = gamerId
       self.gamerName = nickname
-      self.totalCount = 1
+      self.totalCount = totalCount
     }
   }
 
@@ -108,36 +121,48 @@ access(all) contract TestnetTest2 {
   access(all) resource Gamer {
     access(all) let gamerId: UInt
     access(all) let nickname: String
-    access(all) var freePlayed: Bool
 
     access(all) fun insert_coin(payment: @FlowToken.Vault) {
       pre {
         payment.balance == 1.1: "payment is not 1.1FLOW coin."
       }
-      if let challenged = TestnetTest2.gamersInfo.tryingPrize[self.gamerId] {
+      if let isStillPlayed = TestnetTest5.gamersInfo.lastTimePlayed[self.gamerId] {
+        if (isStillPlayed != nil && isStillPlayed! + 90.0 < getCurrentBlock().timestamp) {
+          // NOTE. If a player cut the network after the game won, we don't care about it.
+          let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: self.gamerId, paid: false) // set lose
+        }
+      }
+      if let challenged = TestnetTest5.gamersInfo.tryingPrize[self.gamerId] {
         if (challenged > 0) {
           panic("You are now on playing the game. Payment is not accepted.")
         }
       }
-      TestnetTest2.gamersInfo.setTryingPrize(gamerId: self.gamerId)
-      TestnetTest2.FlowTokenVault.borrow()!.deposit(from: <- payment)
+      TestnetTest5.gamersInfo.setTryingPrize(gamerId: self.gamerId)
+      TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- payment)
+    }
+
+    access(all) fun tipping(payment: @FlowToken.Vault) {
+      pre {
+        payment.balance == 1.0 || payment.balance == 5.0: "payment is not 1.0FLOW or 5.0FLOW coin."
+      }
+      TestnetTest5.gamersInfo.setTipJarBalance(amount: payment.balance)
+      TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- payment)
     }
 
     init(nickname: String) {
-      TestnetTest2.totalCount = TestnetTest2.totalCount + 1
-      self.gamerId = TestnetTest2.totalCount
+      TestnetTest5.totalCount = TestnetTest5.totalCount + 1
+      self.gamerId = TestnetTest5.totalCount
       self.nickname = nickname
-      self.freePlayed = false
-      TestnetTest2.gamersInfo.setPrizeWinners(gamerId: self.gamerId, prize: 0, nickname: nickname)
+      TestnetTest5.gamersInfo.setPrizeWinners(gamerId: self.gamerId, prize: 0, nickname: nickname)
       emit GamerCreatted(gamerId: self.gamerId)
     }
   }
 
-  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @TestnetTest2.Gamer {
+  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @TestnetTest5.Gamer {
     let gamer <- create Gamer(nickname: nickname)
 
-    if (TestnetTest2.GamerFlowTokenVault[gamer.gamerId] == nil) {
-      TestnetTest2.GamerFlowTokenVault[gamer.gamerId] = flow_vault_receiver
+    if (TestnetTest5.GamerFlowTokenVault[gamer.gamerId] == nil) {
+      TestnetTest5.GamerFlowTokenVault[gamer.gamerId] = flow_vault_receiver
     }
     return <- gamer
   }
@@ -150,17 +175,30 @@ access(all) contract TestnetTest2 {
     ** Save the Gamer's shooting game outcome
     */
     access(all) fun shootingGameOutcome(gamerId: UInt, outcome: Bool) {
-      let prizePaid = TestnetTest2.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: outcome)
+      let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: outcome)
       if (prizePaid > 0) {
         // Pay the prize.
-        let reward <- TestnetTest2.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
-        TestnetTest2.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
+        let reward <- TestnetTest5.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
+        TestnetTest5.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
+      }
+    }
+
+    /*
+    ** Save the Gamer's shooting game outcome
+    */
+    access(all) fun useTipJarForFreePlay(gamerId: UInt) {
+      if let freePlayed = TestnetTest5.gamersInfo.freePlayCount[gamerId] {
+        if (freePlayed >= 2) {
+         panic("It's not acceptable.")
+        }
+        TestnetTest5.gamersInfo.useTipJarBalance()
+        TestnetTest5.gamersInfo.setTryingPrize(gamerId: gamerId)
       }
     }
   }
 
   init() {
-    self.account.storage.save( <- create Admin(), to: /storage/TestnetTest2Admin) // grant admin resource
+    self.account.storage.save( <- create Admin(), to: /storage/TestnetTest5Admin) // grant admin resource
     self.totalCount = 0
     self.GamerFlowTokenVault = {}
     self.FlowTokenVault = self.account.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)

@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import { config, sansPrefix, withPrefix, mutate, tx } from "@onflow/fcl";
 import { SHA3 } from "sha3";
 import pkg from "elliptic";
@@ -15,11 +14,11 @@ export const handler = async (event) => {
 
   if (input.type === "shooting_game_outcome") {
     transaction = `
-      import TestnetTest2 from 0x975b04756864e9ea
+      import TestnetTest5 from 0x975b04756864e9ea
 
       transaction(gamerId: UInt, outcome: Bool) {
         prepare(signer: auth(BorrowValue) &Account) {
-          let admin = signer.storage.borrow<&TestnetTest2.Admin>(from: /storage/TestnetTest2Admin)
+          let admin = signer.storage.borrow<&TestnetTest5.Admin>(from: /storage/TestnetTest5Admin)
             ?? panic("Could not borrow reference to the Administrator Resource.")
           admin.shootingGameOutcome(gamerId: gamerId, outcome: outcome)
         }
