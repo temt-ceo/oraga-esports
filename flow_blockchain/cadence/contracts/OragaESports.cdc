@@ -141,12 +141,12 @@ access(all) contract TestnetTest5 {
       TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- payment)
     }
 
-    access(all) fun tipping(payment: @FlowToken.Vault) {
+    access(all) fun tipping(tip: @FlowToken.Vault) {
       pre {
-        payment.balance == 1.0 || payment.balance == 5.0: "payment is not 1.0FLOW or 5.0FLOW coin."
+        tip.balance == 1.0 || tip.balance == 5.0: "tip is not 1.0FLOW or 5.0FLOW coin."
       }
-      TestnetTest5.gamersInfo.setTipJarBalance(amount: payment.balance)
-      TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- payment)
+      TestnetTest5.gamersInfo.setTipJarBalance(amount: tip.balance)
+      TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- tip)
     }
 
     init(nickname: String) {

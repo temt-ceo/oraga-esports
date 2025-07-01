@@ -4,7 +4,7 @@
   import Field from './shooting/Field.svelte'
   import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
   import { getBalance, isRegistered } from '../../flow_blockchain/scripts';
-  import { createGamer } from '../../flow_blockchain/transactions'
+  import { createGamer, tipping } from '../../flow_blockchain/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
   import Dialog from './Dialog.svelte';
 
@@ -24,8 +24,12 @@
   let playerName;
   let modal;
   let modal2;
+  let modal3;
+  let notificationModal;
+  let notificationMessage;
   let gameUser;
   let havingResource;
+  let tipAmount = "1.0";
 
   currentUser.subscribe(async (user) => {
     gameUser = user
@@ -98,7 +102,10 @@
       </p>
 
       <p class="bodoni">
-        <img src="/assets/tip_jar.png" alt="$FLOW" /> <span class="prize">{currentSituation?.tipJarBalance ? parseInt(currentSituation?.tipJarBalance) : '-'}</span> ($FLOW) has been donated for free play. <button>Tipping</button>
+        <img src="/assets/tip_jar.png" alt="$FLOW" />
+        <span class="prize">₣{currentSituation?.tipJarBalance ? parseInt(currentSituation?.tipJarBalance) : '-'}</span>
+        has been donated for free play.
+        <button on:click={() => modal3.showModal()}>Tipping</button>
       </p>
 
       <p class="cinzel">
@@ -136,6 +143,41 @@
     <a on:click={unauthenticate} href="/">Sign Out</a>
   </div>
 </Dialog>
+
+<Dialog bind:dialog={modal3}>
+  <div>Could you put the tip in the tip jar?</div>
+  <div>
+    <label>
+      <input type="radio" bind:group={tipAmount} value="1.0">
+      ₣1.0
+    </label>
+    <label>
+      <input type="radio" bind:group={tipAmount} value="5.0">
+      ₣5.0
+    </label>
+  </div>
+  (Your Balance: <span class="flow_balance">₣{flowBalance > 0 ? (Math.trunc(flowBalance * 10) / 10) : ''}</span>)<br>
+  <button class="yes" on:click={async () => {
+    modal3.close()
+    const txId = await tipping(tipAmount);
+    tx(txId).subscribe((res) => {
+      notificationMessage = 'THANK YOU!'
+      notificationModal.showModal()
+      if (!res.errorMessage && res.statusString == 'SEALED') {
+        notificationModal.close()
+      }
+    });
+  }}>Yes</button>
+  <button on:click={() => {
+    modal3.close()
+  }}>Maybe later</button>
+</Dialog>
+
+<div class="notification">
+  <Dialog bind:dialog={notificationModal}>
+    <div>{notificationMessage}</div>
+  </Dialog>
+</div>
 
 <style>
   input {
@@ -206,6 +248,7 @@
 
     & .prize {
       font-size: 32px;
+      vertical-align: sub;
     }
   }
 
@@ -239,6 +282,24 @@
 
   p.sticky .total-prize {
     font-size: 13px;
+  }
+
+  button.yes {
+    color: white;
+    background-color: dodgerblue;
+  }
+
+  .notification :global(dialog) {
+    margin-top: 0;
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Libre Bodoni';
+    color: rgba(255, 64, 129, 0.7);
+    background-color: rgba(11, 4, 35, 1);
+		border-color: dodgerblue;
+    border-width: 4px;
+    padding: 5px 30px;
+    font-size: 24px;
   }
 
   @media screen and (min-width: 700px) {
