@@ -1,0 +1,28 @@
+{
+  "theme_color": "#FF4081",
+  "background_color": "#0B0423",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "icon512_maskable.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "icon512_rounded.png",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "any",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "en-US",
+  "name": "Oraga eSports",
+  "short_name": "Oraga eSports - Win the real money rewards by winning the game",
+  "start_url": "https://oraga-esports.com/",
+  "scope": "https://oraga-esports.com/",
+  "description": "eSports platform with blockchain games. A cornerstone of blockchain gaming created by the Flow blockchain community.",
+  "id": "oraga-esports.com"
+}

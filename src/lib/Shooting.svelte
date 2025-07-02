@@ -30,9 +30,11 @@
   let gameUser;
   let havingResource;
   let tipAmount = "1.0";
+  let lasttimeSignIn
 
   currentUser.subscribe(async (user) => {
     gameUser = user
+    lasttimeSignIn = (new Date()).getTime()
     if (user.addr) {
       flowBalance = await getBalance(user.addr);
       havingResource = await isRegistered(user.addr);
@@ -51,6 +53,10 @@
       flowBalance = await getBalance(gameUser.addr);
       havingResource = await isRegistered(gameUser.addr);
       // console.log('User Info', havingResource)
+      // 6時間経過でログアウト
+      if (lasttimeSignIn + (6 * 60 * 60 * 1000) < (new Date()).getTime()) {
+        unauthenticate()
+      }
     }
   }, 1500);
 
@@ -88,7 +94,8 @@
         screenWidth={screen.width > 512 ? 512 : screen.width * 0.96}
         havingResource={havingResource}
         gameUser={gameUser}
-        currentPrize={!currentSituation?.currentPrize ? '-' : parseInt(currentSituation?.currentPrize) + 1}
+        currentSituation={currentSituation}
+        flowBalance={flowBalance}
       />
     </Application>
 
@@ -109,7 +116,7 @@
       </p>
 
       <p class="cinzel">
-        Character design by <a href="https://uzi-material.com/">Masara</a>
+        Character design by <a href="https://uzi-material.com/">Uzi</a>
       </p>
       {#if gameUser?.addr}
         <a on:click={unauthenticate} href="/">Sign Out</a>
