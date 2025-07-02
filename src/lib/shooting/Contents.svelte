@@ -10,7 +10,8 @@
   export let screenWidth;
   export let havingResource;
   export let gameUser;
-  export let currentPrize;
+  export let currentSituation;
+  export let flowBalance;
 
   //=========
   let { app } = getApp()
@@ -174,7 +175,8 @@
     screenWidth={screenWidth}
     havingResource={havingResource}
     gameUser={gameUser}
-    currentPrize={currentPrize}
+    currentSituation={currentSituation}
+    flowBalance={flowBalance}
   />
   <Zombie distance={2} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[1]} started={gameCtr} screenWidth={screenWidth} gameReset={gameReset} />
   <Zombie distance={6} bind:damage={damageCtr} enemySpeed={enemySpeed} bind:position={zombiePositions[2]} started={gameCtr} screenWidth={screenWidth} gameReset={gameReset} />

@@ -17,7 +17,8 @@
   export let gameReset
   export let havingResource
   export let gameUser
-  export let currentPrize
+  export let currentSituation
+  export let flowBalance
 
   const margin = 16
   const barHeight = 16
@@ -33,6 +34,7 @@
   let btnClicked = false
   let coinInserted = false
   let modal
+  let freePlayModal
   let notificationModal
   let notificationMessage
 
@@ -46,7 +48,7 @@
         const outcome = res[0]
         const txId = res[1]
         if (outcome == 'false') {
-          notificationMessage = `Prize money rises! ₣ ${currentPrize} ==> ${currentPrize + 1}`
+          notificationMessage = `Prize money rises! ₣ ${parseInt(currentSituation?.currentPrize) + 1} ==> ${parseInt(currentSituation?.currentPrize) + 1 + 1}`
           notificationModal.showModal()
           tx(txId).subscribe((res) => {
             if (!res.errorMessage && res.statusString == 'SEALED') {
@@ -73,21 +75,25 @@
       gameReset = true
       btnClicked = true
       damage = 0
-      modal.showModal()
-      let txId = await insertCoin()
-      gameReset = false
-      tx(txId).subscribe((res) => {
-        console.log('tx status:', res);
-        if (!res.errorMessage && res.statusString == 'SEALED') {
-          // Transaction is sealed. Start the game.
-          coinInserted = true
-          timerCtrl1 = setInterval(() => countdown--, 1500)
-          setTimeout(gameStart, 5500)
-        } else if (res.errorMessage) {
-          notificationMessage = "Sorry transaction failed. But Don't worry, your money is not decreased. It's safe blockchain system."
-          notificationModal.showModal()
-        }
-      });
+      if (flowBalance > 0.001) {
+        modal.showModal()
+        let txId = await insertCoin()
+        gameReset = false
+        tx(txId).subscribe((res) => {
+          console.log('tx status:', res);
+          if (!res.errorMessage && res.statusString == 'SEALED') {
+            // Transaction is sealed. Start the game.
+            coinInserted = true
+            timerCtrl1 = setInterval(() => countdown--, 1500)
+            setTimeout(gameStart, 5500)
+          } else if (res.errorMessage) {
+            notificationMessage = "Sorry transaction failed. But Don't worry, your money is not decreased. It's safe blockchain system."
+            notificationModal.showModal()
+          }
+        });
+      } else if (currentSituation?.freePlayCount[havingResource?.gamerId] < 3) {
+        freePlayModal.showModal()
+      }
     }
   }
 
@@ -248,6 +254,25 @@
   </Dialog>
 </div>
 
+<Dialog bind:dialog={freePlayModal}>
+  <div>Would you like to play for free using chips?</div>
+  (Your Balance: <span class="flow_balance">₣{flowBalance > 0 ? flowBalance : ''}</span>)<br>
+  <button class="yes" on:click={async () => {
+    freePlayModal.close()
+    // const txId = await tipping(tipAmount);
+    // tx(txId).subscribe((res) => {
+    //   notificationMessage = 'THANK YOU!'
+    //   notificationModal.showModal()
+    //   if (!res.errorMessage && res.statusString == 'SEALED') {
+    //     notificationModal.close()
+    //   }
+    // });
+  }}>Yes</button>
+  <button on:click={() => {
+    freePlayModal.close()
+  }}>Maybe later</button>
+</Dialog>
+
 <style>
   .game-player :global(dialog) {
     margin-top: 0;
@@ -265,5 +290,10 @@
     border-width: 4px;
     padding: 5px 30px;
     font-size: 24px;
+  }
+
+  button.yes {
+    color: white;
+    background-color: dodgerblue;
   }
 </style>

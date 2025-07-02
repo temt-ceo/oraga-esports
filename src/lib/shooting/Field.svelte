@@ -6,7 +6,8 @@
   export let screenWidth;
   export let havingResource;
   export let gameUser;
-  export let currentPrize;
+  export let currentSituation;
+  export let flowBalance;
 
   const uniforms = {
     uSampler2: PIXI.Texture.from('/assets/bg_mesh.jpg'),
@@ -86,5 +87,6 @@
   screenWidth={screenWidth}
   havingResource={havingResource}
   gameUser={gameUser}
-  currentPrize={currentPrize}
+  currentSituation={currentSituation}
+  flowBalance={flowBalance}
 />

@@ -62,7 +62,6 @@ export const insertCoin = async function () {
 };
 
 export const tipping = async function (amount) {
-  console.log(99999, amount, Number.isFinite(amount));
   const txId = await mutate({
     cadence: `
       import "TestnetTest5"
