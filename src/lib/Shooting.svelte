@@ -81,6 +81,9 @@
       <span class="unit">($FLOW)</span>
     </p>
     <p class="catch">Stay alive for one minute!</p>
+    {#if screen.width >= 1440}
+     <p class="caution"><span class="cinzel">Caution! </span><br>Since it is easy to operate on a tablet,<br>the operation on a PC is in <span class="strong">HARD mode</span>.</p>
+    {/if}
   </div>
 
   <div class="main-screen">
@@ -224,6 +227,14 @@
   .unit {
     color: rgba(255, 64, 129, 0.7);
     font-size: 22px;
+  }
+
+  .caution {
+    color: rgba(255, 64, 129, 0.7);
+    font-size: 20px;
+    & > .strong {
+      font-size: 24px;
+    }
   }
 
   .cinzel {

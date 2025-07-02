@@ -23,7 +23,7 @@
   const margin = 16
   const barHeight = 16
   const intialBarWidth = screenWidth * 0.5 - 3 * margin
-  const maxHealth = 50
+  const maxHealth = 20
   let health = maxHealth - damage
   let barWidth = (health / maxHealth) * intialBarWidth
   let dead = false
@@ -189,22 +189,22 @@
   <Text
     x={started || !btnClicked ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.2}
-    text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted ? countdown : 'Please wait..')}`}
-    style={{ fill: 'grey', fontSize: 48 }}
+    text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted ? countdown : 'Please wait.. ')}`}
+    style={{ fill: 'grey', fontSize: 52 }}
     anchor={0.5}
   />
   <Text
     x={dead ? screenWidth * (0.5) - margin * 0.5 : -999}
     y={screenWidth * 0.2}
     text={'Game Over'}
-    style={{ fill: 'grey', fontSize: 48 }}
+    style={{ fill: 'grey', fontSize: 52 }}
     anchor={0.5}
   />
   <Text
     x={started ? -999 : screenWidth * (0.5) - margin}
     y={screenWidth * 0.5 - margin}
-    text={coinInserted && countdown > 0 ? 'Coin Inserted. Ready..!!' : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
-    style={{ fill: '#FF4081', fontSize: 30 }}
+    text={coinInserted && countdown > 0 ? ' Coin Inserted. Ready..!!' : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
+    style={{ fill: '#FF4081', fontSize: 34 }}
     anchor={0.5}
   />
   <Text
@@ -221,7 +221,6 @@
     y={screenWidth - margin * 1.5}
     texture={PIXI.Texture.from('/assets/coin_insert_button.png')}
     anchor={0.5}
-    rotation={angle - Math.PI}
     eventMode={'static'}
     on:click={startBtnClicked}
   />
