@@ -1,6 +1,6 @@
 <script>
   import * as PIXI from 'pixi.js'
-  import { Ticker, Sprite, getApp } from 'svelte-pixi'
+  import { Ticker, Sprite } from 'svelte-pixi'
   import Player from './Player.svelte'
   import Zombie from './Zombie.svelte'
   import Victor from 'victor'
@@ -14,11 +14,10 @@
   export let flowBalance;
 
   //=========
-  let { app } = getApp()
   let frame = 0
   let delta = 0
   let playerRadius = 48
-  let enemySpeed = 3.5;
+  let enemySpeed = 3.0;
   let damageCtr = 0
   let gameReset = false
   let gameCtr = false
@@ -32,8 +31,8 @@
     17: {x: 0, y: 0}, 18: {x: 0, y: 0}, 19: {x: 0, y: 0}, 20: {x: 0, y: 0}, 21: {x: 0, y: 0}, 22: {x: 0, y: 0}, 23: {x: 0, y: 0},
   }
   const enemyRadius = 48
-  const bulletRadius = 20
-  let bulletSpeed = 12
+  const bulletRadius = 15
+  let bulletSpeed = 15
   let angle1 = 0
   let angle2 = 0
   let angle3 = 0
@@ -129,7 +128,7 @@
     if (gameReset) frame = 0;
     if (!gameCtr) return
 
-    enemySpeed = 3 + Math.floor(frame / 300) * 0.1
+    enemySpeed = (screen.width >= 768 ? 2.6 : 2.1) + Math.floor(frame / 150) * 0.1
     if (mouseX != 0 && mouseY != 0) {
       angle = Math.atan2(
         mouseY - screenWidth / 2 + playerRadius / 2,

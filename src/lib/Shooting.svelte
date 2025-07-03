@@ -34,6 +34,12 @@
 
   currentUser.subscribe(async (user) => {
     gameUser = user
+    // 1時間経過でログアウト
+    const time = localStorage.getItem("time");
+    if (time && parseInt(time) + (60 * 60 * 1000) < (new Date()).getTime()) {
+      unauthenticate()
+    }
+    localStorage.setItem("time", (new Date()).getTime().toString());
     lasttimeSignIn = (new Date()).getTime()
     if (user.addr) {
       flowBalance = await getBalance(user.addr);
@@ -53,10 +59,6 @@
       flowBalance = await getBalance(gameUser.addr);
       havingResource = await isRegistered(gameUser.addr);
       // console.log('User Info', havingResource)
-      // 6時間経過でログアウト
-      if (lasttimeSignIn + (6 * 60 * 60 * 1000) < (new Date()).getTime()) {
-        unauthenticate()
-      }
     }
   }, 1500);
 
@@ -67,12 +69,27 @@
 
 <div class="game-screen">
   {#if havingResource}
-    <p class="paragraph sticky">
+    <div class="paragraph sticky">
       <span class="allura">Hello,</span>{havingResource?.nickname}
+      {#if screen.width >= 1024}
+        <br>
+      {/if}
       <span class="total-prize">( Total prize won:
         ₣ <span class="cinzel balance">{currentSituation?.prizeWinners[havingResource?.gamerId]?.prize ?? 0}</span>
       )</span>
-    </p>
+      {#if screen.width >= 1024}
+      <p class="caution">
+        <span class="cinzel">Caution! </span><br>Since it is easy to operate on a tablet,<br>the operation on a PC screen is in <span class="strong">HARD mode</span>.
+        <br>
+        <br>
+        Please play with your smart phone.
+        <br>
+        <img src="/assets/qrcode.png" alt="$qrcode" />
+        <br>
+        Scan the QR code<br>with your camera.
+      </p>
+     {/if}
+    </div>
   {/if}
   <div class="right-pane">
     <p class="current_prize">
@@ -119,7 +136,7 @@
         Character design by <a href="https://uzi-material.com/">Uzi</a>
       </p>
       {#if gameUser?.addr}
-        <a on:click={unauthenticate} href="/">Sign Out</a>
+        <a on:click={unauthenticate} href="">Sign Out</a>
       {:else}
         <button on:click={authenticate}>Sign In</button>
       {/if}
@@ -147,7 +164,7 @@
     });
   }}>Set name</button>
   <div>
-    <a on:click={unauthenticate} href="/">Sign Out</a>
+    <a on:click={unauthenticate} href="">Sign Out</a>
   </div>
 </Dialog>
 
@@ -201,8 +218,7 @@
   .catch {
     color: white;
     font-size: 26px;
-    margin: 0 0 14px 10px;
-    margin-top: 10px;
+    margin: 0 0 7px 10px;
     font-weight: 700;
   }
 
@@ -224,6 +240,22 @@
   .unit {
     color: rgba(255, 64, 129, 0.7);
     font-size: 22px;
+  }
+
+  .caution {
+    width: 200px;
+    padding: 2px;
+		border-color: dodgerblue;
+    border-radius: 8px;
+    color: rgba(255, 64, 129, 0.7);
+    font-size: 16px;
+    & > .strong {
+      font-size: 24px;
+    }
+    & > img {
+      padding: 5px 25px;
+      width: 100px !important;
+    }
   }
 
   .cinzel {
@@ -263,7 +295,7 @@
     margin-right: 5px;
   }
 
-  p.paragraph {
+  .paragraph {
     margin-top: 4px;
     padding-left: 5px;
 
@@ -272,7 +304,7 @@
     }
   }
 
-  p.sticky {
+  .sticky {
     position: sticky;
     margin-bottom: 0;
     top: 0;
@@ -283,11 +315,11 @@
     }
   }
 
-  p.sticky  .balance {
+  .sticky  .balance {
     font-size: 18px;
   }
 
-  p.sticky .total-prize {
+  .sticky .total-prize {
     font-size: 13px;
   }
 

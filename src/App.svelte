@@ -92,15 +92,16 @@
 
     &.sign {
       height: 37px;
-      width: 88vw;
+      width: 84vw;
       margin-bottom: 0;
-      padding: 2px 5px 10px;
+      padding: 2px 8px 10px;
       font-size: 11px;
       color: white;
       background-color: rgba(11, 4, 35, 1);
       position: absolute;
       left: 6%;
       bottom: 0;
+      border-radius: 8px;
       & .allura {
         font-size: 24px;
       }
