@@ -17,7 +17,7 @@
   let frame = 0
   let delta = 0
   let playerRadius = 48
-  let enemySpeed = 3.5;
+  let enemySpeed = 3.0;
   let damageCtr = 0
   let gameReset = false
   let gameCtr = false
@@ -128,7 +128,7 @@
     if (gameReset) frame = 0;
     if (!gameCtr) return
 
-    enemySpeed = 3 + Math.floor(frame / 100) * 0.2
+    enemySpeed = (screen.width >= 768 ? 2.6 : 2.1) + Math.floor(frame / 150) * 0.1
     if (mouseX != 0 && mouseY != 0) {
       angle = Math.atan2(
         mouseY - screenWidth / 2 + playerRadius / 2,

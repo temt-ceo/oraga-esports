@@ -1,6 +1,6 @@
 <script>
   import * as PIXI from 'pixi.js'
-  import { tx } from '@onflow/fcl';
+  import { tx, unauthenticate } from '@onflow/fcl';
   import { insertCoin } from '../../../flow_blockchain/transactions'
    import { Sprite, Graphics, Text, Ticker } from 'svelte-pixi'
   import { generateClient } from 'aws-amplify/api';
@@ -38,28 +38,37 @@
   let notificationModal
   let notificationMessage
 
-  const createSub = client
-  .graphql({ query: subscriptions.onCreateGameServerProcess })
-  .subscribe({
-    next: ({ data }) => {
-      console.log(data.onCreateGameServerProcess)
-      if (data.onCreateGameServerProcess?.type == 'shooting_game_outcome') {
-        const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
-        const outcome = res[0]
-        const txId = res[1]
-        if (outcome == 'false') {
-          notificationMessage = `Prize money rises! ₣ ${parseInt(currentSituation?.currentPrize) + 1} ==> ${parseInt(currentSituation?.currentPrize) + 1 + 1}`
-          notificationModal.showModal()
-          tx(txId).subscribe((res) => {
-            if (!res.errorMessage && res.statusString == 'SEALED') {
-              notificationModal.close()
-            }
-          });
+  client
+    .graphql({ query: subscriptions.onCreateGameServerProcess })
+    .subscribe({
+      next: ({ data }) => {
+        console.log(data.onCreateGameServerProcess)
+        if (data.onCreateGameServerProcess?.type == 'shooting_game_outcome') {
+          const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
+          const outcome = res[0]
+          const txId = res[1]
+          if (outcome == 'false') {
+            notificationMessage = `Prize money rises! ₣ ${parseInt(currentSituation?.currentPrize) + 1} ==> ${parseInt(currentSituation?.currentPrize) + 1 + 1}`
+            notificationModal.showModal()
+            tx(txId).subscribe((res) => {
+              if (!res.errorMessage && res.statusString == 'SEALED') {
+                notificationModal.close()
+              }
+            });
+          }
         }
-      }
-    },
-    error: (error) => console.warn(error)
-  });
+      },
+      error: (error) => console.warn(error)
+    }
+  );
+
+  setInterval(() => {
+    // 1時間経過でログアウト
+    const time = localStorage.getItem("time");
+    if (!started && time && parseInt(time) + (60 * 60 * 1000) < (new Date()).getTime()) {
+      unauthenticate()
+    }
+  }, 60000)
 
   function gameStart() {
     clearInterval(timerCtrl1)
