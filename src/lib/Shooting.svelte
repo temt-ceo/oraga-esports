@@ -86,7 +86,7 @@
         <br>
         <img src="/assets/qrcode.png" alt="$qrcode" />
         <br>
-        Scan the QR code<br>with your camera.
+        Scan the QR code<br>with your camera app.
       </p>
      {/if}
     </div>
@@ -211,7 +211,7 @@
  .game-screen {
     height: 95%;
     margin-bottom: 5px;
-    overflow: scroll;
+    overflow-y: scroll;
     color: white;
   }
 

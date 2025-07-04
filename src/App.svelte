@@ -32,7 +32,7 @@
     <div class="game-screen">
       <h1 class="title">Oraga eSports</h1>
       <div class="content">
-        <div class="game-collection">
+        <div class="game-collection can-scroll">
           <a href="/shooting">
             <img src="/assets/Shooting.png" alt="Shooting" />
           </a>
@@ -157,10 +157,9 @@
   .section {
     height: 95vh;
     background: rgba(11, 4, 35, 1);
-    overflow-y: scroll !important;
+    overflow: hidden;
     border-radius: 30px;
     border: 2px solid rgba(255, 255, 5, 0.7);
-    overflow: hidden;
     &.shooting {
       padding: 10px 0 0 2px;
       margin: 0 1vw;
@@ -186,11 +185,20 @@
     max-width: 72vw;
     height: 70vh;
     margin: 0 45px 0 35px;
-    overflow: scroll;
     color: white;
     line-height: 0.9;
     & img {
       width: 300px;
+    }
+    &.can-scroll {
+      overflow: scroll;
+      & img {
+        cursor: pointer;
+      }
+    }
+    &::-webkit-scrollbar-corner {
+      width: 0;
+      display: none;
     }
   }
 
@@ -217,10 +225,14 @@
 
     .content {
       margin-top: 30px;
+      overflow: hidden;
     }
 
     .game-collection {
-      max-width: 40vw;
+      max-width: 45vw;
+    }
+    .game-collection.can-scroll {
+      overflow-x: hidden;
     }
 
     .paragraph.sign {
@@ -230,8 +242,11 @@
   }
 
   @media screen and (max-width: 380px) {
+    .section {
+      overflow: scroll;
+    }
     .game-collection {
-      min-width: 300px;
+      min-width: 295px;
       margin-left: 15px;
     }
     .game-collection > img {

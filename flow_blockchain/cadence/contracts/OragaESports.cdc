@@ -127,7 +127,7 @@ access(all) contract TestnetTest5 {
         payment.balance == 1.1: "payment is not 1.1FLOW coin."
       }
       if let isStillPlayed = TestnetTest5.gamersInfo.lastTimePlayed[self.gamerId] {
-        if (isStillPlayed != nil && isStillPlayed! + 90.0 < getCurrentBlock().timestamp) {
+        if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
           // NOTE. If a player cut the network after the game won, we don't care about it.
           let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: self.gamerId, paid: false) // set lose
         }
@@ -189,10 +189,25 @@ access(all) contract TestnetTest5 {
     access(all) fun useTipJarForFreePlay(gamerId: UInt) {
       if let freePlayed = TestnetTest5.gamersInfo.freePlayCount[gamerId] {
         if (freePlayed >= 2) {
-         panic("It's not acceptable.")
+          panic("It's not acceptable.")
         }
-        TestnetTest5.gamersInfo.useTipJarBalance()
+        if let isStillPlayed = TestnetTest5.gamersInfo.lastTimePlayed[gamerId] {
+          if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
+            // NOTE. If a player cut the network after the game won, we don't care about it.
+            let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: false) // set lose
+          }
+        }
+        if let challenged = TestnetTest5.gamersInfo.tryingPrize[gamerId] {
+          if (challenged > 0) {
+            panic("You are now on playing the game. Payment is not accepted.")
+          }
+        }
         TestnetTest5.gamersInfo.setTryingPrize(gamerId: gamerId)
+        TestnetTest5.gamersInfo.useTipJarBalance()
+      } else {
+        TestnetTest5.gamersInfo.freePlayCount[gamerId] = 1
+        TestnetTest5.gamersInfo.setTryingPrize(gamerId: gamerId)
+        TestnetTest5.gamersInfo.useTipJarBalance()
       }
     }
   }
