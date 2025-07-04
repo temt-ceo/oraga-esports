@@ -128,7 +128,7 @@
     if (gameReset) frame = 0;
     if (!gameCtr) return
 
-    enemySpeed = (screen.width >= 768 ? 2.6 : 2.1) + Math.floor(frame / 150) * 0.1
+    enemySpeed = (screen.width >= 768 ? 3.0 : 2.5) + Math.floor(frame / 150) * 0.1
     if (mouseX != 0 && mouseY != 0) {
       angle = Math.atan2(
         mouseY - screenWidth / 2 + playerRadius / 2,

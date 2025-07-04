@@ -33,6 +33,7 @@
   let timerCtrl2
   let btnClicked = false
   let coinInserted = false
+  let freePlayStarted = false
   let modal
   let freePlayModal
   let notificationModal
@@ -56,9 +57,20 @@
               }
             });
           }
+        } else if (data.onCreateGameServerProcess?.type == 'free_play') {
+          const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
+          const txId = res[1]
+          tx(txId).subscribe((res) => {
+            if (!res.errorMessage && res.statusString == 'SEALED') {
+              // Transaction is sealed. Start the game.
+              gameReset = false
+              freePlayStarted = true
+              timerCtrl1 = setInterval(() => countdown--, 1500)
+              setTimeout(gameStart, 5500)
+            }
+          });
         }
-      },
-      error: (error) => console.warn(error)
+      }
     }
   );
 
@@ -78,20 +90,21 @@
 
   async function startBtnClicked() {
     if (!btnClicked) {
-      dead = false
-      countdown = 3
-      remainTime = 60
-      gameReset = true
-      btnClicked = true
-      damage = 0
       if (flowBalance > 0.001) {
+        dead = false
+        countdown = 3
+        remainTime = 60
+        gameReset = true
+        btnClicked = true
+        damage = 0
+
         modal.showModal()
         let txId = await insertCoin()
-        gameReset = false
         tx(txId).subscribe((res) => {
           console.log('tx status:', res);
           if (!res.errorMessage && res.statusString == 'SEALED') {
             // Transaction is sealed. Start the game.
+            gameReset = false
             coinInserted = true
             timerCtrl1 = setInterval(() => countdown--, 1500)
             setTimeout(gameStart, 5500)
@@ -100,7 +113,7 @@
             notificationModal.showModal()
           }
         });
-      } else if (currentSituation?.freePlayCount[havingResource?.gamerId] < 3) {
+      } else if (currentSituation && (!currentSituation.freePlayCount[havingResource?.gamerId] || currentSituation.freePlayCount[havingResource?.gamerId] < 3)) {
         freePlayModal.showModal()
       }
     }
@@ -111,6 +124,7 @@
     started = false
     btnClicked = false
     coinInserted = false
+    freePlayStarted = false
 
     const query = {
       type: 'shooting_game_outcome',
@@ -132,6 +146,7 @@
     started = false
     btnClicked = false
     coinInserted = false
+    freePlayStarted = false
 
     const query = {
       type: 'shooting_game_outcome',
@@ -198,7 +213,7 @@
   <Text
     x={started || !btnClicked ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.2}
-    text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted ? countdown : 'Please wait.. ')}`}
+    text={`${countdown == 0 ? (dead ? 'Game Over' : '') : (coinInserted || freePlayStarted ? countdown : 'Please wait.. ')}`}
     style={{ fill: 'grey', fontSize: 52 }}
     anchor={0.5}
   />
@@ -212,7 +227,7 @@
   <Text
     x={started ? -999 : screenWidth * (0.5) - margin}
     y={screenWidth * 0.5 - margin}
-    text={coinInserted && countdown > 0 ? ' Coin Inserted. Ready..!!' : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
+    text={(coinInserted || freePlayStarted) && countdown > 0 ? ` ${freePlayStarted ? 'All set!' : 'Coin Inserted.'} Ready..!!` : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
     style={{ fill: '#FF4081', fontSize: 34 }}
     anchor={0.5}
   />
@@ -266,15 +281,27 @@
   <div>Would you like to play for free using chips?</div>
   (Your Balance: <span class="flow_balance">₣{flowBalance > 0 ? flowBalance : ''}</span>)<br>
   <button class="yes" on:click={async () => {
+    dead = false
+    countdown = 3
+    remainTime = 60
+    gameReset = true
+    btnClicked = true
+    damage = 0
+
     freePlayModal.close()
-    // const txId = await tipping(tipAmount);
-    // tx(txId).subscribe((res) => {
-    //   notificationMessage = 'THANK YOU!'
-    //   notificationModal.showModal()
-    //   if (!res.errorMessage && res.statusString == 'SEALED') {
-    //     notificationModal.close()
-    //   }
-    // });
+    const query = {
+      type: 'free_play',
+      message: '',
+      playerId: havingResource?.gamerId,
+    };
+
+    /* create a todo */
+    await client.graphql({
+      query: createGameServerProcess,
+      variables: {
+        input: query
+      }
+    });
   }}>Yes</button>
   <button on:click={() => {
     freePlayModal.close()

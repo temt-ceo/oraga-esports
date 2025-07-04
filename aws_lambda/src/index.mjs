@@ -27,6 +27,21 @@ export const handler = async (event) => {
         }
       }
     `;
+  } else if (input.type === "free_play") {
+    transaction = `
+      import TestnetTest5 from 0x975b04756864e9ea
+
+      transaction(gamerId: UInt) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let admin = signer.storage.borrow<&TestnetTest5.Admin>(from: /storage/TestnetTest5Admin)
+            ?? panic("Could not borrow reference to the Administrator Resource.")
+          admin.useTipJarForFreePlay(gamerId: gamerId)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
   }
 
   config({
@@ -114,7 +129,22 @@ export const handler = async (event) => {
       tx(txId).subscribe((res) => {
         console.log(res);
       });
+    } else if (input.type === "free_play") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [arg(gamerId, t.UInt)],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[free_play] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
     }
+
     return {
       id: new Date().getTime(),
       type: input.type || "",
