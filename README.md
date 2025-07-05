@@ -1,3 +1,29 @@
+# 【 Strengths of Oraga eSports 】
+
+As an explanation of the eSports game
+
+1. Win the game.
+2. The game prize is sent to your wallet automatically in realtime.
+3. Sell it at crypt exchange.
+   This streamlined process, from game start to cryptocurrency sale at an exchange, addresses the previous fragmentation where games and exchanges operated separately, creating a complex system that deterred newcomers. By intuitively conveying that all desired actions can be completed within 1.5 minutes, we have eliminated gamers' resistance. Additionally, by adopting an intuitive user interface, I am confident that we can effectively onboard new users.
+
+<br><br>
+■ Oraga eSports launches its first game, a shooting game
+<br><br>
+
+The system benefits both game developers and players, and the use of real-time communication technology allows players to track the progress of prizes in real time. The blog explains the advantages of adopting Interaction Templates, which enable secure transactions, into large-scale eSports platforms, and how anyone can build games, provide them securely, and generate profits.
+<br><br>
+Oraga eSports Development Blog: https://medium.com/@tickets.on.flow
+
+# Functional requirements:
+
+1. Ability to deposit money and start the game.
+2. Receive prize money when winning a game.
+3. Add 1 FLOW to the prize amount when losing a game.
+4. Provide a tip jar feature to allow one free play for those without FLOW (withdraw 1 FLOW from the tip jar and use it to play the game).
+5. Donate (1 FLOW) to the tip jar.
+6. Record wins and losses on the blockchain.
+
 # Svelte + Vite
 
 This template should help get you started developing with Svelte in Vite.
@@ -42,6 +68,6 @@ If you have state that's important to retain within a component, consider creati
 ```js
 // store.js
 // An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+import { writable } from "svelte/store";
+export default writable(0);
 ```
