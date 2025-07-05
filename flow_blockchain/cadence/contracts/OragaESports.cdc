@@ -36,6 +36,16 @@ access(all) contract TestnetTest5 {
               self.setPrizeWinners(gamerId: gamerId, prize: paidPrize, nickname: nil)
             }
             return paidPrize + added
+          } else {
+            // In this case, any other person snatched the prize while playing a game. That's why the prize is only the fee this player paid.
+            self.currentPrize = self.currentPrize - added
+            self.unsetTryingPrize(gamerId: gamerId)
+            if let prizeHistory = self.prizeWinners[gamerId] {
+              self.setPrizeWinners(gamerId: gamerId, prize: added + prizeHistory.prize, nickname: nil)
+            } else {
+              self.setPrizeWinners(gamerId: gamerId, prize: added, nickname: nil)
+            }
+            return added
           }
         }
         panic("Error. Oops, something is not good.")
@@ -180,11 +190,12 @@ access(all) contract TestnetTest5 {
         // Pay the prize.
         let reward <- TestnetTest5.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
         TestnetTest5.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
+        emit WonThePrize(gamerId: gamerId, amount: UFix64.fromString(prizePaid.toString().concat(".0"))!)
       }
     }
 
     /*
-    ** Save the Gamer's shooting game outcome
+    ** Start the free play using tip jar coin.
     */
     access(all) fun useTipJarForFreePlay(gamerId: UInt) {
       if let freePlayed = TestnetTest5.gamersInfo.freePlayCount[gamerId] {
