@@ -1,42 +1,15 @@
 {
   "contracts": {
-    "TestnetTest5": {
+    "OragaESports": {
       "source": "cadence/contracts/OragaESports.cdc",
       "aliases": {
+        "testing": "OragaESports"
+      }
+    },
+    "TestnetTest5": {
+      "source": "cadence/contracts/OragaESportsForTestnet.cdc",
+      "aliases": {
         "testing": "0000000000000007"
-      }
-    }
-  },
-  "deployments": {
-    "emulator": {
-      "emulator-account": ["TestnetTest5"]
-    },
-    "testnet": {
-      "testnet-account": ["TestnetTest5"]
-    }
-  },
-  "networks": {
-    "emulator": "127.0.0.1:3569",
-    "mainnet": "access.mainnet.nodes.onflow.org:9000",
-    "testing": "127.0.0.1:3569",
-    "testnet": "access.devnet.nodes.onflow.org:9000"
-  },
-  "accounts": {
-    "emulator-account": {
-      "address": "f8d6e0586b0a20c7",
-      "key": {
-        "type": "file",
-        "location": "emulator-account.pkey"
-      }
-    },
-    "testnet-account": {
-      "address": "0x975b04756864e9ea",
-      "key": {
-        "type": "file",
-        "location": "testnet-account.pkey",
-        "index": 0,
-        "signatureAlgorithm": "ECDSA_secp256k1",
-        "hashAlgorithm": "SHA3_256"
       }
     }
   },
@@ -112,6 +85,47 @@
         "mainnet": "1d7e57aa55817448",
         "testnet": "631e88ae7f1d7c20"
       }
+    }
+  },
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "testing": "127.0.0.1:3569",
+    "testnet": "access.devnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": {
+        "type": "file",
+        "location": "emulator-account.pkey"
+      }
+    },
+    "mainnet-account": {
+      "address": "b576a3926d239682",
+      "key": {
+        "type": "file",
+        "location": "mainnet-account.pkey"
+      }
+    },
+    "testnet-account": {
+      "address": "975b04756864e9ea",
+      "key": {
+        "type": "file",
+        "signatureAlgorithm": "ECDSA_secp256k1",
+        "location": "testnet-account.pkey"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": ["TestnetTest5"]
+    },
+    "mainnet": {
+      "mainnet-account": ["OragaESports"]
+    },
+    "testnet": {
+      "testnet-account": ["TestnetTest5"]
     }
   }
 }

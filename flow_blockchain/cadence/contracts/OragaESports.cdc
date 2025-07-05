@@ -1,7 +1,7 @@
 import "FlowToken"
 import "FungibleToken"
 
-access(all) contract TestnetTest5 {
+access(all) contract OragaESports {
 
   access(self) var totalCount: UInt
   access(self) let GamerFlowTokenVault: {UInt: Capability<&{FungibleToken.Receiver}>}
@@ -136,43 +136,43 @@ access(all) contract TestnetTest5 {
       pre {
         payment.balance == 1.1: "payment is not 1.1FLOW coin."
       }
-      if let isStillPlayed = TestnetTest5.gamersInfo.lastTimePlayed[self.gamerId] {
+      if let isStillPlayed = OragaESports.gamersInfo.lastTimePlayed[self.gamerId] {
         if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
           // NOTE. If a player cut the network after the game won, we don't care about it.
-          let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: self.gamerId, paid: false) // set lose
+          let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: self.gamerId, paid: false) // set lose
         }
       }
-      if let challenged = TestnetTest5.gamersInfo.tryingPrize[self.gamerId] {
+      if let challenged = OragaESports.gamersInfo.tryingPrize[self.gamerId] {
         if (challenged > 0) {
           panic("You are now on playing the game. Payment is not accepted.")
         }
       }
-      TestnetTest5.gamersInfo.setTryingPrize(gamerId: self.gamerId)
-      TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- payment)
+      OragaESports.gamersInfo.setTryingPrize(gamerId: self.gamerId)
+      OragaESports.FlowTokenVault.borrow()!.deposit(from: <- payment)
     }
 
     access(all) fun tipping(tip: @FlowToken.Vault) {
       pre {
         tip.balance == 1.0 || tip.balance == 5.0: "tip is not 1.0FLOW or 5.0FLOW coin."
       }
-      TestnetTest5.gamersInfo.setTipJarBalance(amount: tip.balance)
-      TestnetTest5.FlowTokenVault.borrow()!.deposit(from: <- tip)
+      OragaESports.gamersInfo.setTipJarBalance(amount: tip.balance)
+      OragaESports.FlowTokenVault.borrow()!.deposit(from: <- tip)
     }
 
     init(nickname: String) {
-      TestnetTest5.totalCount = TestnetTest5.totalCount + 1
-      self.gamerId = TestnetTest5.totalCount
+      OragaESports.totalCount = OragaESports.totalCount + 1
+      self.gamerId = OragaESports.totalCount
       self.nickname = nickname
-      TestnetTest5.gamersInfo.setPrizeWinners(gamerId: self.gamerId, prize: 0, nickname: nickname)
+      OragaESports.gamersInfo.setPrizeWinners(gamerId: self.gamerId, prize: 0, nickname: nickname)
       emit GamerCreatted(gamerId: self.gamerId)
     }
   }
 
-  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @TestnetTest5.Gamer {
+  access(all) fun createGamer(nickname: String, flow_vault_receiver: Capability<&{FungibleToken.Receiver}>): @OragaESports.Gamer {
     let gamer <- create Gamer(nickname: nickname)
 
-    if (TestnetTest5.GamerFlowTokenVault[gamer.gamerId] == nil) {
-      TestnetTest5.GamerFlowTokenVault[gamer.gamerId] = flow_vault_receiver
+    if (OragaESports.GamerFlowTokenVault[gamer.gamerId] == nil) {
+      OragaESports.GamerFlowTokenVault[gamer.gamerId] = flow_vault_receiver
     }
     return <- gamer
   }
@@ -185,11 +185,11 @@ access(all) contract TestnetTest5 {
     ** Save the Gamer's shooting game outcome
     */
     access(all) fun shootingGameOutcome(gamerId: UInt, outcome: Bool) {
-      let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: outcome)
+      let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: outcome)
       if (prizePaid > 0) {
         // Pay the prize.
-        let reward <- TestnetTest5.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
-        TestnetTest5.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
+        let reward <- OragaESports.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: UFix64.fromString(prizePaid.toString().concat(".0"))!) as! @FlowToken.Vault
+        OragaESports.GamerFlowTokenVault[gamerId]!.borrow()!.deposit(from: <- reward)
         emit WonThePrize(gamerId: gamerId, amount: UFix64.fromString(prizePaid.toString().concat(".0"))!)
       }
     }
@@ -198,33 +198,33 @@ access(all) contract TestnetTest5 {
     ** Start the free play using tip jar coin.
     */
     access(all) fun useTipJarForFreePlay(gamerId: UInt) {
-      if let freePlayed = TestnetTest5.gamersInfo.freePlayCount[gamerId] {
+      if let freePlayed = OragaESports.gamersInfo.freePlayCount[gamerId] {
         if (freePlayed >= 2) {
           panic("It's not acceptable.")
         }
-        if let isStillPlayed = TestnetTest5.gamersInfo.lastTimePlayed[gamerId] {
+        if let isStillPlayed = OragaESports.gamersInfo.lastTimePlayed[gamerId] {
           if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
             // NOTE. If a player cut the network after the game won, we don't care about it.
-            let prizePaid = TestnetTest5.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: false) // set lose
+            let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: false) // set lose
           }
         }
-        if let challenged = TestnetTest5.gamersInfo.tryingPrize[gamerId] {
+        if let challenged = OragaESports.gamersInfo.tryingPrize[gamerId] {
           if (challenged > 0) {
             panic("You are now on playing the game. Payment is not accepted.")
           }
         }
-        TestnetTest5.gamersInfo.setTryingPrize(gamerId: gamerId)
-        TestnetTest5.gamersInfo.useTipJarBalance()
+        OragaESports.gamersInfo.setTryingPrize(gamerId: gamerId)
+        OragaESports.gamersInfo.useTipJarBalance()
       } else {
-        TestnetTest5.gamersInfo.freePlayCount[gamerId] = 1
-        TestnetTest5.gamersInfo.setTryingPrize(gamerId: gamerId)
-        TestnetTest5.gamersInfo.useTipJarBalance()
+        OragaESports.gamersInfo.freePlayCount[gamerId] = 1
+        OragaESports.gamersInfo.setTryingPrize(gamerId: gamerId)
+        OragaESports.gamersInfo.useTipJarBalance()
       }
     }
   }
 
   init() {
-    self.account.storage.save( <- create Admin(), to: /storage/TestnetTest5Admin) // grant admin resource
+    self.account.storage.save( <- create Admin(), to: /storage/OragaESportsAdmin) // grant admin resource
     self.totalCount = 0
     self.GamerFlowTokenVault = {}
     self.FlowTokenVault = self.account.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)

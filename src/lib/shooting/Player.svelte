@@ -1,7 +1,7 @@
 <script>
   import * as PIXI from 'pixi.js'
   import { tx, unauthenticate } from '@onflow/fcl';
-  import { insertCoin } from '../../../flow_blockchain/transactions'
+  import { insertCoin } from '../../../flow_blockchain/mainnet/transactions'
    import { Sprite, Graphics, Text, Ticker } from 'svelte-pixi'
   import { generateClient } from 'aws-amplify/api';
   import { createGameServerProcess } from '../../graphql/mutations';
@@ -23,7 +23,7 @@
   const margin = 16
   const barHeight = 16
   const intialBarWidth = screenWidth * 0.5 - 3 * margin
-  const maxHealth = 20
+  const maxHealth = 25
   let health = maxHealth - damage
   let barWidth = (health / maxHealth) * intialBarWidth
   let dead = false

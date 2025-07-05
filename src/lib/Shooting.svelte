@@ -3,8 +3,8 @@
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
   import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
-  import { getBalance, isRegistered } from '../../flow_blockchain/scripts';
-  import { createGamer, tipping } from '../../flow_blockchain/transactions'
+  import { getBalance, isRegistered } from '../../flow_blockchain/mainnet/scripts';
+  import { createGamer, tipping } from '../../flow_blockchain/mainnet/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
   import Dialog from './Dialog.svelte';
 
@@ -13,9 +13,9 @@
   let app
 
   config({
-    'flow.network': 'testnet',
-    'accessNode.api': 'https://rest-testnet.onflow.org',
-    'discovery.wallet': 'https://wallet-v2-dev.blocto.app/-/flow/authn',
+    'flow.network': 'mainnet',
+    'accessNode.api': 'https://rest-mainnet.onflow.org',
+    'discovery.wallet': 'https://wallet-v2.blocto.app/-/flow/authn',
     'app.detail.title': 'Oraga eSports',
     'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
   }).load({ flowJSON });
@@ -128,7 +128,12 @@
       <p class="bodoni">
         <img src="/assets/tip_jar.png" alt="$FLOW" />
         <span class="prize">₣{currentSituation?.tipJarBalance ? parseInt(currentSituation?.tipJarBalance) : '-'}</span>
-        has been donated for free play.
+        {#if parseInt(currentSituation?.tipJarBalance) > 0}
+          has been donated for free play.
+        {:else}
+          The tip jar is currently empty.
+        {/if}
+
         <button on:click={() => modal3.showModal()}>Tipping</button>
       </p>
 

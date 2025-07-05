@@ -4,14 +4,14 @@
   import config from './amplifyconfiguration.json';
   import * as fcl from '@onflow/fcl';
   import flowJSON from '../flow_blockchain/flow.json';
-  import { getGamersInfo } from '../flow_blockchain/scripts';
+  import { getGamersInfo } from '../flow_blockchain/mainnet/scripts';
 
   Amplify.configure(config);
   let currentSituation;
   fcl.config({
-    'flow.network': 'testnet',
-    'accessNode.api': 'https://rest-testnet.onflow.org',
-    'discovery.wallet': 'https://wallet-v2-dev.blocto.app/-/flow/authn',
+    'flow.network': 'mainnet',
+    'accessNode.api': 'https://rest-mainnet.onflow.org',
+    'discovery.wallet': 'https://wallet-v2.blocto.app/-/flow/authn',
     'app.detail.title': 'Oraga eSports',
     'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
   }).load({ flowJSON });

@@ -45,4 +45,5 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 testnet-account.pkey
+mainnet-account.pkey
 .env
