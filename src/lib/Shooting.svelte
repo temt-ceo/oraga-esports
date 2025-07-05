@@ -187,10 +187,8 @@
     tx(txId).subscribe((res) => {
       notificationMessage = 'THANK YOU!'
       notificationModal.showModal()
-      if (!res.errorMessage && res.statusString == 'SEALED') {
-        notificationModal.close()
-      }
     });
+    setTimeout(() => notificationModal.close(), 6000)
   }}>Yes</button>
   <button on:click={() => {
     modal3.close()

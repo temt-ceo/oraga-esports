@@ -38,6 +38,8 @@
   let freePlayModal
   let notificationModal
   let notificationMessage
+  let prizeSnatched = false
+  let prizeSnatchedGamerId = ''
 
   client
     .graphql({ query: subscriptions.onCreateGameServerProcess })
@@ -56,6 +58,38 @@
                 notificationModal.close()
               }
             });
+          } else if (outcome == 'true') {
+            // 賞金をGetした人がいる
+            if (parseInt(data.onCreateGameServerProcess?.playerId) == parseInt(havingResource?.gamerId)) {
+              // 自分が賞金を取った場合
+              if (parseInt(currentSituation?.currentPrize) + 1 >= 2) {
+                notificationMessage = `Jackpot!! Your prize has been transferred. Let’s check your wallet!`
+              } else {
+                notificationMessage = `Your prize has been transferred. Let’s check your wallet!`
+              }
+              notificationModal.showModal()
+              tx(txId).subscribe((res) => {
+                if (!res.errorMessage && res.statusString == 'SEALED') {
+                  notificationModal.close()
+                }
+              });
+            } else {
+              prizeSnatchedGamerId = data.onCreateGameServerProcess?.playerId
+              // 誰か他の人が賞金を取った場合
+              if (started) {
+                // ゲーム中
+                prizeSnatched = true
+              } else {
+                // 邪魔にならないのでダイアログで出す。
+                notificationMessage = `Oops, it looks like Gamer id: ${prizeSnatchedGamerId} snatched the prize money.`
+                notificationModal.showModal()
+                tx(txId).subscribe((res) => {
+                  if (!res.errorMessage && res.statusString == 'SEALED') {
+                    notificationModal.close()
+                  }
+                });
+              }
+            }
           }
         } else if (data.onCreateGameServerProcess?.type == 'free_play') {
           const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
@@ -67,6 +101,9 @@
               freePlayStarted = true
               timerCtrl1 = setInterval(() => countdown--, 1500)
               setTimeout(gameStart, 5500)
+            } else if (res.errorMessage) {
+              notificationMessage = "Sorry transaction failed. Did you free played second times already?"
+              notificationModal.showModal()
             }
           });
         }
@@ -97,6 +134,7 @@
         gameReset = true
         btnClicked = true
         damage = 0
+        prizeSnatched = false
 
         modal.showModal()
         let txId = await insertCoin()
@@ -238,6 +276,28 @@
     style={{ fill: 'white', fontSize: 18 }}
     anchor={0.5}
   />
+  <Text
+    x={!prizeSnatched ? -999 : screenWidth * (0.5) - margin * 0.5}
+    y={screenWidth * 0.7}
+    text={`Oops, it looks like Gamer id: ${prizeSnatchedGamerId} `}
+    style={{ fill: '#FF4081', fontSize: 24 }}
+    anchor={0.5}
+  />
+  <Text
+    x={!prizeSnatched ? -999 : screenWidth * (0.5) - margin * 0.5}
+    y={screenWidth * 0.77}
+    text={'snatched the prize money.'}
+    style={{ fill: '#FF4081', fontSize: 24 }}
+    anchor={0.5}
+  />
+  <Text
+    x={!prizeSnatched ? -999 : screenWidth * (0.5) - margin * 0.5}
+    y={screenWidth * 0.84}
+    text={'Your prize money has been reset to ₣1..'}
+    style={{ fill: '#FF4081', fontSize: 19 }}
+    anchor={0.5}
+  />
+
   <Sprite
     width={87}
     height={30}
@@ -287,6 +347,7 @@
     gameReset = true
     btnClicked = true
     damage = 0
+    prizeSnatched = false
 
     freePlayModal.close()
     const query = {

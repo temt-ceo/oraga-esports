@@ -25,9 +25,9 @@ access(all) contract TestnetTest5 {
         self.currentPrize = self.currentPrize + added
         self.unsetTryingPrize(gamerId: gamerId)
         return 0
-      } else{
+      } else {
         if let paidPrize = self.tryingPrize[gamerId] {
-          if (self.currentPrize - paidPrize > 0) {
+          if (self.currentPrize - paidPrize >= 0) {
             self.currentPrize = self.currentPrize - paidPrize
             self.unsetTryingPrize(gamerId: gamerId)
             if let prizeHistory = self.prizeWinners[gamerId] {
@@ -38,7 +38,7 @@ access(all) contract TestnetTest5 {
             return paidPrize + added
           }
         }
-        panic("Error.")
+        panic("Error. Oops, something is not good.")
       }
     }
 
