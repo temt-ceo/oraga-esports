@@ -137,7 +137,7 @@
       {:else}
         <button on:click={authenticate}>Sign In</button>
       {/if}
-</div>
+    </div>
   </div>
 </div>
 
@@ -184,6 +184,9 @@
     tx(txId).subscribe((res) => {
       notificationMessage = 'THANK YOU!'
       notificationModal.showModal()
+      if (!res.errorMessage && res.statusString == 'SEALED') {
+        notificationModal.close()
+      }
     });
     setTimeout(() => notificationModal.close(), 6000)
   }}>Yes</button>

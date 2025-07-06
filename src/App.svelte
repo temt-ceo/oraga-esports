@@ -50,6 +50,8 @@
           <p class="description">
             Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. If there were 150 game losers worldwide before you played, the prize paid to you will be ₣151.<br><br><br><br>
           </p>
+          <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/TirRaIVmcRc?si=hHBSWUQwOWdJKPju" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <br><br>
         </div>
         <div class="game-collection">
           <img src="/assets/MMO RPG.png" alt="MMO RPG" />

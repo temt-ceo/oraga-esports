@@ -50,11 +50,13 @@
           const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
           const outcome = res[0]
           const txId = res[1]
-          if (outcome == 'false') {
+          if (outcome == 'false' && !started) {
             notificationMessage = `Prize money rises! ₣ ${parseInt(currentSituation?.currentPrize) + 1} ==> ${parseInt(currentSituation?.currentPrize) + 1 + 1}`
             notificationModal.showModal()
             tx(txId).subscribe((res) => {
               if (!res.errorMessage && res.statusString == 'SEALED') {
+                notificationModal.close()
+              } else if (res.errorMessage) {
                 notificationModal.close()
               }
             });
@@ -71,6 +73,8 @@
               tx(txId).subscribe((res) => {
                 if (!res.errorMessage && res.statusString == 'SEALED') {
                   notificationModal.close()
+                } else if (res.errorMessage) {
+                  notificationModal.close()
                 }
               });
             } else {
@@ -85,6 +89,8 @@
                 notificationModal.showModal()
                 tx(txId).subscribe((res) => {
                   if (!res.errorMessage && res.statusString == 'SEALED') {
+                    notificationModal.close()
+                  } else if (res.errorMessage) {
                     notificationModal.close()
                   }
                 });
@@ -151,7 +157,7 @@
             notificationModal.showModal()
           }
         });
-      } else if (currentSituation && (!currentSituation.freePlayCount[havingResource?.gamerId] || currentSituation.freePlayCount[havingResource?.gamerId] < 3)) {
+      } else if (flowBalance == 0.001 && currentSituation && (!currentSituation.freePlayCount[havingResource?.gamerId] || currentSituation.freePlayCount[havingResource?.gamerId] < 3)) {
         freePlayModal.showModal()
       }
     }

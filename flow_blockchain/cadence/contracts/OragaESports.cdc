@@ -136,17 +136,18 @@ access(all) contract OragaESports {
       pre {
         payment.balance == 1.1: "payment is not 1.1FLOW coin."
       }
-      if let isStillPlayed = OragaESports.gamersInfo.lastTimePlayed[self.gamerId] {
-        if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
-          // NOTE. If a player cut the network after the game won, we don't care about it.
-          let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: self.gamerId, paid: false) // set lose
-        }
-      }
-      if let challenged = OragaESports.gamersInfo.tryingPrize[self.gamerId] {
-        if (challenged > 0) {
-          panic("You are now on playing the game. Payment is not accepted.")
-        }
-      }
+      // There is a possibility that double withdrawal may occur by the following logic, comment out this logic.(July/6/2025)
+      // if let isStillPlayed = OragaESports.gamersInfo.lastTimePlayed[self.gamerId] {
+      //   if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
+      //     // NOTE. If a player cut the network after the game won, we don't care about it.
+      //     let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: self.gamerId, paid: false) // set lose
+      //   }
+      // }
+      // if let challenged = OragaESports.gamersInfo.tryingPrize[self.gamerId] {
+      //   if (challenged > 0) {
+      //     panic("You are now on playing the game. Payment is not accepted.")
+      //   }
+      // }
       OragaESports.gamersInfo.setTryingPrize(gamerId: self.gamerId)
       OragaESports.FlowTokenVault.borrow()!.deposit(from: <- payment)
     }
@@ -202,17 +203,19 @@ access(all) contract OragaESports {
         if (freePlayed >= 2) {
           panic("It's not acceptable.")
         }
-        if let isStillPlayed = OragaESports.gamersInfo.lastTimePlayed[gamerId] {
-          if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
-            // NOTE. If a player cut the network after the game won, we don't care about it.
-            let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: false) // set lose
-          }
-        }
-        if let challenged = OragaESports.gamersInfo.tryingPrize[gamerId] {
-          if (challenged > 0) {
-            panic("You are now on playing the game. Payment is not accepted.")
-          }
-        }
+        // To avoid double withdrawal using multi monitor gaming, comment out this logic.(July/6/2025)
+        // if let isStillPlayed = OragaESports.gamersInfo.lastTimePlayed[gamerId] {
+        //   if (isStillPlayed != nil && isStillPlayed! + 80.0 < getCurrentBlock().timestamp) { // 60 + 10 * 2 (game time + transaction)
+        //     // NOTE. If a player cut the network after the game won, we don't care about it.
+        //     let prizePaid = OragaESports.gamersInfo.setCurrentPrize(added: 1, gamerId: gamerId, paid: false) // set lose
+        //   }
+        // }
+        // if let challenged = OragaESports.gamersInfo.tryingPrize[gamerId] {
+        //   if (challenged > 0) {
+        //     panic("You are now on playing the game. Payment is not accepted.")
+        //   }
+        // }
+        OragaESports.gamersInfo.freePlayCount[gamerId] = freePlayed + 1
         OragaESports.gamersInfo.setTryingPrize(gamerId: gamerId)
         OragaESports.gamersInfo.useTipJarBalance()
       } else {
