@@ -2,7 +2,7 @@
   import { onMount} from 'svelte'
   import { Application } from 'svelte-pixi'
   import Field from './shooting/Field.svelte'
-  import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
+  import { authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
   import { getBalance, isRegistered } from '../../flow_blockchain/mainnet/scripts';
   import { createGamer, tipping } from '../../flow_blockchain/mainnet/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
@@ -11,14 +11,6 @@
   export let currentSituation;
 
   let app
-
-  config({
-    'flow.network': 'mainnet',
-    'accessNode.api': 'https://rest-mainnet.onflow.org',
-    'discovery.wallet': 'https://wallet-v2.blocto.app/-/flow/authn',
-    'app.detail.title': 'Oraga eSports',
-    'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
-  }).load({ flowJSON });
 
   let flowBalance;
   let playerName;

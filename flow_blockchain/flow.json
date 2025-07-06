@@ -3,7 +3,7 @@
     "OragaESports": {
       "source": "cadence/contracts/OragaESports.cdc",
       "aliases": {
-        "testing": "OragaESports"
+        "mainnet": "b576a3926d239682"
       }
     },
     "TestnetTest5": {

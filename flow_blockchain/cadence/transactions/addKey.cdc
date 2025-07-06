@@ -2,7 +2,7 @@ transaction(publicKey: String, numOfKeyToAdd: Int) {
     prepare(signer: auth(AddKey) &Account) {
         let key = PublicKey(
             publicKey: publicKey.decodeHex(),
-            signatureAlgorithm: SignatureAlgorithm.ECDSA_secp256k1
+            signatureAlgorithm: SignatureAlgorithm.ECDSA_P256
         )
 
         var counter = 0

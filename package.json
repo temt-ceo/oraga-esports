@@ -18,6 +18,9 @@
   "dependencies": {
     "@onflow/fcl": "^1.19.0",
     "aws-amplify": "^6.15.1",
+    "dotenv": "^17.0.1",
+    "elliptic": "^6.6.1",
+    "sha3": "^2.1.4",
     "svelte-routing": "^2.13.0",
     "victor": "^1.1.0"
   }
