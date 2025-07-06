@@ -3,7 +3,7 @@ import { config, sansPrefix, withPrefix, mutate, tx } from "@onflow/fcl";
 import { SHA3 } from "sha3";
 import pkg from "elliptic";
 const { ec: EC } = pkg;
-const ec = new EC("secp256k1");
+const ec = new EC("p256");
 
 export const handler = async (event) => {
   console.log("Event", JSON.stringify(event, 3));
@@ -14,7 +14,7 @@ export const handler = async (event) => {
 
   if (input.type === "shooting_game_outcome") {
     transaction = `
-      import OragaESports from 0x975b04756864e9ea
+      import OragaESports from 0xb576a3926d239682
 
       transaction(gamerId: UInt, outcome: Bool) {
         prepare(signer: auth(BorrowValue) &Account) {
@@ -29,7 +29,7 @@ export const handler = async (event) => {
     `;
   } else if (input.type === "free_play") {
     transaction = `
-      import OragaESports from 0x975b04756864e9ea
+      import OragaESports from 0xb576a3926d239682
 
       transaction(gamerId: UInt) {
         prepare(signer: auth(BorrowValue) &Account) {
@@ -57,14 +57,14 @@ export const handler = async (event) => {
         fs.readFileSync("/tmp/sequence.txt", { encoding: "utf8" })
       );
     } else {
-      IT_KEY_ID = 10;
+      IT_KEY_ID = 50;
     }
-    IT_KEY_ID = !IT_KEY_ID || IT_KEY_ID >= 10 ? 0 : IT_KEY_ID + 1;
+    IT_KEY_ID = !IT_KEY_ID || IT_KEY_ID >= 50 ? 0 : IT_KEY_ID + 1;
     fs.writeFileSync("/tmp/sequence.txt", IT_KEY_ID.toString());
     console.log("IT_KEY_ID", IT_KEY_ID);
 
     const PRIVATE_KEY = fs.readFileSync("mainnet-account.pkey", "utf8");
-    const ADDRESS = "0x975b04756864e9ea";
+    const ADDRESS = "0xb576a3926d239682";
     const KEY_ID = 0;
 
     const hash = (message) => {

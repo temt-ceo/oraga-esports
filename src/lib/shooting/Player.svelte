@@ -280,21 +280,21 @@
     x={!prizeSnatched ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.7}
     text={`Oops, it looks like Gamer id: ${prizeSnatchedGamerId} `}
-    style={{ fill: '#FF4081', fontSize: 24 }}
+    style={{ fill: '#F88379', fontSize: 24 }}
     anchor={0.5}
   />
   <Text
     x={!prizeSnatched ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.77}
     text={'snatched the prize money.'}
-    style={{ fill: '#FF4081', fontSize: 24 }}
+    style={{ fill: '#F88379', fontSize: 24 }}
     anchor={0.5}
   />
   <Text
     x={!prizeSnatched ? -999 : screenWidth * (0.5) - margin * 0.5}
     y={screenWidth * 0.84}
     text={'Your prize money has been reset to ₣1..'}
-    style={{ fill: '#FF4081', fontSize: 19 }}
+    style={{ fill: '#F88379', fontSize: 19 }}
     anchor={0.5}
   />
 
