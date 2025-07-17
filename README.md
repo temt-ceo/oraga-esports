@@ -10,7 +10,6 @@ This streamlined process, from game start to cryptocurrency sale at an exchange,
 <br><br>
 ■ Oraga eSports launches its first game, a shooting game
 <br><br>
-
 The system benefits both game developers and players, and the use of real-time communication technology allows players to track the progress of prizes in real time. The blog explains the advantages of adopting Interaction Templates, which enable secure transactions, into large-scale eSports platforms, and how anyone can build games, provide them securely, and generate profits.
 <br><br>
 Oraga eSports Development Blog: https://medium.com/@tickets.on.flow
