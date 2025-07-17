@@ -1,5 +1,6 @@
 <script>
   import Shooting from './lib/Shooting.svelte'
+  import Stats from './lib/Stats.svelte'
   import { Amplify } from 'aws-amplify';
   import config from './amplifyconfiguration.json';
   import * as fcl from '@onflow/fcl';
@@ -18,7 +19,6 @@
 
   setInterval(async () => {
     currentSituation = await getGamersInfo();
-    console.log(currentSituation)
   }, 1500);
 
 </script>
@@ -26,6 +26,10 @@
   {#if location.href.includes('/shooting')}
     <section class="section shooting">
       <Shooting currentSituation={currentSituation} />
+    </section>
+  {:else if location.href.includes('/stats')}
+    <section class="section shooting">
+      <Stats currentSituation={currentSituation} />
     </section>
   {:else}
   <section class="section">
@@ -50,8 +54,10 @@
           <p class="description">
             Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. If there were 150 game losers worldwide before you played, the prize paid to you will be ₣151.<br><br><br><br>
           </p>
-          <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/TirRaIVmcRc?si=hHBSWUQwOWdJKPju" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-          <br><br>
+          <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/eywOO8flkbg?si=NoaArp-3RasPUJpm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <div class="notice">
+            The difficulty level is exactly the same as in this YouTube video.
+          </div>
         </div>
         <div class="game-collection">
           <img src="/assets/MMO RPG.png" alt="MMO RPG" />
@@ -202,6 +208,13 @@
       width: 0;
       display: none;
     }
+    & iframe {
+      margin-bottom: 50px;
+    }
+    & .notice {
+      margin-bottom: 90px;
+      font-size: 14px;
+    }
   }
 
   @media screen and (min-width: 700px) {
@@ -233,8 +246,13 @@
     .game-collection {
       max-width: 45vw;
     }
+
     .game-collection.can-scroll {
       overflow-x: hidden;
+    }
+
+    .game-collection > iframe {
+      margin-bottom: 70px;
     }
 
     .paragraph.sign {
@@ -244,14 +262,11 @@
   }
 
   @media screen and (max-width: 380px) {
-    .section {
-      overflow: scroll;
-    }
     .game-collection {
       min-width: 295px;
       margin-left: 15px;
     }
-    .game-collection > img {
+    .game-collection img {
       width: 270px;
     }
   }

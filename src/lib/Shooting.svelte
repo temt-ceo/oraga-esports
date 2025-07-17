@@ -5,7 +5,6 @@
   import { authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
   import { getBalance, isRegistered } from '../../flow_blockchain/mainnet/scripts';
   import { createGamer, tipping } from '../../flow_blockchain/mainnet/transactions'
-  import flowJSON from '../../flow_blockchain/flow.json';
   import Dialog from './Dialog.svelte';
 
   export let currentSituation;
@@ -142,11 +141,16 @@
 </div>
 
 <Dialog bind:dialog={modal}>
-  <div>You need a crypto wallet.<br>(You can sign out anytime)</div>
+  <div>You need a crypto wallet.<br>(You can get ₣{!currentSituation?.currentPrize ? '-' : parseInt(currentSituation?.currentPrize) + 1} prize as<br> soon as you won.)</div>
   <button on:click={() => {
     authenticate()
     modal.close()
   }}>SignIn</button>
+  <div class="practice">Or do you want to practice<br>the game?
+    <button on:click={() => {
+      location.href = '/stats'
+    }}>Free Training</button>
+  </div>
 </Dialog>
 
 <Dialog bind:dialog={modal2}>
@@ -337,6 +341,15 @@
     border-width: 4px;
     padding: 5px 30px;
     font-size: 24px;
+  }
+
+  .practice {
+    margin-top: 18px;
+    font-size: 15px;
+    padding: 4px 12px 6px;
+    color: #32de84;
+    background-color: blueviolet;
+    border-radius: 4px;
   }
 
   @media screen and (min-width: 700px) {

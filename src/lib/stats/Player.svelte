@@ -34,7 +34,6 @@
   let btnClicked = false
   let coinInserted = false
   let freePlayStarted = false
-  let modal
   let freePlayModal
   let notificationModal
   let notificationMessage
@@ -133,33 +132,18 @@
 
   async function startBtnClicked() {
     if (!btnClicked) {
-      if (flowBalance > 0.001) {
-        dead = false
-        countdown = 3
-        remainTime = 60
-        gameReset = true
-        btnClicked = true
-        damage = 0
-        prizeSnatched = false
+      dead = false
+      countdown = 3
+      remainTime = 60
+      gameReset = true
+      btnClicked = true
+      damage = 0
+      prizeSnatched = false
 
-        modal.showModal()
-        let txId = await insertCoin()
-        tx(txId).subscribe((res) => {
-          console.log('tx status:', res);
-          if (!res.errorMessage && res.statusString == 'SEALED') {
-            // Transaction is sealed. Start the game.
-            gameReset = false
-            coinInserted = true
-            timerCtrl1 = setInterval(() => countdown--, 1500)
-            setTimeout(gameStart, 5500)
-          } else if (res.errorMessage) {
-            notificationMessage = "Sorry transaction failed. But Don't worry, your money is not decreased. It's safe blockchain system."
-            notificationModal.showModal()
-          }
-        });
-      } else if (flowBalance == 0.001 && currentSituation && (!currentSituation.freePlayCount[havingResource?.gamerId] || currentSituation.freePlayCount[havingResource?.gamerId] < 3)) {
-        freePlayModal.showModal()
-      }
+      gameReset = false
+      coinInserted = true
+      timerCtrl1 = setInterval(() => countdown--, 1500)
+      setTimeout(gameStart, 5500)
     }
   }
 
@@ -248,9 +232,9 @@
   />
 
   <Text
-    x={started ? -999 : screenWidth * (0.7)}
-    y={margin}
-    text={`Click the Button to Start`}
+    x={started ? -999 : screenWidth * (0.5)}
+    y={margin * 3}
+    text={`Click the Button to start Training`}
     style={{ fill: 'white', fontSize: 16 }}
     anchor={0.5}
   />
@@ -271,7 +255,7 @@
   <Text
     x={started ? -999 : screenWidth * (0.5) - margin}
     y={screenWidth * 0.5 - margin}
-    text={(coinInserted || freePlayStarted) && countdown > 0 ? ` ${freePlayStarted ? 'All set!' : 'Coin Inserted.'} Ready..!!` : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
+    text={(coinInserted || freePlayStarted) && countdown > 0 ? ` ${freePlayStarted ? 'All set!' : 'Training!'} Ready..!!` : (countdown == 0 ? (remainTime < 60 ? (dead ? '' : 'Congratulations!!'): 'GAME START!') : '')}
     style={{ fill: '#FF4081', fontSize: 34 }}
     anchor={0.5}
   />
@@ -316,27 +300,6 @@
   />
 </Ticker>
 
-{#if gameUser && havingResource}
-  <div class="game-player">
-    <Dialog bind:dialog={modal}>
-      <div>You need to accept the transaction on the wallet. Game fee is only ₣1.1!</div>
-      <button on:click={() => modal.close()}>Please click here first.</button>
-    </Dialog>
-  </div>
-{:else if !gameUser}
-  <div class="game-player">
-    <Dialog bind:dialog={modal}>
-      <div>You need a crypto wallet.<br>Please sign in the wallet.</div>
-      <button on:click={() => modal.close()}>Please click here first.</button>
-    </Dialog>
-  </div>
-{:else if !havingResource}
-  <div class="game-player">
-    <Dialog bind:dialog={modal}>
-      <div>You are still not registered as a game player on the blockchain.<br>Please reload the browser screen.</div>
-    </Dialog>
-  </div>
-{/if}
 <div class="game-player notification">
   <Dialog bind:dialog={notificationModal}>
     <div>{notificationMessage}</div>
