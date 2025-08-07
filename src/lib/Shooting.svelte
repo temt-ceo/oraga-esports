@@ -141,16 +141,11 @@
 </div>
 
 <Dialog bind:dialog={modal}>
-  <div>You need a crypto wallet.<br>(You can get ₣{!currentSituation?.currentPrize ? '-' : parseInt(currentSituation?.currentPrize) + 1} prize as<br> soon as you won.)</div>
+  <div>You need a crypto wallet.<br>(You can sign out anytime)</div>
   <button on:click={() => {
     authenticate()
     modal.close()
   }}>SignIn</button>
-  <div class="practice">Or do you want to practice<br>the game?
-    <button on:click={() => {
-      location.href = '/stats'
-    }}>Free Training</button>
-  </div>
 </Dialog>
 
 <Dialog bind:dialog={modal2}>
