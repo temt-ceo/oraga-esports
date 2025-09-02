@@ -4,6 +4,7 @@
   import { createGameServerProcess } from '../graphql/mutations';
   import * as subscriptions from '../graphql/subscriptions';
   // 以下ブロックチェーンライブラリ
+  import { tx } from '@onflow/fcl';
   import { getInfo } from '../../flow_blockchain/mainnet/scripts';
 
   import "../app.css";
@@ -15,8 +16,17 @@
     .graphql({ query: subscriptions.onCreateGameServerProcess })
     .subscribe({
       next: ({ data }) => {
-        console.log(data.onCreateGameServerProcess)
-        if (data.onCreateGameServerProcess?.type == 'cook_stocker') {
+        console.log(data)
+        if (data.onCreateGameServerProcess?.type == 'cook_stocker_save' || data.onCreateGameServerProcess?.type == 'cook_stocker_delete') {
+          const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
+          const txId = res[1]
+          tx(txId).subscribe((res) => {
+            if (!res.errorMessage && res.statusString == 'SEALED') {
+              if (data.onCreateGameServerProcess?.type == 'cook_stocker_save') alert('ブロックチェーンに保存が完了しました。')
+              if (data.onCreateGameServerProcess?.type == 'cook_stocker_delete') alert('ブロックチェーンからデータを削除しました。')
+            } else if (res.errorMessage) {
+            }
+          });
         }
       }
     }
@@ -95,6 +105,10 @@
       <button class="btn btn-accent w-[100px]" on:click={() => { tgt = '保存'; modal2.showModal() }}>保存</button>
       <button class="btn btn-secondary w-[100px] ml-4" on:click={() => { tgt = '削除'; modal2.showModal() }}>全削除</button>
     </div>
+    <div class="text-green-600 underline mt-2 ml-10">
+      <a href="https://www.flowscan.io/contract/A.b576a3926d239682.CookStocker?tab=deployments" target="_blank">スマートコントラクト</a><br>
+      <a href="https://github.com/temt-ceo/oraga-esports/pull/19/files" target="_blank">プルリク</a>
+    </div>
   </div>
   <p class="paragraph sign flex flex-wrap">
     <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
@@ -147,7 +161,7 @@
 }
 
 :global(dialog) {
-  margin: 70% auto 0 auto;
+  margin: 30vh auto 0 auto;
   font-size: 36px;
   font-weight: 700;
   font-family: 'Libre Bodoni';
@@ -155,7 +169,7 @@
   background-color: rgba(11, 4, 35, 1);
   border-color: dodgerblue;
   border-width: 4px;
-  padding: 5px 30px;
+  padding: 30px 20px;
   font-size: 24px;
 }
 
@@ -178,7 +192,7 @@ h1 {
     background-color: rgba(11, 4, 35, 1);
     position: absolute;
     left: 6%;
-    bottom: 8%;
+    bottom: 0%;
     border-radius: 8px;
     & .allura {
       font-size: 24px;
