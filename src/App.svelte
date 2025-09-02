@@ -54,7 +54,7 @@
       <svelte:component this={DynamicComponent} />
     </section>
   {:else}
-  <section class="section remove-all">
+  <section class="section">
     <div class="game-screen">
       <h1 class="title">Oraga eSports</h1>
       <div class="content">
