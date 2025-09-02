@@ -44,3 +44,17 @@ export const getGamersInfo = async function () {
   });
   return result;
 };
+
+export const getInfo = async function (id) {
+  const result = await query({
+    cadence: `
+    import "CookStocker"
+
+    access(all) fun main(id: String): CookStocker.VegeData? {
+        return CookStocker.getCookStockerInfo(id: id)
+    }
+    `,
+    args: (arg, t) => [arg(id, t.String)],
+  });
+  return result;
+};

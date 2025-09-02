@@ -11,6 +11,12 @@
       "aliases": {
         "testing": "0000000000000007"
       }
+    },
+    "CookStocker": {
+      "source": "cadence/contracts/CookStocker.cdc",
+      "aliases": {
+        "testing": "0000000000000008"
+      }
     }
   },
   "dependencies": {
@@ -122,10 +128,10 @@
       "emulator-account": ["TestnetTest5"]
     },
     "mainnet": {
-      "mainnet-account": ["OragaESports"]
+      "mainnet-account": ["OragaESports", "CookStocker"]
     },
     "testnet": {
-      "testnet-account": ["TestnetTest5"]
+      "testnet-account": ["TestnetTest5", "CookStocker"]
     }
   }
 }

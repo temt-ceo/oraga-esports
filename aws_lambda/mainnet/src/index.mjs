@@ -42,6 +42,32 @@ export const handler = async (event) => {
         }
       }
     `;
+  } else if (input.type === "cook_stocker_save") {
+    transaction = `
+      import CookStocker from 0xb576a3926d239682
+
+      transaction(id: String, add: [String], remove: [String]) {
+        prepare(signer: &Account) {
+          CookStocker.setCookStockerInfo(id: id, add: add, remove: remove)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
+  } else if (input.type === "cook_stocker_delete") {
+    transaction = `
+      import CookStocker from 0xb576a3926d239682
+
+      transaction(id: String) {
+        prepare(signer: &Account) {
+          CookStocker.deleteCookStockerInfo(id: id)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
   }
 
   config({
@@ -140,6 +166,39 @@ export const handler = async (event) => {
       });
       console.log(`txId: ${txId}`);
       message = `Tx[free_play] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    } else if (input.type === "cook_stocker_save") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [
+          arg(message.id.toString(), t.String),
+          arg(message.add, t.Array(t.String)),
+          arg(message.remove, t.Array(t.String)),
+        ],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[cook_stocker_save] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    } else if (input.type === "cook_stocker_delete") {
+      const outcome = message == "true" || message == true;
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [arg(message.id.toString(), t.String)],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[cook_stocker_delete] is On Going.`;
       tx(txId).subscribe((res) => {
         console.log(res);
       });

@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import Shooting from './lib/Shooting.svelte'
   import Stats from './lib/Stats.svelte'
   import { Amplify } from 'aws-amplify';
@@ -8,7 +9,10 @@
   import { getGamersInfo } from '../flow_blockchain/mainnet/scripts';
 
   Amplify.configure(config);
+
+  let DynamicComponent = null;
   let currentSituation;
+
   fcl.config({
     'flow.network': 'mainnet',
     'accessNode.api': 'https://rest-mainnet.onflow.org',
@@ -17,8 +21,22 @@
     'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
   }).load({ flowJSON });
 
+  let currentUrl = '';
+  onMount(async () => {
+    currentUrl = window.location.href;
+    console.log('Current URL:', currentUrl);
+
+    // Dynamically import the component (こうしないとTailwindCSSがCookStocker意外にも適用されてしまうので)
+    if (currentUrl.includes('/cook-stocker')) {
+      const { default: LoadedComponent } = await import('./lib/CookStocker.svelte');
+      DynamicComponent = LoadedComponent;
+    }
+  });
+
   setInterval(async () => {
-    currentSituation = await getGamersInfo();
+    if (!currentUrl.includes('/cook-stocker')) {
+      currentSituation = await getGamersInfo();
+    }
   }, 1500);
 
 </script>
@@ -31,8 +49,12 @@
     <section class="section shooting">
       <Stats currentSituation={currentSituation} />
     </section>
+  {:else if location.href.includes('/cook-stocker')}
+    <section>
+      <svelte:component this={DynamicComponent} />
+    </section>
   {:else}
-  <section class="section">
+  <section class="section remove-all">
     <div class="game-screen">
       <h1 class="title">Oraga eSports</h1>
       <div class="content">
@@ -87,7 +109,7 @@
     background-image: url('/assets/453d816d7d25d5a4aa075a8c64c79818.jpg');
     background-repeat: repeat;
   }
-  
+
   h1 {
     text-align: center;
     margin: 0;

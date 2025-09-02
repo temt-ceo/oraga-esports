@@ -93,3 +93,56 @@ export const tipping = async function (amount) {
   console.log(txId);
   return txId;
 };
+
+export const save = async function (id, add, remove) {
+  console.log(id, add, remove);
+  const txId = await mutate({
+    cadence: `
+      import "CookStocker"
+
+      transaction(id: String, add: [String], remove: [String]) {
+        prepare(signer: &Account) {
+          CookStocker.setCookStockerInfo(id: id, add: add, remove: remove)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(id.toString(), t.String),
+      arg(add, t.Array(t.String)),
+      arg(remove, t.Array(t.String)),
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
+
+export const removeInfo = async function (id) {
+  const txId = await mutate({
+    cadence: `
+      import "CookStocker"
+
+      transaction(id: String) {
+        prepare(signer: &Account) {
+          CookStocker.deleteCookStockerInfo(id: id)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [arg(id.toString(), t.String)],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};

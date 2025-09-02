@@ -13,11 +13,14 @@
     "pixi.js": "^7.3.2",
     "svelte": "^4.2.3",
     "svelte-pixi": "latest",
+    "tailwindcss": "^4.1.12",
     "vite": "^5.0.0"
   },
   "dependencies": {
     "@onflow/fcl": "^1.19.0",
+    "@tailwindcss/vite": "^4.1.12",
     "aws-amplify": "^6.15.1",
+    "daisyui": "^5.0.54",
     "dotenv": "^17.0.1",
     "elliptic": "^6.6.1",
     "sha3": "^2.1.4",
