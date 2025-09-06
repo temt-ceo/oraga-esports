@@ -213,15 +213,14 @@ h1 {
   bottom: 0%;
   border-radius: 8px;
 
+  & span {
+    font-family: 'Allura';
+    font-size: 24px;
+    color: white;
+  }
   & img {
     max-width: 36px;
   }
-}
-
-.allura {
-  font-family: 'Allura';
-  font-size: 24px;
-  color: white;
 }
 
 @media screen and (min-width: 700px) {
