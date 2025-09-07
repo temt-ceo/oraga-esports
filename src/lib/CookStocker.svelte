@@ -23,6 +23,7 @@
           const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
           const txId = res[1]
           tx(txId).subscribe((res) => {
+            console.log('tx status:', res);
             if (!res.errorMessage && res.statusString == 'SEALED') {
               loading = false
               if (data.onCreateGameServerProcess?.type == 'cook_stocker_save') alert('ブロックチェーンに保存が完了しました。')
