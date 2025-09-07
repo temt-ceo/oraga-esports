@@ -4,6 +4,7 @@
   import { createGameServerProcess } from '../graphql/mutations';
   import * as subscriptions from '../graphql/subscriptions';
   // 以下ブロックチェーンライブラリ
+  import { tx } from '@onflow/fcl';
   import { getInfo } from '../../flow_blockchain/mainnet/scripts';
 
   import "../app.css";
@@ -11,12 +12,24 @@
   import Dialog from './Dialog.svelte';
 
   const client = generateClient();
+  let loading = false
   client
     .graphql({ query: subscriptions.onCreateGameServerProcess })
     .subscribe({
       next: ({ data }) => {
-        console.log(data.onCreateGameServerProcess)
-        if (data.onCreateGameServerProcess?.type == 'cook_stocker') {
+        console.log(data)
+        if (data.onCreateGameServerProcess?.type == 'cook_stocker_save' || data.onCreateGameServerProcess?.type == 'cook_stocker_delete') {
+          loading = true
+          const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
+          const txId = res[1]
+          tx(txId).subscribe((res) => {
+            if (!res.errorMessage && res.statusString == 'SEALED') {
+              loading = false
+              if (data.onCreateGameServerProcess?.type == 'cook_stocker_save') alert('ブロックチェーンに保存が完了しました。')
+              if (data.onCreateGameServerProcess?.type == 'cook_stocker_delete') alert('ブロックチェーンからデータを削除しました。')
+            } else if (res.errorMessage) {
+            }
+          });
         }
       }
     }
@@ -82,21 +95,28 @@
 </script>
 
 <section class="section">
-  <div class="game-screen">
+  <div class="game-screen overflow-auto">
     <h1 class="text-3xl font-bold text-green-600 underline">
       Cook Stocker
     </h1>
     <div class="w-full h-5/7 py-2 flex flex-wrap overflow-auto">
       {#each Object.keys(list) as name}
-        <VegeCard name={name} pastDate={list[name] != null ? list[name] : (info ? new Date(parseInt(info.data[name]) * 1000).getTime() : null)} onSet={onSet} onUnset={onUnset} />
+        <VegeCard name={name} setData={list[name] != null ? list[name] : (info ? new Date(parseInt(info.data[name]) * 1000).getTime() : null)} onSet={onSet} onUnset={onUnset} />
       {/each}
     </div>
     <div class="flex justify-center">
       <button class="btn btn-accent w-[100px]" on:click={() => { tgt = '保存'; modal2.showModal() }}>保存</button>
       <button class="btn btn-secondary w-[100px] ml-4" on:click={() => { tgt = '削除'; modal2.showModal() }}>全削除</button>
+      {#if loading}
+        <div class="ml-3 text-success"><span class="loading loading-infinity loading-xl"></span>(保存中)</div>
+      {/if}
+    </div>
+    <div class="text-green-600 underline mt-2 ml-10">
+      <a href="https://www.flowscan.io/contract/A.b576a3926d239682.CookStocker?tab=deployments" target="_blank">スマートコントラクト</a><br>
+      <a href="https://github.com/temt-ceo/oraga-esports/pull/19/files" target="_blank">プルリク</a>
     </div>
   </div>
-  <p class="paragraph sign flex flex-wrap">
+  <p class="paragraph flex flex-wrap">
     <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
     Copyright © 2025 Tokyo EM Technology. All rights reserved.
   </p>
@@ -147,7 +167,7 @@
 }
 
 :global(dialog) {
-  margin: 70% auto 0 auto;
+  margin: 30vh auto 0 auto;
   font-size: 36px;
   font-weight: 700;
   font-family: 'Libre Bodoni';
@@ -155,7 +175,7 @@
   background-color: rgba(11, 4, 35, 1);
   border-color: dodgerblue;
   border-width: 4px;
-  padding: 5px 30px;
+  padding: 30px 20px;
   font-size: 24px;
 }
 
@@ -163,73 +183,6 @@ h1 {
   text-align: center;
   margin: 0;
   padding: 10px;
-}
-
-.paragraph {
-  margin: 10px 0;
-
-  &.sign {
-    height: 37px;
-    width: 84vw;
-    margin-bottom: 0;
-    padding: 2px 8px 10px;
-    font-size: 11px;
-    color: white;
-    background-color: rgba(11, 4, 35, 1);
-    position: absolute;
-    left: 6%;
-    bottom: 8%;
-    border-radius: 8px;
-    & .allura {
-      font-size: 24px;
-    }
-
-    & img {
-      max-width: 36px;
-    }
-  }
-}
-
-.current_prize {
-  font-size: 14px;
-  padding-left: 6px;
-  font-family: 'Libre Bodoni';
-  & img {
-    width: 16px !important;
-    vertical-align: sub;
-  }
-}
-
-.allura {
-  font-family: 'Allura';
-  font-size: 35px;
-  color: white;
-}
-
-.cinzel {
-  font-family: 'Cinzel';
-  font-size: 15px;
-  line-height: 0.6;
-  &.li {
-    padding-left: 10px;
-  }
-}
-
-.bodoni {
-  font-family: 'Libre Bodoni';
-}
-
-p.bodoni {
-  line-height: 1.2;
-  &.theme1 {
-    font-size: 14px;
-  }
-}
-
-.description {
-  font-size: 14.5px;
-  line-height: 1.1;
-  margin-bottom: 0;
 }
 
 .section {
@@ -246,42 +199,27 @@ p.bodoni {
   height: 90vh;
 }
 
-.content {
-  width: 97vw;
-  max-height: 70vh;
-  display: flex;
-  margin: 55px auto;
-  overflow: scroll;
+.paragraph {
+  margin: 10px 0;
+  height: 37px;
+  width: 84vw;
+  margin-bottom: 0;
+  padding: 2px 8px 10px;
+  font-size: 11px;
   color: white;
-  font-size: 22px;
-}
+  background-color: rgba(11, 4, 35, 1);
+  position: absolute;
+  left: 6%;
+  bottom: 0%;
+  border-radius: 8px;
 
-.game-collection {
-  min-width: 330px;
-  max-width: 72vw;
-  height: 70vh;
-  margin: 0 45px 0 35px;
-  color: white;
-  line-height: 0.9;
+  & span {
+    font-family: 'Allura';
+    font-size: 24px;
+    color: white;
+  }
   & img {
-    width: 300px;
-  }
-  &.can-scroll {
-    overflow: scroll;
-    & img {
-      cursor: pointer;
-    }
-  }
-  &::-webkit-scrollbar-corner {
-    width: 0;
-    display: none;
-  }
-  & iframe {
-    margin-bottom: 50px;
-  }
-  & .notice {
-    margin-bottom: 90px;
-    font-size: 14px;
+    max-width: 36px;
   }
 }
 
@@ -296,46 +234,9 @@ p.bodoni {
     height: 93vh;
   }
 
-  .section.shooting {
-    width: 90vw;
-    max-width: 1300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 10px;
-    margin-top: 10px;
-  }
-
-  .content {
-    margin-top: 30px;
-    overflow: hidden;
-  }
-
-  .game-collection {
-    max-width: 45vw;
-  }
-
-  .game-collection.can-scroll {
-    overflow-x: hidden;
-  }
-
-  .game-collection > iframe {
-    margin-bottom: 70px;
-  }
-
-  .paragraph.sign {
+  .paragraph {
     bottom: 6%;
     right: 5vw;
-  }
-}
-
-@media screen and (max-width: 380px) {
-  .game-collection {
-    min-width: 295px;
-    margin-left: 15px;
-  }
-  .game-collection img {
-    width: 270px;
   }
 }
 

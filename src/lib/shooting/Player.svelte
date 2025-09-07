@@ -2,7 +2,7 @@
   import * as PIXI from 'pixi.js'
   import { tx, unauthenticate } from '@onflow/fcl';
   import { insertCoin } from '../../../flow_blockchain/mainnet/transactions'
-   import { Sprite, Graphics, Text, Ticker } from 'svelte-pixi'
+  import { Sprite, Graphics, Text, Ticker } from 'svelte-pixi'
   import { generateClient } from 'aws-amplify/api';
   import { createGameServerProcess } from '../../graphql/mutations';
   import * as subscriptions from '../../graphql/subscriptions';
