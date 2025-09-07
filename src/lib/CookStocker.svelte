@@ -196,7 +196,7 @@ h1 {
 }
 
 .game-screen {
-  height: 85vh;
+  height: 90vh;
 }
 
 .paragraph {
