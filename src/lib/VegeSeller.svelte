@@ -129,7 +129,8 @@
         loading = false
         alert('ありがとう！野菜ストッカーの解錠ボタンを押して野菜を取り出して持ち帰ってね❣️')
         tempInfo = {}
-        flowBalance = await getBalance(loginUser.addr);
+        flowBalance = await getBalance(loginUser.addr)
+        cashierVal = '0円'
         const tmp = Math.floor(flowBalance * 10) / 10
         displayBalance = `${tmp * 60}円(₣${tmp})` // 2025年9月時点の時価
       }
@@ -189,8 +190,9 @@
     {/if}
     <div class="text-green-600 underline mt-2 ml-10">
       <a href="https://www.flowscan.io/contract/A.b576a3926d239682.VegeSeller?tab=deployments" target="_blank">スマートコントラクト</a><br>
-      <a href="https://github.com/temt-ceo/oraga-esports/pull/19/files" target="_blank">プルリク</a>
+      <a href="https://github.com/temt-ceo/oraga-esports/pull/22/files" target="_blank">プルリク</a>
     </div>
+    <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/92hqmJ8rrlM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   </div>
   <p class="paragraph flex flex-wrap">
     <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
@@ -332,6 +334,11 @@ h1 {
   & img {
     max-width: 36px;
   }
+}
+
+
+iframe {
+  margin: 0 auto 70px auto;
 }
 
 @media screen and (min-width: 700px) {
