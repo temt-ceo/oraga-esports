@@ -26,15 +26,18 @@
     currentUrl = window.location.href;
     console.log('Current URL:', currentUrl);
 
-    // Dynamically import the component (こうしないとTailwindCSSがCookStocker意外にも適用されてしまうので)
+    // Dynamically import the component (こうしないとTailwindCSSがCookStockerやVegeSeller意外にも適用されてしまう)
     if (currentUrl.includes('/cook-stocker')) {
       const { default: LoadedComponent } = await import('./lib/CookStocker.svelte');
+      DynamicComponent = LoadedComponent;
+    } else if (currentUrl.includes('/vege-seller')) {
+      const { default: LoadedComponent } = await import('./lib/VegeSeller.svelte');
       DynamicComponent = LoadedComponent;
     }
   });
 
   setInterval(async () => {
-    if (!currentUrl.includes('/cook-stocker')) {
+    if (!currentUrl.includes('/cook-stocker') && !location.href.includes('/vege-seller')) {
       currentSituation = await getGamersInfo();
     }
   }, 1500);
@@ -49,7 +52,7 @@
     <section class="section shooting">
       <Stats currentSituation={currentSituation} />
     </section>
-  {:else if location.href.includes('/cook-stocker')}
+  {:else if location.href.includes('/cook-stocker') || location.href.includes('/vege-seller')}
     <section>
       <svelte:component this={DynamicComponent} />
     </section>

@@ -146,3 +146,64 @@ export const removeInfo = async function (id) {
   console.log(txId);
   return txId;
 };
+
+export const saveSellerData = async function (id, add, addAmount, remove) {
+  console.log(id, add, addAmount, remove);
+  const txId = await mutate({
+    cadence: `
+      import "VegeSeller"
+
+      transaction(id: String, add: [String], addAmount: [UInt8], remove: [String]) {
+        prepare(signer: &Account) {
+          VegeSeller.setVegeSellerInfo(id: id, add: add, addAmount: addAmount, remove: remove)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(id.toString(), t.String),
+      arg(add, t.Array(t.String)),
+      arg(addAmount, t.Array(t.UInt8)),
+      arg(remove, t.Array(t.String)),
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
+
+export const buyVege = async function (id, buy, price) {
+  const txId = await mutate({
+    cadence: `
+      import "VegeSeller"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction(id: String, buy: [String], price: UFix64) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let payment <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: price) as! @FlowToken.Vault
+          VegeSeller.buyVege(id: id, amount: <- payment, buy: buy)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(id.toString(), t.String),
+      arg(buy, t.Array(t.String)),
+      arg(price, t.UFix64),
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};

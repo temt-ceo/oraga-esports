@@ -17,6 +17,12 @@
       "aliases": {
         "testing": "0000000000000008"
       }
+    },
+    "VegeSeller": {
+      "source": "cadence/contracts/VegeSeller.cdc",
+      "aliases": {
+        "testing": "0000000000000009"
+      }
     }
   },
   "dependencies": {
@@ -128,10 +134,10 @@
       "emulator-account": ["TestnetTest5"]
     },
     "mainnet": {
-      "mainnet-account": ["OragaESports", "CookStocker"]
+      "mainnet-account": ["OragaESports", "CookStocker", "VegeSeller"]
     },
     "testnet": {
-      "testnet-account": ["TestnetTest5", "CookStocker"]
+      "testnet-account": ["TestnetTest5", "CookStocker", "VegeSeller"]
     }
   }
 }
