@@ -58,3 +58,17 @@ export const getInfo = async function (id) {
   });
   return result;
 };
+
+export const getSellerInfo = async function (id) {
+  const result = await query({
+    cadence: `
+    import "VegeSeller"
+
+    access(all) fun main(id: String): VegeSeller.VegeData? {
+        return VegeSeller.getVegeSellerInfo(id: id)
+    }
+    `,
+    args: (arg, t) => [arg(id, t.String)],
+  });
+  return result;
+};

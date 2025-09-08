@@ -68,6 +68,19 @@ export const handler = async (event) => {
         }
       }
     `;
+  } else if (input.type === "vege_seller_save") {
+    transaction = `
+      import VegeSeller from 0xb576a3926d239682
+
+      transaction(id: String, add: [String], addAmount: [UInt8], remove: [String]) {
+        prepare(signer: &Account) {
+          VegeSeller.setVegeSellerInfo(id: id, add: add, addAmount: addAmount, remove: remove)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
   }
 
   config({
@@ -192,6 +205,25 @@ export const handler = async (event) => {
       txId = await mutate({
         cadence: transaction,
         args: (arg, t) => [arg(message.id.toString(), t.String)],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[cook_stocker_delete] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    } else if (input.type === "vege_seller_save") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [
+          arg(message.id.toString(), t.String),
+          arg(message.add, t.Array(t.String)),
+          arg(message.addAmount, t.Array(t.UInt8)),
+          arg([], t.Array(t.String)),
+        ],
         proposer: authFunctionForProposer,
         payer: authFunction,
         authorizations: [authFunction],
