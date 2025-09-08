@@ -201,7 +201,6 @@ export const handler = async (event) => {
         console.log(res);
       });
     } else if (input.type === "cook_stocker_delete") {
-      const outcome = message == "true" || message == true;
       txId = await mutate({
         cadence: transaction,
         args: (arg, t) => [arg(message.id.toString(), t.String)],
