@@ -23,6 +23,12 @@
       "aliases": {
         "testing": "0000000000000009"
       }
+    },
+    "TaxiRide": {
+      "source": "cadence/contracts/TaxiRide.cdc",
+      "aliases": {
+        "testing": "0000000000000010"
+      }
     }
   },
   "dependencies": {
@@ -134,10 +140,20 @@
       "emulator-account": ["TestnetTest5"]
     },
     "mainnet": {
-      "mainnet-account": ["OragaESports", "CookStocker", "VegeSeller"]
+      "mainnet-account": [
+        "OragaESports",
+        "CookStocker",
+        "VegeSeller",
+        "TaxiRide"
+      ]
     },
     "testnet": {
-      "testnet-account": ["TestnetTest5", "CookStocker", "VegeSeller"]
+      "testnet-account": [
+        "TestnetTest5",
+        "CookStocker",
+        "VegeSeller",
+        "TaxiRide"
+      ]
     }
   }
 }

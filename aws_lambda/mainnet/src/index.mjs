@@ -81,6 +81,34 @@ export const handler = async (event) => {
         }
       }
     `;
+  } else if (input.type === "taxi_ride_complete") {
+    transaction = `
+      import TaxiRide from 0xb576a3926d239682
+
+      transaction(driverId: UInt, wage: UFix64) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let taxiRideAdmin = signer.storage.borrow<&TaxiRide.Admin>(from: /storage/TaxiRideAdmin)
+            ?? panic("Could not borrow reference to the Administrator Resource.")
+          taxiRideAdmin.payWage(driverId: driverId, wage: wage)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
+  } else if (input.type === "taxi_ride_rating") {
+    transaction = `
+      import TaxiRide from 0xb576a3926d239682
+
+      transaction(driverId: UInt, keys: [String], values: [String]) {
+        prepare(signer: &Account) {
+          TaxiRide.setDriverInfo(driverId: driverId, keys: keys, values: values, flow_vault_receiver: nil)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
   }
 
   config({
@@ -230,6 +258,41 @@ export const handler = async (event) => {
       });
       console.log(`txId: ${txId}`);
       message = `Tx[cook_stocker_delete] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    } else if (input.type === "taxi_ride_complete") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [
+          arg(message.driverId, t.UInt),
+          arg(message.wage, t.UFix64),
+        ],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[taxi_ride_complete] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    } else if (input.type === "taxi_ride_rating") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [
+          arg(message.driverId || 0, t.UInt),
+          arg(message.keys, t.Array(t.String)),
+          arg(message.values, t.Array(t.String)),
+        ],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[taxi_ride_complete] is On Going.`;
       tx(txId).subscribe((res) => {
         console.log(res);
       });
