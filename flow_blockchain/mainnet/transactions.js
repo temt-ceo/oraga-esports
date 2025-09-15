@@ -207,3 +207,98 @@ export const buyVege = async function (id, buy, price) {
   console.log(txId);
   return txId;
 };
+
+export const setDriverInfo = async function (driverId, keys, values) {
+  const txId = await mutate({
+    cadence: `
+      import "TaxiRide"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction(driverId: UInt, keys: [String], values: [String]) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let FlowTokenReceiver = signer.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+
+          TaxiRide.setDriverInfo(driverId: driverId, keys: keys, values: values, flow_vault_receiver: FlowTokenReceiver)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(driverId || 0, t.UInt),
+      arg(keys, t.Array(t.String)),
+      arg(values, t.Array(t.String)),
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
+
+export const newOrder = async function (
+  execDateTime,
+  driverId,
+  start,
+  goal,
+  price
+) {
+  const txId = await mutate({
+    cadence: `
+      import "TaxiRide"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction(execTime: UFix64, driverId: UInt, start: String, goal: String, price: UFix64) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let payment <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: price) as! @FlowToken.Vault
+          TaxiRide.newOrder(payment: <- payment, execTime: execTime, driverId: driverId, start: start, goal: goal)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(new Date(execDateTime).getTime() / 1000 + 0.0001, t.UFix64), // 少数でないとエラーになるので1ミリ秒を足す(Cadenceでは秒以下は少数)
+      arg(driverId, t.UInt),
+      arg(start, t.String),
+      arg(goal, t.String),
+      arg(Math.floor(price * 1000) / 1000, t.UFix64), // 少数でないとエラーになるが長すぎてもエラーになるので少数を特定桁数までとしている
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
+
+export const fixBug = async function (driverId) {
+  const txId = await mutate({
+    cadence: `
+      import "TaxiRide"
+
+      transaction(driverId: UInt) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          TaxiRide.fixBug(driverId: driverId)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [arg(driverId, t.UInt)],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};

@@ -20,6 +20,7 @@
     "@onflow/fcl": "^1.19.0",
     "@tailwindcss/vite": "^4.1.12",
     "aws-amplify": "^6.15.1",
+    "cally": "^0.8.0",
     "daisyui": "^5.0.54",
     "dotenv": "^17.0.1",
     "elliptic": "^6.6.1",
