@@ -73,13 +73,13 @@ export const getSellerInfo = async function (id) {
   return result;
 };
 
-export const getTaxiRideInfo = async function () {
+export const getRideShareInfo = async function () {
   const result = await query({
     cadence: `
-    import "TaxiRide"
+    import "RideShare"
 
-    access(all) fun main(): TaxiRide.Info? {
-        return TaxiRide.getInfo()
+    access(all) fun main(): RideShare.Info? {
+        return RideShare.getInfo()
     }
     `,
     args: (arg, t) => [],

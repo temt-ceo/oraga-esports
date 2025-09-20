@@ -1,7 +1,7 @@
 <script>
   import { onMount} from 'svelte'
   import { Application } from 'svelte-pixi'
-  import Field from './taxiRide/Field.svelte'
+  import Field from './rideShare/Field.svelte'
   import 'cally';
   import "../app.css";
   import Dialog from './Dialog.svelte';
@@ -11,7 +11,7 @@
   import * as subscriptions from '../graphql/subscriptions';
   // 以下ブロックチェーンライブラリ
   import { config, authenticate, unauthenticate, currentUser, tx } from '@onflow/fcl';
-  import { getTaxiRideInfo, getBalances, getBalancesWithoutUser } from '../../flow_blockchain/mainnet/scripts';
+  import { getRideShareInfo, getBalances, getBalancesWithoutUser } from '../../flow_blockchain/mainnet/scripts';
   import { setDriverInfo, newOrder, fixBug } from '../../flow_blockchain/mainnet/transactions'
   import flowJSON from '../../flow_blockchain/flow.json';
 
@@ -23,7 +23,11 @@
     .subscribe({
       next: ({ data }) => {
         console.log(data)
-        if (data.onCreateGameServerProcess?.type == 'taxi_ride_complete' || data.onCreateGameServerProcess?.type == 'taxi_ride_rating') {
+        if (
+          data.onCreateGameServerProcess?.type == 'ride_share_complete' ||
+          data.onCreateGameServerProcess?.type == 'ride_share_rating' ||
+          data.onCreateGameServerProcess?.type == 'ride_share_new_driver'
+        ) {
           loading = true
           const res = data.onCreateGameServerProcess?.message.split(' , txId: ')
           const txId = res[1]
@@ -31,6 +35,10 @@
             console.log('tx status:', res);
             if (!res.errorMessage && res.statusString == 'SEALED') {
               loading = false
+              if (data.onCreateGameServerProcess?.type == 'ride_share_new_driver') {
+                alert('ドライバー情報をブロックチェーンに保存しました。')
+              }
+
               // トランザクション成功なので残高表示を更新する
               flowBalances = await getBalances(loginUser.addr)
               const tmp = Math.floor(flowBalances[0] * 10) / 10
@@ -54,7 +62,7 @@
   let app
   const add = []
   const addAmount = []
-  const rateOfFlow = 62  // 2025年9月15日時点の時価
+  const rateOfFlow = 59  // 2025年9月15日時点の時価
   let modal;
   let driverModal;
   let ratingModal;
@@ -114,7 +122,7 @@
 
   // ブロックチェーンからスマートコントラクト情報取得
   setInterval(async () => {
-    info = await getTaxiRideInfo();
+    info = await getRideShareInfo();
 
     // 現在注文中のOrderのドライバー賃金取得
     const currentOrder = info.orderQueue.find(element => parseFloat(element.execTime) == (new Date(execDateTime).getTime() / 1000 + 0.0001)) // transactions.jsでブロックチェーンに渡した値で検索
@@ -163,7 +171,7 @@
   // 【関数】ブロックチェーンに賃金データ支払い実行
   async function payWageToDriver(wage) {
     const query = {
-      type: 'taxi_ride_complete',
+      type: 'ride_share_complete',
       message: JSON.stringify({driverId: parseInt(driverId), wage}),
       playerId: '',
     };
@@ -177,23 +185,17 @@
     });
   }
 
-  // 【関数】ブロックチェーンにドライバー更新情報保存
+  // 【関数】ブロックチェーンにドライバー更新情報保存(Rating)
   async function updateDriverInfo() {
     const keys = Object.keys(info.driverData[driverId].data)
     const values = Object.values(info.driverData[driverId].data)
     const ratingIndex = keys.indexOf('rateAverage')
     const workCountIndex = keys.indexOf('workCount')
-    if (workCountIndex < 0) {
-      keys.push('workCount')
-      values.push('1')
-      values[ratingIndex] = driverRating
-    } else {
-      values[ratingIndex] = (parseFloat(values[ratingIndex]) + parseInt(driverRating) / parseInt(values[workCountIndex])).toString()
-      values[workCountIndex] = (parseInt(values[workCountIndex]) + 1).toString()
-    }
+    values[ratingIndex] = ((parseFloat(values[ratingIndex]) + parseInt(driverRating)) / parseInt(values[workCountIndex] + 1)).toString()
+    values[workCountIndex] = (parseInt(values[workCountIndex]) + 1).toString()
     
     const query = {
-      type: 'taxi_ride_rating',
+      type: 'ride_share_rating',
       message: JSON.stringify({driverId: parseInt(driverId), keys, values}),
       playerId: '',
     };
@@ -263,16 +265,35 @@
   async function saveDriverInfoOnBC() {
     await authenticate() // ログイン後ならスルーされる
 
-    const keys = ['name', 'carType', 'rateAverage']
-    const values = [newDriverName, newDriverCarType, '2.5'] // 最初はレーティングを中間にセット
-    console.log(keys, values, 666)
-    let txId = await setDriverInfo(newDriverId, keys, values)
-    loading = true
-    tx(txId).subscribe(async (res) => {
-      console.log('txId:', txId, 'tx status:', res);
-      if (!res.errorMessage && res.statusString == 'SEALED') {
-        loading = false
-        alert('ドライバー情報をブロックチェーンに保存しました。')
+    const keys = ['name', 'carType', 'rateAverage', 'workCount']
+    const values = [newDriverName, newDriverCarType, '2.5', '0'] // 最初はレーティングを中間にセット
+
+    // let txId = await setDriverInfo(newDriverId, keys, values)
+    // loading = true
+    // tx(txId).subscribe(async (res) => {
+    //   console.log('txId:', txId, 'tx status:', res);
+    //   if (!res.errorMessage && res.statusString == 'SEALED') {
+    //     loading = false
+    //     alert('ドライバー情報をブロックチェーンに保存しました。')
+    //   }
+    // });
+
+    const query = {
+      type: 'ride_share_new_driver',
+      message: JSON.stringify({
+        driverId: newDriverId ?? 0,
+        driverAddress: loginUser?.addr,
+        keys,
+        values
+      }),
+      playerId: '',
+    };
+
+    console.log('***** Start to send a transaction of the new driver. *****')
+    await client.graphql({
+      query: createGameServerProcess,
+      variables: {
+        input: query
       }
     });
   }
@@ -303,7 +324,7 @@
 
 <section class="section">
   <div class="game-screen overflow-auto">
-    <h1 class="text-3xl font-bold text-green-600 underline">TaxiRide</h1>
+    <h1 class="text-3xl font-bold text-green-600 underline">RideShare</h1>
     <Application
       width={screen.width * 0.98}
       height={screen.width > 512 ? 256 : screen.width * 0.5}
@@ -431,8 +452,8 @@
       <div class="ml-3 text-success"><span class="loading loading-infinity loading-xl"></span>(保存中)</div>
     {/if}
     <div class="text-green-600 underline mt-2 ml-10">
-      <a href="https://www.flowscan.io/contract/A.b576a3926d239682.TaxiRide?tab=deployments" target="_blank">スマートコントラクト</a><br>
-      <a href="https://github.com/temt-ceo/oraga-esports/pull/22/files" target="_blank">プルリク</a>
+      <a href="https://www.flowscan.io/contract/A.b576a3926d239682.RideShare?tab=deployments" target="_blank">スマートコントラクト</a><br>
+      <a href="https://github.com/temt-ceo/oraga-esports/pull/24" target="_blank">プルリク</a>
     </div>
     <input
       type="checkbox"
@@ -442,8 +463,7 @@
       checked={true}
       class="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800 mr-2"
     />        
-  <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/hAJKmZri6Rc?si=gXAtJrS-ZcQ4E-mK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+  <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/InE1MO3_LR0?si=hsBzPiZ1T8F-tIUe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   <p class="paragraph flex flex-wrap">
     <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
     Copyright © 2025 TEM Technologies Co. LLC All rights reserved.
@@ -467,14 +487,14 @@
         {#each driverDataLuxury as driverData}
           <label class="input">
             <input type="radio" name="radio-1" value={driverData.driverId} class="radio" on:change={(event) => driverId = event.target.value} />
-            <span class="label">{driverData.name}(🌟{driverData.rateAverage})</span>
+            <span class="label">{driverData.name}(🌟{Math.floor(driverData.rateAverage * 10) / 10})</span>
           </label>
         {/each}
       {:else}
         {#each driverDataNormal as driverData}
           <label class="input">
             <input type="radio" name="radio-1" value={driverData.driverId} class="radio" on:change={(event) => driverId = event.target.value} />
-            <span class="label">{driverData.name}(🌟{driverData.rateAverage})</span>
+            <span class="label">{driverData.name}(🌟{Math.floor(driverData.rateAverage * 10) / 10})</span>
           </label>
         {/each}
       {/if}

@@ -121,7 +121,7 @@
     }
   }
   function enterOrderStatus6() {
-    // ドライバーのRating(TaxiRide.svelteで行う)
+    // ドライバーのRating(RideShare.svelteで行う)
     const now = new Date()
     const processedTime = new Date(now.getTime() + frame * 12 * 60) // 大体0.8秒=1分
     if (startTime.getTime() < processedTime.getTime() - 1000 * 60 * 20) {// (大きい=より未来)
@@ -167,28 +167,28 @@
     height={40}
     x={carPosition.x}
     y={carPosition.y}
-    texture={PIXI.Texture.from('/assets/taxi_ride/car.png')}
+    texture={PIXI.Texture.from('/assets/ride_share/car.png')}
   />
   <Sprite
     width={40}
     height={63}
     x={personPosition.x}
     y={personPosition.y}
-    texture={PIXI.Texture.from('/assets/taxi_ride/person.png')}
+    texture={PIXI.Texture.from('/assets/ride_share/person.png')}
   />
   <Sprite
     width={50}
     height={50}
     x={startPosition.x}
     y={startPosition.y}
-    texture={PIXI.Texture.from(startPlace == '品川駅南口' || startPlace == '品川駅北口' ? '/assets/taxi_ride/station.png' : '/assets/shooting/star.png')}
+    texture={PIXI.Texture.from(startPlace == '品川駅南口' || startPlace == '品川駅北口' ? '/assets/ride_share/station.png' : '/assets/shooting/star.png')}
   />
   <Sprite
     width={85}
     height={60}
     x={destinationPosition.x}
     y={destinationPosition.y - 4}
-    texture={PIXI.Texture.from(goalPlace == '羽田空港' ? '/assets/taxi_ride/airport.png' : (goalPlace == '' ? '/assets/shooting/star.png' : '/assets/taxi_ride/station.png'))}
+    texture={PIXI.Texture.from(goalPlace == '羽田空港' ? '/assets/ride_share/airport.png' : (goalPlace == '' ? '/assets/shooting/star.png' : '/assets/ride_share/station.png'))}
   />
   <Text
     x={screenWidth / 2}

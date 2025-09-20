@@ -1,7 +1,7 @@
 import "FlowToken"
 import "FungibleToken"
 
-access(all) contract TaxiRide {
+access(all) contract RideShare {
 
   access(self) let FlowTokenVault: Capability<&{FungibleToken.Receiver}>
   access(self) let DriverFlowTokenVault: {UInt: Capability<&{FungibleToken.Receiver}>}
@@ -24,13 +24,13 @@ access(all) contract TaxiRide {
         return id
       } else {
         // 新規登録
-        TaxiRide.totalDrivers = TaxiRide.totalDrivers + 1
+        RideShare.totalDrivers = RideShare.totalDrivers + 1
         var data = DriverData()
         for index, key in keys {
           data.set(key: key, value: values[index])
         }
-        self.driverData[TaxiRide.totalDrivers] = data
-        return TaxiRide.totalDrivers
+        self.driverData[RideShare.totalDrivers] = data
+        return RideShare.totalDrivers
       }
     }
 
@@ -86,19 +86,10 @@ access(all) contract TaxiRide {
   }
   // PUT
   access(all) fun setDriverInfo(driverId: UInt, keys: [String], values: [String], flow_vault_receiver: Capability<&{FungibleToken.Receiver}>?) {
-    let _driverId = TaxiRide.info.setDriver(id: driverId, keys: keys, values: values)
+    let _driverId = RideShare.info.setDriver(id: driverId, keys: keys, values: values)
     if (flow_vault_receiver != nil) {
-      TaxiRide.DriverFlowTokenVault[_driverId] = flow_vault_receiver
+      RideShare.DriverFlowTokenVault[_driverId] = flow_vault_receiver
     }
-  }
-
-  // 間違えて0(driverId)に入金先をセットしてしまったので解消するためのコード(orz)。1回しか使えない。nilはDriverFlowTokenVaultにセットできないので。
-  access(all) fun fixBug(driverId: UInt) {
-    pre {
-      TaxiRide.DriverFlowTokenVault[0] != nil: "nil can't be set to DriverFlowTokenVault."
-    }
-    TaxiRide.DriverFlowTokenVault[driverId] = TaxiRide.DriverFlowTokenVault[0]
-    TaxiRide.DriverFlowTokenVault[0] = nil
   }
 
   // PUT
@@ -111,11 +102,11 @@ access(all) contract TaxiRide {
     // ORDER COMPLETE
     access(all) fun payWage(driverId: UInt, wage: UFix64) {
       pre {
-        TaxiRide.DriverFlowTokenVault[driverId] != nil: "Deposit destination is nil, so we can't send wage."
+        RideShare.DriverFlowTokenVault[driverId] != nil: "Deposit destination is nil, so we can't send wage."
       }
       // Pay the wage.
-      let wage <- TaxiRide.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: wage) as! @FlowToken.Vault
-      TaxiRide.DriverFlowTokenVault[driverId]!.borrow()!.deposit(from: <- wage)
+      let wage <- RideShare.account.storage.borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!.withdraw(amount: wage) as! @FlowToken.Vault
+      RideShare.DriverFlowTokenVault[driverId]!.borrow()!.deposit(from: <- wage)
     }
   }
 
@@ -124,6 +115,6 @@ access(all) contract TaxiRide {
     self.FlowTokenVault = self.account.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
     self.DriverFlowTokenVault = {}
     self.totalDrivers = 0
-    self.account.storage.save( <- create Admin(), to: /storage/TaxiRideAdmin)
+    self.account.storage.save( <- create Admin(), to: /storage/RideShareAdmin)
   }
 }
