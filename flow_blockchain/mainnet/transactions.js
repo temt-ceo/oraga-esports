@@ -211,7 +211,7 @@ export const buyVege = async function (id, buy, price) {
 export const setDriverInfo = async function (driverId, keys, values) {
   const txId = await mutate({
     cadence: `
-      import "TaxiRide"
+      import "RideShare"
       import "FlowToken"
       import "FungibleToken"
 
@@ -219,7 +219,7 @@ export const setDriverInfo = async function (driverId, keys, values) {
         prepare(signer: auth(BorrowValue) &Account) {
           let FlowTokenReceiver = signer.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
 
-          TaxiRide.setDriverInfo(driverId: driverId, keys: keys, values: values, flow_vault_receiver: FlowTokenReceiver)
+          RideShare.setDriverInfo(driverId: driverId, keys: keys, values: values, flow_vault_receiver: FlowTokenReceiver)
         }
         execute {
           log("success")
@@ -249,14 +249,14 @@ export const newOrder = async function (
 ) {
   const txId = await mutate({
     cadence: `
-      import "TaxiRide"
+      import "RideShare"
       import "FlowToken"
       import "FungibleToken"
 
       transaction(execTime: UFix64, driverId: UInt, start: String, goal: String, price: UFix64) {
         prepare(signer: auth(BorrowValue) &Account) {
           let payment <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: price) as! @FlowToken.Vault
-          TaxiRide.newOrder(payment: <- payment, execTime: execTime, driverId: driverId, start: start, goal: goal)
+          RideShare.newOrder(payment: <- payment, execTime: execTime, driverId: driverId, start: start, goal: goal)
         }
         execute {
           log("success")
@@ -282,11 +282,11 @@ export const newOrder = async function (
 export const fixBug = async function (driverId) {
   const txId = await mutate({
     cadence: `
-      import "TaxiRide"
+      import "RideShare"
 
       transaction(driverId: UInt) {
         prepare(signer: auth(BorrowValue) &Account) {
-          TaxiRide.fixBug(driverId: driverId)
+          RideShare.fixBug(driverId: driverId)
         }
         execute {
           log("success")

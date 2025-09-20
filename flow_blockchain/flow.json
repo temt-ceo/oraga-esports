@@ -24,8 +24,8 @@
         "testing": "0000000000000009"
       }
     },
-    "TaxiRide": {
-      "source": "cadence/contracts/TaxiRide.cdc",
+    "RideShare": {
+      "source": "cadence/contracts/RideShare.cdc",
       "aliases": {
         "testing": "0000000000000010"
       }
@@ -144,7 +144,7 @@
         "OragaESports",
         "CookStocker",
         "VegeSeller",
-        "TaxiRide"
+        "RideShare"
       ]
     },
     "testnet": {
@@ -152,7 +152,7 @@
         "TestnetTest5",
         "CookStocker",
         "VegeSeller",
-        "TaxiRide"
+        "RideShare"
       ]
     }
   }

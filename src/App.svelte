@@ -33,14 +33,14 @@
     } else if (currentUrl.includes('/vege-seller')) {
       const { default: LoadedComponent } = await import('./lib/VegeSeller.svelte');
       DynamicComponent = LoadedComponent;
-    } else if (currentUrl.includes('/taxi-ride')) {
-      const { default: LoadedComponent } = await import('./lib/TaxiRide.svelte');
+    } else if (currentUrl.includes('/ride-share')) {
+      const { default: LoadedComponent } = await import('./lib/RideShare.svelte');
       DynamicComponent = LoadedComponent;
     }
   });
 
   setInterval(async () => {
-    if (!currentUrl.includes('/cook-stocker') && !location.href.includes('/vege-seller') && !location.href.includes('/taxi-ride')) {
+    if (!currentUrl.includes('/cook-stocker') && !location.href.includes('/vege-seller') && !location.href.includes('/ride-share')) {
       currentSituation = await getGamersInfo();
     }
   }, 1500);
@@ -55,7 +55,7 @@
     <section class="section shooting">
       <Stats currentSituation={currentSituation} />
     </section>
-  {:else if location.href.includes('/cook-stocker') || location.href.includes('/vege-seller') || location.href.includes('/taxi-ride')}
+  {:else if location.href.includes('/cook-stocker') || location.href.includes('/vege-seller') || location.href.includes('/ride-share')}
     <section>
       <svelte:component this={DynamicComponent} />
     </section>
@@ -86,7 +86,7 @@
           <div class="notice">
             The difficulty level is exactly the same as in this YouTube video.
           </div>
-          <div><a href="/taxi-ride">➜ To TaxiRide demo</a></div>
+          <div><a href="/ride-share">➜ To RideShare demo</a></div>
         </div>
         <div class="game-collection">
           <img src="/assets/MMO RPG.png" alt="MMO RPG" />
