@@ -36,6 +36,9 @@
     } else if (currentUrl.includes('/ride-share')) {
       const { default: LoadedComponent } = await import('./lib/RideShare.svelte');
       DynamicComponent = LoadedComponent;
+    } else if (currentUrl.includes('/mmorpg')) {
+      const { default: LoadedComponent } = await import('./lib/MMORPG.svelte');
+      DynamicComponent = LoadedComponent;
     }
   });
 
@@ -55,7 +58,7 @@
     <section class="section shooting">
       <Stats currentSituation={currentSituation} />
     </section>
-  {:else if location.href.includes('/cook-stocker') || location.href.includes('/vege-seller') || location.href.includes('/ride-share')}
+  {:else if location.href.includes('/cook-stocker') || location.href.includes('/vege-seller') || location.href.includes('/ride-share') || location.href.includes('/mmorpg')}
     <section>
       <svelte:component this={DynamicComponent} />
     </section>
@@ -89,17 +92,29 @@
           <div><a href="/ride-share">➜ To RideShare demo</a></div>
         </div>
         <div class="game-collection">
-          <img src="/assets/MMO RPG.png" alt="MMO RPG" />
+          <a href="/mmorpg">
+            <img src="/assets/MMO RPG.png" alt="MMO RPG" />
+          </a>
           <br>
           <p class="paragraph">
-            Category: <span class="allura">MMO RPG</span> (Coming Soon!)<br>
+            Category: <span class="allura">MMO RPG</span><br>
+          </p>
+          <span class="cinzel">How to play:</span><br>
+          <span class="cinzel li">1. Find a Buddy. </span><br>
+          <span class="cinzel li">2. Share resource capabilities within the team. </span><br>
+          <span class="cinzel li">3. Defeat the enemy team and win the prize money.</span>
+          <p class="bodoni theme1">
+            You choose your preferred resource from the Warrior and Thief resources. Select the resource you want from your teammates and find a Buddy who possesses that resource.<br>
+          </p>
+          <p class="description">
+            Swapping resource capabilities is free. Team up and defeat the enemy team! The prize is double the game fee!<br><br><br><br>
           </p>
         </div>
       </div>
     </div>
     <p class="paragraph sign">
       <span class="allura">Powered by </span><img src="/assets/flow_logo.avif" alt="flow logo" /> Flow blockchain.<br>
-      Copyright © 2025 Tokyo EM Technology. All rights reserved.
+      Copyright © 2025 TEM Technologies Co., LLC. All rights reserved.
     </p>
   </section>
   {/if}

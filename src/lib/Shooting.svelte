@@ -13,7 +13,7 @@
 
   let flowBalance;
   let playerName;
-  let modal;
+  let dialog;
   let modal2;
   let modal3;
   let notificationModal;
@@ -41,7 +41,7 @@
       }
     } else {
       console.log('Not login.')
-      modal.showModal();
+      dialog.showModal();
     }
   });
 
@@ -140,11 +140,11 @@
   </div>
 </div>
 
-<Dialog bind:dialog={modal}>
+<Dialog bind:dialog={dialog}>
   <div>You need a crypto wallet.<br>(You can sign out anytime)</div>
   <button on:click={() => {
     authenticate()
-    modal.close()
+    dialog.close()
   }}>SignIn</button>
 </Dialog>
 

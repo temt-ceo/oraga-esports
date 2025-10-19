@@ -64,7 +64,7 @@ access(all) contract CookStocker {
   }
   // PUT
   access(all) fun setCookStockerInfo(id: String, add: [String], remove: [String]) {
-    self.info.set(id: id, add: add, remove: remove)
+    self.info.set(id: id, add: add, remove: remove);
   }
   // DELETE
   access(all) fun deleteCookStockerInfo(id: String) {

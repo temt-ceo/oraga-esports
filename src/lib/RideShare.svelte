@@ -123,7 +123,7 @@
   // ブロックチェーンからスマートコントラクト情報取得
   setInterval(async () => {
     info = await getRideShareInfo();
-
+console.log(info)
     // 現在注文中のOrderのドライバー賃金取得
     const currentOrder = info.orderQueue.find(element => parseFloat(element.execTime) == (new Date(execDateTime).getTime() / 1000 + 0.0001)) // transactions.jsでブロックチェーンに渡した値で検索
     // ドライバー一覧取得
@@ -463,10 +463,10 @@
       checked={true}
       class="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800 mr-2"
     />        
-  <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/InE1MO3_LR0?si=hsBzPiZ1T8F-tIUe" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/iIgzPaSjDB4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   <p class="paragraph flex flex-wrap">
     <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
-    Copyright © 2025 TEM Technologies Co. LLC All rights reserved.
+    Copyright © 2025 TEM Technologies Co., LLC All rights reserved.
   </p>
 
   <Dialog bind:dialog={modal}>
