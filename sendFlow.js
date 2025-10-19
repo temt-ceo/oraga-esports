@@ -69,7 +69,7 @@ async function sendTx() {
         }
       }
     `,
-    args: (arg, t) => [arg(33.05, t.UFix64), arg(addr, t.Address)],
+    args: (arg, t) => [arg(13.55, t.UFix64), arg(addr, t.Address)],
     payer: authorizationFunction,
     proposer: authorizationFunction,
     authorizations: [authorizationFunction],

@@ -302,3 +302,197 @@ export const fixBug = async function (driverId) {
   console.log(txId);
   return txId;
 };
+
+export const buyResource = async function (resourceName) {
+  const txId = await mutate({
+    cadence: `
+      import "MMORPG6"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction(resourceName: String) {
+        prepare(signer: auth(Storage, Capabilities)  &Account) {
+
+          if (resourceName == "Warrior") {
+              let payment <- signer.storage
+                .borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!
+                .withdraw(amount: 5.0) as! @FlowToken.Vault
+
+              /* Create a Warrior resource */
+              signer.storage
+                  .save(<- MMORPG6.createWarriorResource(
+                      payment: <- payment
+                  ), to: /storage/MMORPG6WarriorResource)
+
+              /* リソースのaccess(all)のフィールドに誰でもアクセスできるようにCapabilityを公開 */
+              let cap = signer.capabilities.storage
+                  .issue<&MMORPG6.Warrior>(/storage/MMORPG6WarriorResource)
+              signer.capabilities.publish(cap, at: /public/MMORPG6WarriorResource)
+
+          } else if (resourceName == "Thief") {
+              let payment <- signer.storage
+                .borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!
+                .withdraw(amount: 5.0) as! @FlowToken.Vault
+
+              /* Create a Thief resource */
+              signer.storage
+                  .save(<- MMORPG6.createThiefResource(
+                      payment: <- payment
+                  ), to: /storage/MMORPG6ThiefResource)
+
+              /* リソースのaccess(all)のフィールドに誰でもアクセスできるようにCapabilityを公開 */
+              let cap = signer.capabilities.storage
+                  .issue<&MMORPG6.Thief>(/storage/MMORPG6ThiefResource)
+              signer.capabilities.publish(cap, at: /public/MMORPG6ThiefResource)
+          }
+        }
+      }
+    `,
+    args: (arg, t) => [arg(resourceName, t.String)],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log("transaction sent.");
+  console.log(txId);
+  return txId;
+};
+
+export const shareResourceCapabilityWithBuddy = async function (
+  resourceName,
+  recipient
+) {
+  const txId = await mutate({
+    cadence: `
+      import "MMORPG6"
+
+      transaction(resourceName: String, recipient: Address) {
+        prepare(signer: auth(IssueStorageCapabilityController, PublishInboxCapability) &Account) {
+
+          if (resourceName == "Warrior") {
+              /* Issue a resource capability for WarriorAbility1 entitlement */
+              let capability = signer.capabilities
+                  .storage
+                  .issue<auth(MMORPG6.WarriorAbility1) &MMORPG6.Warrior>(/storage/MMORPG6WarriorResource)
+
+              /* Publish the capability for the specified recipient */
+              signer.inbox.publish(capability, name: "LargeRecoveryShield", recipient: recipient)
+
+          } else if (resourceName == "Thief") {
+              /* Issue a resource capability for ThiefAbility1 entitlement */
+              let capability = signer.capabilities
+                  .storage
+                  .issue<auth(MMORPG6.ThiefAbility1) &MMORPG6.Thief>(/storage/MMORPG6ThiefResource)
+
+              /* Publish the capability for the specified recipient */
+              signer.inbox.publish(capability, name: "PoisonMaking", recipient: recipient)
+          }
+        }
+      }
+    `,
+    args: (arg, t) => [arg(resourceName, t.String), arg(recipient, t.Address)],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log("transaction sent.");
+  console.log(txId);
+  return txId;
+};
+
+export const newGameBattle = async function (
+  player1Address,
+  player2Address,
+  lifeOfPlayer1,
+  lifeOfPlayer2,
+  gameFee
+) {
+  const txId = await mutate({
+    cadence: `
+      import "MMORPG6"
+      import "FlowToken"
+      import "FungibleToken"
+
+      transaction(player1Address: Address, player2Address: Address, lifeOfPlayer1: UInt8, lifeOfPlayer2: UInt8, gameFee: UFix64) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          /* THE GAME FEE */
+          let payment <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: gameFee) as! @FlowToken.Vault
+          /* GAME START */
+          MMORPG6.newGameBattle(
+              payment: <- payment,
+              player1Address: player1Address,
+              player2Address: player2Address,
+              lifeOfPlayer1: lifeOfPlayer1,
+              lifeOfPlayer2: lifeOfPlayer2
+          )
+        }
+        execute {
+          log("success")
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(player1Address, t.Address),
+      arg(player2Address, t.Address),
+      arg(lifeOfPlayer1, t.UInt8),
+      arg(lifeOfPlayer2, t.UInt8),
+      arg(gameFee + 0.00001, t.UFix64), // 少数である必要があるため
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log(txId);
+  return txId;
+};
+
+export const executeBuddyAbility = async function (
+  resourceName,
+  providerAddress,
+  battleId,
+  target
+) {
+  const txId = await mutate({
+    cadence: `
+      import "MMORPG6"
+
+      transaction(resourceName: String, providerAddress: Address, battleId: Int, target: String) {
+        prepare(signer: auth(ClaimInboxCapability) &Account) {
+          if (resourceName == "Warrior") {
+              /* Claim the capability published by buddy */
+              let capability = signer.inbox
+                  .claim<auth(MMORPG6.WarriorAbility1) &MMORPG6.Warrior>(
+                      "LargeRecoveryShield",
+                      provider: providerAddress
+                  )
+              capability!.borrow()!.LargeRecoveryShield(battleId: battleId, target: target)
+          } else if (resourceName == "Thief") {
+              /* Claim the capability published by buddy */
+              let capability = signer.inbox
+                  .claim<auth(MMORPG6.ThiefAbility1) &MMORPG6.Thief>(
+                      "PoisonMaking",
+                      provider: providerAddress
+                  )
+              capability!.borrow()!.PoisonMaking(battleId: battleId)
+          }
+        }
+      }
+    `,
+    args: (arg, t) => [
+      arg(resourceName, t.String),
+      arg(providerAddress, t.Address),
+      arg(battleId, t.Int),
+      arg(target, t.String),
+    ],
+    proposer: authz,
+    payer: authz,
+    authorizations: [authz],
+    limit: 999,
+  });
+  console.log("transaction sent.");
+  console.log(txId);
+  return txId;
+};

@@ -29,6 +29,12 @@
       "aliases": {
         "testing": "0000000000000010"
       }
+    },
+    "MMORPG6": {
+      "source": "cadence/contracts/MMORPG.cdc",
+      "aliases": {
+        "testing": "0000000000000011"
+      }
     }
   },
   "dependencies": {
@@ -141,18 +147,20 @@
     },
     "mainnet": {
       "mainnet-account": [
-        "OragaESports",
         "CookStocker",
         "VegeSeller",
-        "RideShare"
+        "RideShare",
+        "OragaESports",
+        "MMORPG6"
       ]
     },
     "testnet": {
       "testnet-account": [
-        "TestnetTest5",
         "CookStocker",
         "VegeSeller",
-        "RideShare"
+        "RideShare",
+        "OragaESports",
+        "MMORPG6"
       ]
     }
   }

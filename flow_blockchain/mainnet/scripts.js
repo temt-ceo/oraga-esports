@@ -161,3 +161,59 @@ export const getBalancesWithoutUser = async function () {
   });
   return result;
 };
+
+export const getMMORPGInfo = async function () {
+  const result = await query({
+    cadence: `
+    import "MMORPG6"
+
+    access(all) fun main(): MMORPG6.Info? {
+        return MMORPG6.getInfo()
+    }
+    `,
+    args: (arg, t) => [],
+  });
+  return result;
+};
+
+export const havingResourceId = async function (address, resourceName) {
+  const result = await query({
+    cadence: `
+    import "MMORPG6"
+
+    access(all) fun main(address: Address, resourceName: String): UInt? {
+        if (resourceName == "Warrior") {
+            return getAccount(address).capabilities.get<&MMORPG6.Warrior>(/public/MMORPG6WarriorResource).borrow()?.id
+        } else if (resourceName == "Thief") {
+            return getAccount(address).capabilities.get<&MMORPG6.Thief>(/public/MMORPG6ThiefResource).borrow()?.id
+        }
+        return nil
+    }
+    `,
+    args: (arg, t) => [arg(address, t.Address), arg(resourceName, t.String)],
+  });
+  return result;
+};
+
+export const havingResourceMaxLife = async function (address, resourceName) {
+  const result = await query({
+    cadence: `
+    import "MMORPG6"
+
+    access(all) fun main(address: Address, resourceName: String): UInt8? {
+        if (resourceName == "Warrior") {
+            return getAccount(address).capabilities
+                .get<&MMORPG6.Warrior>(/public/MMORPG6WarriorResource)
+                .borrow()?.maxLife
+        } else if (resourceName == "Thief") {
+            return getAccount(address).capabilities
+                .get<&MMORPG6.Thief>(/public/MMORPG6ThiefResource)
+                .borrow()?.maxLife
+        }
+        return nil
+    }
+    `,
+    args: (arg, t) => [arg(address, t.Address), arg(resourceName, t.String)],
+  });
+  return result;
+};

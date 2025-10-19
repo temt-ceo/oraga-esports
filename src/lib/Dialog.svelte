@@ -19,7 +19,7 @@
 	}
 
 	dialog > :global(button) {
-		width: 100px;
+		min-width: 120px;
 		height: 30px;
 		margin-top: 15px;
 		border-radius: 6px;

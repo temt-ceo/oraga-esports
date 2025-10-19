@@ -128,6 +128,41 @@ export const handler = async (event) => {
         }
       }
     `;
+  } else if (input.type === "mmorpg_basic_attack") {
+    // TeamPlayer1: mainPlayer, TeamPlayer2: buddyPlayer, resourceName: [Warrior, Thief, Enemy]
+    transaction = `
+      import MMORPG6 from 0xb576a3926d239682
+
+      transaction(battleId: Int, target: String, resourceName: String) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let MMORPG6Admin = signer.storage.borrow<&MMORPG6.Admin>(from: /storage/MMORPG6Admin)
+            ?? panic("Could not borrow reference to the Administrator Resource.")
+          if (resourceName == "Enemy") {
+            MMORPG6Admin.basicAttack(battleId: battleId, target: target, resourceName: resourceName)
+          } else {
+            MMORPG6Admin.basicAttack(battleId: battleId, target: nil, resourceName: resourceName)
+          }
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
+  } else if (input.type === "pay_reward_to_winner_of_mmorpg") {
+    transaction = `
+      import MMORPG6 from 0xb576a3926d239682
+
+      transaction(recipient1: Address, recipient2: Address, reward: UFix64) {
+        prepare(signer: auth(BorrowValue) &Account) {
+          let MMORPG6Admin = signer.storage.borrow<&MMORPG6.Admin>(from: /storage/MMORPG6Admin)
+            ?? panic("Could not borrow reference to the Administrator Resource.")
+          MMORPG6Admin.payRewards(recipient1: recipient1, recipient2: recipient2, reward: reward)
+        }
+        execute {
+          log("success")
+        }
+      }
+    `;
   }
 
   config({
@@ -334,16 +369,69 @@ export const handler = async (event) => {
       tx(txId).subscribe((res) => {
         console.log(res);
       });
+    } else if (input.type === "mmorpg_basic_attack") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [
+          arg(message.battleId, t.Int),
+          arg(message.target, t.String),
+          arg(message.resourceName, t.String),
+        ],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[mmorpg_basic_attack] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
+    } else if (input.type === "pay_reward_to_winner_of_mmorpg") {
+      txId = await mutate({
+        cadence: transaction,
+        args: (arg, t) => [
+          arg(message.recipient1, t.Address),
+          arg(message.recipient2, t.Address),
+          arg(message.reward, t.UFix64),
+        ],
+        proposer: authFunctionForProposer,
+        payer: authFunction,
+        authorizations: [authFunction],
+        limit: 999,
+      });
+      console.log(`txId: ${txId}`);
+      message = `Tx[pay_reward_to_winner_of_mmorpg] is On Going.`;
+      tx(txId).subscribe((res) => {
+        console.log(res);
+      });
     }
 
-    return {
-      id: new Date().getTime(),
-      type: input.type || "",
-      message: `${input.message} , txId: ${txId}`,
-      playerId: gamerId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    if (
+      input.type === "call_friend_candidate" ||
+      input.type === "accept_calling_friend" ||
+      input.type === "battle_is_ready" ||
+      input.type === "entered_the_game_world" ||
+      input.type === "used_buddy_capability"
+    ) {
+      return {
+        id: new Date().getTime(),
+        type: input.type,
+        message: input.message,
+        playerId: gamerId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    } else {
+      return {
+        id: new Date().getTime(),
+        type: input.type,
+        message: `${input.message} , txId: ${txId}`,
+        playerId: gamerId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
   } catch (error) {
     return {
       id: new Date().getTime(),
