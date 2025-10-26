@@ -1,7 +1,7 @@
 import "FlowToken"
 import "FungibleToken"
 
-access(all) contract MMORPG6 {
+access(all) contract MMORPG8 {
 
   access(self) let FlowTokenVault: Capability<&{FungibleToken.Receiver}>
   access(self) let info: Info
@@ -119,11 +119,11 @@ access(all) contract MMORPG6 {
 
       // 両方戦士タイプなら悪魔を登場させる
       if (lifeOfPlayer1 > 5 && lifeOfPlayer2 > 5) {
-        self.enemy1Life = 9 + revertibleRandom(modulo: modulo) // 9 ~ 11の整数
+        self.enemy2Life = 9 + revertibleRandom(modulo: modulo) // 9 ~ 11の整数
       } else {
-        self.enemy1Life = 5 + revertibleRandom(modulo: modulo) // 5 ~ 7の整数
+        self.enemy2Life = 5 + revertibleRandom(modulo: modulo) // 5 ~ 7の整数
       }
-      self.enemy2Life = 8 + revertibleRandom(modulo: modulo) // 8 ~ 10の整数
+      self.enemy1Life = 8 + revertibleRandom(modulo: modulo) // 8 ~ 10の整数
       self.reward = reward
     }
   }
@@ -159,15 +159,15 @@ access(all) contract MMORPG6 {
     access(all) let maxLife: UInt8
 
     access(ThiefAbility1) fun PoisonMaking(battleId: Int) {
-      MMORPG6.info.updateGameBattle(battleId: battleId, target: nil, lifeChange: 6, isDamage: true)
+      MMORPG8.info.updateGameBattle(battleId: battleId, target: nil, lifeChange: 6, isDamage: true)
     }
     access(ThiefAbility2) fun WhipAttack(battleId: Int) {
-      MMORPG6.info.updateGameBattle(battleId: battleId, target: nil, lifeChange: 1, isDamage: true)
+      MMORPG8.info.updateGameBattle(battleId: battleId, target: nil, lifeChange: 1, isDamage: true)
     }
     
     init() {
-      MMORPG6.totalGamePlayers = MMORPG6.totalGamePlayers + 1
-      self.id = MMORPG6.totalGamePlayers
+      MMORPG8.totalGamePlayers = MMORPG8.totalGamePlayers + 1
+      self.id = MMORPG8.totalGamePlayers
       self.maxLife = 5
     }
   }
@@ -177,15 +177,15 @@ access(all) contract MMORPG6 {
     access(all) let maxLife: UInt8
 
     access(WarriorAbility1) fun LargeRecoveryShield(battleId: Int, target: String) {
-      MMORPG6.info.updateGameBattle(battleId: battleId, target: target, lifeChange: 4, isDamage: false)
+      MMORPG8.info.updateGameBattle(battleId: battleId, target: target, lifeChange: 4, isDamage: false)
     }
     access(WarriorAbility2) fun RageAttack(battleId: Int) {
-      MMORPG6.info.updateGameBattle(battleId: battleId, target: nil, lifeChange: 3, isDamage: true)
+      MMORPG8.info.updateGameBattle(battleId: battleId, target: nil, lifeChange: 3, isDamage: true)
     }
 
     init() {
-      MMORPG6.totalGamePlayers = MMORPG6.totalGamePlayers + 1
-      self.id = MMORPG6.totalGamePlayers
+      MMORPG8.totalGamePlayers = MMORPG8.totalGamePlayers + 1
+      self.id = MMORPG8.totalGamePlayers
       self.maxLife = 8
     }
   }
@@ -193,7 +193,7 @@ access(all) contract MMORPG6 {
   access(all) resource Admin {
     access(all) fun payRewards(recipient1: Address, recipient2: Address, reward: UFix64) {
       // Pay the reward.
-      let reward1 <- MMORPG6.account
+      let reward1 <- MMORPG8.account
         .storage
         .borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!
         .withdraw(amount: reward) as! @FlowToken.Vault
@@ -203,7 +203,7 @@ access(all) contract MMORPG6 {
         .get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
         .borrow()!.deposit(from: <- reward1)
 
-      let reward2 <- MMORPG6.account
+      let reward2 <- MMORPG8.account
         .storage
         .borrow<auth(FungibleToken.Withdraw) &{FungibleToken.Provider}>(from: /storage/flowTokenVault)!
         .withdraw(amount: reward) as! @FlowToken.Vault
@@ -215,27 +215,27 @@ access(all) contract MMORPG6 {
     }
 
     access(all) fun basicAttack(battleId: Int, target: String?, resourceName: String) {
-      MMORPG6.info.updateGameBattle(battleId: battleId, target: target, lifeChange: MMORPG6.info.basicAttackInfo[resourceName]![1], isDamage: true)
+      MMORPG8.info.updateGameBattle(battleId: battleId, target: target, lifeChange: MMORPG8.info.basicAttackInfo[resourceName]![1], isDamage: true)
     }
   }
 
-  access(all) fun createWarriorResource(payment: @FlowToken.Vault): @MMORPG6.Warrior {
+  access(all) fun createWarriorResource(payment: @FlowToken.Vault): @MMORPG8.Warrior {
     pre {
-      payment.balance == 0.5: "Cost of resource must be 5.0FLOW coin."
+      payment.balance == 5.0: "Cost of resource must be 5.0FLOW coin."
     }
     let _resource <- create Warrior() // resourceは予約語なので_をつけてます
 
-    MMORPG6.FlowTokenVault.borrow()!.deposit(from: <- payment) // 代金徴収
+    MMORPG8.FlowTokenVault.borrow()!.deposit(from: <- payment) // 代金徴収
     return <- _resource
   }
 
-  access(all) fun createThiefResource(payment: @FlowToken.Vault): @MMORPG6.Thief {
+  access(all) fun createThiefResource(payment: @FlowToken.Vault): @MMORPG8.Thief {
     pre {
-      payment.balance == 0.5: "Cost of resource must be 5.0FLOW coin."
+      payment.balance == 5.0: "Cost of resource must be 5.0FLOW coin."
     }
     let _resource <- create Thief()
 
-    MMORPG6.FlowTokenVault.borrow()!.deposit(from: <- payment) // 代金徴収
+    MMORPG8.FlowTokenVault.borrow()!.deposit(from: <- payment) // 代金徴収
     return <- _resource
   }
 
@@ -243,6 +243,6 @@ access(all) contract MMORPG6 {
     self.info = Info()
     self.FlowTokenVault = self.account.capabilities.get<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
     self.totalGamePlayers = 0
-    self.account.storage.save( <- create Admin(), to: /storage/MMORPG6Admin)
+    self.account.storage.save( <- create Admin(), to: /storage/MMORPG8Admin)
   }
 }

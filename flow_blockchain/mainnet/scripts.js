@@ -165,10 +165,10 @@ export const getBalancesWithoutUser = async function () {
 export const getMMORPGInfo = async function () {
   const result = await query({
     cadence: `
-    import "MMORPG6"
+    import "MMORPG8"
 
-    access(all) fun main(): MMORPG6.Info? {
-        return MMORPG6.getInfo()
+    access(all) fun main(): MMORPG8.Info? {
+        return MMORPG8.getInfo()
     }
     `,
     args: (arg, t) => [],
@@ -179,13 +179,13 @@ export const getMMORPGInfo = async function () {
 export const havingResourceId = async function (address, resourceName) {
   const result = await query({
     cadence: `
-    import "MMORPG6"
+    import "MMORPG8"
 
     access(all) fun main(address: Address, resourceName: String): UInt? {
         if (resourceName == "Warrior") {
-            return getAccount(address).capabilities.get<&MMORPG6.Warrior>(/public/MMORPG6WarriorResource).borrow()?.id
+            return getAccount(address).capabilities.get<&MMORPG8.Warrior>(/public/MMORPG8WarriorResource).borrow()?.id
         } else if (resourceName == "Thief") {
-            return getAccount(address).capabilities.get<&MMORPG6.Thief>(/public/MMORPG6ThiefResource).borrow()?.id
+            return getAccount(address).capabilities.get<&MMORPG8.Thief>(/public/MMORPG8ThiefResource).borrow()?.id
         }
         return nil
     }
@@ -198,16 +198,16 @@ export const havingResourceId = async function (address, resourceName) {
 export const havingResourceMaxLife = async function (address, resourceName) {
   const result = await query({
     cadence: `
-    import "MMORPG6"
+    import "MMORPG8"
 
     access(all) fun main(address: Address, resourceName: String): UInt8? {
         if (resourceName == "Warrior") {
             return getAccount(address).capabilities
-                .get<&MMORPG6.Warrior>(/public/MMORPG6WarriorResource)
+                .get<&MMORPG8.Warrior>(/public/MMORPG8WarriorResource)
                 .borrow()?.maxLife
         } else if (resourceName == "Thief") {
             return getAccount(address).capabilities
-                .get<&MMORPG6.Thief>(/public/MMORPG6ThiefResource)
+                .get<&MMORPG8.Thief>(/public/MMORPG8ThiefResource)
                 .borrow()?.maxLife
         }
         return nil

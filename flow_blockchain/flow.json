@@ -30,7 +30,7 @@
         "testing": "0000000000000010"
       }
     },
-    "MMORPG6": {
+    "MMORPG8": {
       "source": "cadence/contracts/MMORPG.cdc",
       "aliases": {
         "testing": "0000000000000011"
@@ -151,7 +151,7 @@
         "VegeSeller",
         "RideShare",
         "OragaESports",
-        "MMORPG6"
+        "MMORPG8"
       ]
     },
     "testnet": {
@@ -160,7 +160,7 @@
         "VegeSeller",
         "RideShare",
         "OragaESports",
-        "MMORPG6"
+        "MMORPG8"
       ]
     }
   }

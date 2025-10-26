@@ -62,7 +62,7 @@
     thiefPosition.y = buddyPlayerPos
     enemy1Position = new Victor(st, screenHeight * 0.3)
     enemy2Position = new Victor(st, screenHeight * 0.6)
-    txtMessage1 = 'First strike!'
+    txtMessage1 = isEN ? 'First strike!' : '先制攻撃！'
     player1HasDamage = false
     player2HasDamage = false
     enemy1HasDamage = false
@@ -81,6 +81,7 @@
     barWidth[2] = _enemy1HP * 7
     barWidth[3] = _enemy2HP * 7
     frame++
+
     if (battleTurn == 0) {
       briefingPosition()
     } else if (battleTurn == -1) {
@@ -142,28 +143,26 @@
       txtMessage2 = `${basicInfo.basicAbility[`${attackingResource}-BasicAttack`]}!! ${basicInfo.basicAttackInfo[attackingResource][1]} Damage`
       txtMessage2 += attackingResource == 'Enemy' ? '!!' : ' To All Enemies!'
     } else if (battleTurn == 14 || battleTurn == 15) {
-      txtMessage1 = '仲間の能力を使った!'
-      const resource = mainPlayer ? buddyResource : yourResource
-      txtMessage2 = `${basicInfo.basicAbility[`${resource}-ShareableAbility`]} ${
+      txtMessage1 = isEN ? "Used Buddy' capability!" : '仲間の能力を使った!'
+      txtMessage2 = `${
         isEN ?
-        resource == 'Warrior' ? 'Large Recovery Shield (Restores 6 HP) activated!!' : 'Poison Mix (Deals 6 damage to all enemies) activated!!'
-        : resource == 'Warrior' ? '大型回復シールド(HP6回復)能力発動!!' : '毒調合(敵全体６ダメージ)能力発動!!'
+        yourResource == 'Warrior' ? 'Large Recovery Shield (Restores 6 HP) activated!!' : 'Poison Mix (Deals 6 damage to all enemies) activated!!'
+        : yourResource == 'Warrior' ? '大型回復シールド(HP6回復)能力発動!!' : '毒調合(敵全体６ダメージ)能力発動!!'
       }`
     } else if (battleTurn == 16 || battleTurn == 17) {
-      txtMessage1 = '仲間の能力を使った!'
-      const resource = mainPlayer ? yourResource : buddyResource
-      txtMessage2 = `${basicInfo.basicAbility[`${resource}-ShareableAbility`]} ${
+      txtMessage1 = isEN ? "Used Buddy' capability!" : '仲間の能力を使った!'
+      txtMessage2 = `${
         isEN ?
-        resource == 'Warrior' ? 'Large Recovery Shield (Restores 6 HP) activated!!' : 'Poison Mix (Deals 6 damage to all enemies) activated!!'
-        : resource == 'Warrior' ? '大型回復シールド(HP6回復)能力発動!!' : '毒調合(敵全体６ダメージ)能力発動!!'
+        buddyResource == 'Warrior' ? 'Large Recovery Shield (Restores 6 HP) activated!!' : 'Poison Mix (Deals 6 damage to all enemies) activated!!'
+        : buddyResource == 'Warrior' ? '大型回復シールド(HP6回復)能力発動!!' : '毒調合(敵全体６ダメージ)能力発動!!'
       }`
     } else if (battleTurn == 99) {
       if (_yourHP + _buddyHP == 0) {
-        txtMessage1 = isEN ? '残念、ゲームオーバーだ！' : 'Too bad, game over!'
-        txtMessage2 = isEN ? '賞金は相手チームに贈られる。' : 'The prize is awarded to the opposing team.'        
-      } else if (_enemy1HP + _enemy1HP == 0) {
-        txtMessage1 = isEN ? 'おめでとう！バトルに勝利だ！！' : 'Congratulations! Victory in battle!!'
-        txtMessage2 = isEN ? 'バトルの報奨金はあなたのものだ！すぐ送る!!' : 'The battle bounty is yours! Sending it right away!!'
+        txtMessage1 = isEN ? 'Too bad, game over!' : '残念、ゲームオーバーだ！'
+        txtMessage2 = isEN ? 'The prize is awarded to the opposing team.': '賞金は相手チームに贈られる。'
+      } else if (_enemy1HP + _enemy2HP == 0) {
+        txtMessage1 = isEN ? 'Congratulations! Victory in battle!!' : 'おめでとう！バトルに勝利だ！！'
+        txtMessage2 = isEN ? 'The battle bounty is yours! Sending it right away!!' : 'バトルの報奨金はあなたのものだ！すぐ送る!!'
       }
       setTimeout(() => briefingPosition(), 30000)
     }
@@ -247,16 +246,16 @@
   <Sprite
     width={60}
     height={80}
-    x={battleTurn == 14 || battleTurn == 15 ? enemy1Position.x - 25 : disappearPosition.x}
-    y={enemy1Position.y + 15}
-    texture={PIXI.Texture.from('/assets/mmorpg/poisonMaking.png')}
+    x={battleTurn == 14 || battleTurn == 15 ? thiefPosition.x + 35 : disappearPosition.x}
+    y={thiefPosition.y - 10}
+    texture={PIXI.Texture.from('/assets/mmorpg/recoveryShield.png')}
   />
   <Sprite
     width={60}
     height={80}
-    x={battleTurn == 16 || battleTurn == 17 ? thiefPosition.x + 35 : disappearPosition.x}
-    y={thiefPosition.y - 10}
-    texture={PIXI.Texture.from('/assets/mmorpg/recoveryShield.png')}
+    x={battleTurn == 16 || battleTurn == 17 ? enemy1Position.x - 25 : disappearPosition.x}
+    y={enemy1Position.y + 15}
+    texture={PIXI.Texture.from('/assets/mmorpg/poisonMaking.png')}
   />
   <!-- 特殊能力ここまで -->
   <Text
@@ -320,7 +319,7 @@
 
   <Graphics
     x={enemy1Position.x + 50}
-    y={margin * 2}
+    y={margin / 2}
     draw={(graphics) => {
       graphics.clear()
       graphics.beginFill(0xc24d2c)
@@ -338,7 +337,7 @@
 
   <Graphics
     x={enemy1Position.x + 50}
-    y={margin / 2}
+    y={margin * 2}
     draw={(graphics) => {
       graphics.clear()
       graphics.beginFill(0xc24d2c)
