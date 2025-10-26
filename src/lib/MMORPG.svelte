@@ -312,7 +312,7 @@
   }
 
   async function enterTheGameWorld() {
-    let txId = await newGameBattle(loginUser?.addr, buddyAddress, yourResourceMaxLife, buddyResourceMaxLife, gameFee)
+    let txId = await newGameBattle(loginUser?.addr, buddyAddress, mainPlayer ? yourResourceMaxLife : buddyResourceMaxLife, mainPlayer ? buddyResourceMaxLife : yourResourceMaxLife, gameFee)
     loading = true
     tx(txId).subscribe(async (res) => {
       console.log('txId:', txId, 'tx status:', res);
@@ -345,7 +345,7 @@
 
   async function useBuddyAbility() {
     // 回復はThiefを優先。
-    let txId = await executeBuddyAbility(desiredBuddyResource, buddyAddress, battleId, mainPlayer && yourResource == 'Warrior' ? 'TeamPlayer2' : 'TeamPlayer1')
+    let txId = await executeBuddyAbility(desiredBuddyResource, buddyAddress, battleId, mainPlayer ? 'TeamPlayer1' : 'TeamPlayer2')
     loading = true
     tx(txId).subscribe(async (res) => {
       console.log('txId:', txId, 'tx status:', res);
@@ -666,7 +666,7 @@
       </Application>
     </div>
     <div class="flex flex-wrap justify-center mt-2">
-      <div class="w-34 ml-2">
+      <div class="w-36 ml-2">
         <select class="select select-success"
           on:change={(event) => yourResource = event.target.value}
         >
@@ -718,8 +718,8 @@
       <div class="ml-3 text-success"><span class="loading loading-infinity loading-xl"></span>(Saving to blockchain...)</div>
     {/if}
     <div class="text-green-600 mt-2 ml-2 mr-2">
-      <a href="https://www.flowscan.io/contract/A.b576a3926d239682.MMORPG6?tab=deployments" class="underline" target="_blank">{isEN ? 'Smart Contract' : 'スマートコントラクト'}</a><br>
-      <a href="https://github.com/temt-ceo/oraga-esports/pull/24" class="underline" target="_blank">{isEN ? 'Pull Request' : 'プルリク'}</a><br>
+      <a href="https://www.flowscan.io/contract/A.b576a3926d239682.MMORPG8?tab=deployments" class="underline" target="_blank">{isEN ? 'Smart Contract' : 'スマートコントラクト'}</a><br>
+      <a href="https://github.com/temt-ceo/oraga-esports/pull/26/files" class="underline" target="_blank">{isEN ? 'Pull Request' : 'プルリク'}</a><br>
       <input
         type="checkbox"
         on:click={() => {
@@ -729,10 +729,13 @@
         class="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800 mr-2"
       />🌏
     </div>
-    <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/Te3H38fb46c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/1BnCtda9_R4?si=BHEDBWYKjgoYLQHA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     <p class="cinzel ml-1 mr-3">
       <a href="https://uzi-material.com/" target="_blank">Character design by 氏</a>
     </p>  
+    <div class="cinzel">
+      (Press the YouTube icon on the bottom right to watch it on a large screen. In the video, the approval button is pressed when purchasing resources, sharing capabilities with friends, paying for games, and activating friends' resource capabilities.)
+    </div>
     <p class="paragraph flex flex-wrap">
       <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
       <span style="margin-left: 4px; line-height: revert;">Copyright © 2025 TEM Technologies Co., LLC All rights reserved.</span>
@@ -751,7 +754,7 @@
   <Dialog bind:dialog={briefingDialog}>
     <div class="mb-1">{isEN ? 'A battle partner request has been received.' : 'バトル仲間の申請が来ました。'}</div>
     <div class="text-yellow-600 text-lg mb-3">
-      {isEN ? `The opponent's resource is ${requestData?.equipResource}(Max HP is ${requestData?.equipResourceMaxLife}). The opponent is seeking a partner for ${requestData?.desiredPartner}.`: `相手のリソースは ${requestData?.equipResource}(Max HPは${requestData?.equipResourceMaxLife})です。 相手は ${requestData?.desiredPartner} の仲間を探しています。`}
+      {isEN ? `The opponent's resource is ${requestData?.equipResource}(Max HP is ${requestData?.equipResourceMaxLife}). The opponent is seeking a partner for ${requestData?.desiredPartner}.`: `相手のリソースは ${requestData?.equipResource}(Max HPは${requestData?.equipResourceMaxLife})です。  相手は ${requestData?.desiredPartner} の仲間を探しています。`}
     </div>
     <div class="text-red-600 text-lg">{
       isEN ? `Your ${info?.basicAbility[`${yourResource}-ShareableAbility`]} skill can also be used by your allies. Do you permit new allies to use this skill?`
@@ -785,8 +788,8 @@
     <button on:click={() => {
       useBuddyAbility()
       dialog.close()
-    }}>はい</button>
-    <button on:click={() => dialog.close()}>いいえ</button>
+    }}>{isEN ? 'Yes' : 'はい'}</button>
+    <button on:click={() => dialog.close()}>{isEN ? 'No' : 'いいえ'}</button>
   </Dialog>
 
 </section>
@@ -807,7 +810,7 @@
 
 :global(dialog) {
   margin: 25vh auto 0 auto;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   font-family: 'Libre Bodoni';
   color: rgba(255, 64, 129, 0.7);
@@ -887,12 +890,14 @@ iframe {
 .cinzel {
   color: white;
   font-family: 'Cinzel';
-  text-decoration: underline;
   font-size: 15px;
-  line-height: 0.6;
   &.li {
     padding-left: 10px;
   }
+}
+
+button {
+  cursor: pointer;
 }
 
 @media screen and (min-width: 700px) {

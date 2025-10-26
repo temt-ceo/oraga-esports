@@ -306,7 +306,7 @@ export const fixBug = async function (driverId) {
 export const buyResource = async function (resourceName) {
   const txId = await mutate({
     cadence: `
-      import "MMORPG6"
+      import "MMORPG8"
       import "FlowToken"
       import "FungibleToken"
 
@@ -320,14 +320,14 @@ export const buyResource = async function (resourceName) {
 
               /* Create a Warrior resource */
               signer.storage
-                  .save(<- MMORPG6.createWarriorResource(
+                  .save(<- MMORPG8.createWarriorResource(
                       payment: <- payment
-                  ), to: /storage/MMORPG6WarriorResource)
+                  ), to: /storage/MMORPG8WarriorResource)
 
               /* リソースのaccess(all)のフィールドに誰でもアクセスできるようにCapabilityを公開 */
               let cap = signer.capabilities.storage
-                  .issue<&MMORPG6.Warrior>(/storage/MMORPG6WarriorResource)
-              signer.capabilities.publish(cap, at: /public/MMORPG6WarriorResource)
+                  .issue<&MMORPG8.Warrior>(/storage/MMORPG8WarriorResource)
+              signer.capabilities.publish(cap, at: /public/MMORPG8WarriorResource)
 
           } else if (resourceName == "Thief") {
               let payment <- signer.storage
@@ -336,14 +336,14 @@ export const buyResource = async function (resourceName) {
 
               /* Create a Thief resource */
               signer.storage
-                  .save(<- MMORPG6.createThiefResource(
+                  .save(<- MMORPG8.createThiefResource(
                       payment: <- payment
-                  ), to: /storage/MMORPG6ThiefResource)
+                  ), to: /storage/MMORPG8ThiefResource)
 
               /* リソースのaccess(all)のフィールドに誰でもアクセスできるようにCapabilityを公開 */
               let cap = signer.capabilities.storage
-                  .issue<&MMORPG6.Thief>(/storage/MMORPG6ThiefResource)
-              signer.capabilities.publish(cap, at: /public/MMORPG6ThiefResource)
+                  .issue<&MMORPG8.Thief>(/storage/MMORPG8ThiefResource)
+              signer.capabilities.publish(cap, at: /public/MMORPG8ThiefResource)
           }
         }
       }
@@ -365,7 +365,7 @@ export const shareResourceCapabilityWithBuddy = async function (
 ) {
   const txId = await mutate({
     cadence: `
-      import "MMORPG6"
+      import "MMORPG8"
 
       transaction(resourceName: String, recipient: Address) {
         prepare(signer: auth(IssueStorageCapabilityController, PublishInboxCapability) &Account) {
@@ -374,7 +374,7 @@ export const shareResourceCapabilityWithBuddy = async function (
               /* Issue a resource capability for WarriorAbility1 entitlement */
               let capability = signer.capabilities
                   .storage
-                  .issue<auth(MMORPG6.WarriorAbility1) &MMORPG6.Warrior>(/storage/MMORPG6WarriorResource)
+                  .issue<auth(MMORPG8.WarriorAbility1) &MMORPG8.Warrior>(/storage/MMORPG8WarriorResource)
 
               /* Publish the capability for the specified recipient */
               signer.inbox.publish(capability, name: "LargeRecoveryShield", recipient: recipient)
@@ -383,7 +383,7 @@ export const shareResourceCapabilityWithBuddy = async function (
               /* Issue a resource capability for ThiefAbility1 entitlement */
               let capability = signer.capabilities
                   .storage
-                  .issue<auth(MMORPG6.ThiefAbility1) &MMORPG6.Thief>(/storage/MMORPG6ThiefResource)
+                  .issue<auth(MMORPG8.ThiefAbility1) &MMORPG8.Thief>(/storage/MMORPG8ThiefResource)
 
               /* Publish the capability for the specified recipient */
               signer.inbox.publish(capability, name: "PoisonMaking", recipient: recipient)
@@ -411,7 +411,7 @@ export const newGameBattle = async function (
 ) {
   const txId = await mutate({
     cadence: `
-      import "MMORPG6"
+      import "MMORPG8"
       import "FlowToken"
       import "FungibleToken"
 
@@ -420,7 +420,7 @@ export const newGameBattle = async function (
           /* THE GAME FEE */
           let payment <- signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(from: /storage/flowTokenVault)!.withdraw(amount: gameFee) as! @FlowToken.Vault
           /* GAME START */
-          MMORPG6.newGameBattle(
+          MMORPG8.newGameBattle(
               payment: <- payment,
               player1Address: player1Address,
               player2Address: player2Address,
@@ -457,14 +457,14 @@ export const executeBuddyAbility = async function (
 ) {
   const txId = await mutate({
     cadence: `
-      import "MMORPG6"
+      import "MMORPG8"
 
       transaction(resourceName: String, providerAddress: Address, battleId: Int, target: String) {
         prepare(signer: auth(ClaimInboxCapability) &Account) {
           if (resourceName == "Warrior") {
               /* Claim the capability published by buddy */
               let capability = signer.inbox
-                  .claim<auth(MMORPG6.WarriorAbility1) &MMORPG6.Warrior>(
+                  .claim<auth(MMORPG8.WarriorAbility1) &MMORPG8.Warrior>(
                       "LargeRecoveryShield",
                       provider: providerAddress
                   )
@@ -472,7 +472,7 @@ export const executeBuddyAbility = async function (
           } else if (resourceName == "Thief") {
               /* Claim the capability published by buddy */
               let capability = signer.inbox
-                  .claim<auth(MMORPG6.ThiefAbility1) &MMORPG6.Thief>(
+                  .claim<auth(MMORPG8.ThiefAbility1) &MMORPG8.Thief>(
                       "PoisonMaking",
                       provider: providerAddress
                   )

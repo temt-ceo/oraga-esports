@@ -131,16 +131,16 @@ export const handler = async (event) => {
   } else if (input.type === "mmorpg_basic_attack") {
     // TeamPlayer1: mainPlayer, TeamPlayer2: buddyPlayer, resourceName: [Warrior, Thief, Enemy]
     transaction = `
-      import MMORPG6 from 0xb576a3926d239682
+      import MMORPG8 from 0xb576a3926d239682
 
       transaction(battleId: Int, target: String, resourceName: String) {
         prepare(signer: auth(BorrowValue) &Account) {
-          let MMORPG6Admin = signer.storage.borrow<&MMORPG6.Admin>(from: /storage/MMORPG6Admin)
+          let MMORPG8Admin = signer.storage.borrow<&MMORPG8.Admin>(from: /storage/MMORPG8Admin)
             ?? panic("Could not borrow reference to the Administrator Resource.")
           if (resourceName == "Enemy") {
-            MMORPG6Admin.basicAttack(battleId: battleId, target: target, resourceName: resourceName)
+            MMORPG8Admin.basicAttack(battleId: battleId, target: target, resourceName: resourceName)
           } else {
-            MMORPG6Admin.basicAttack(battleId: battleId, target: nil, resourceName: resourceName)
+            MMORPG8Admin.basicAttack(battleId: battleId, target: nil, resourceName: resourceName)
           }
         }
         execute {
@@ -150,13 +150,13 @@ export const handler = async (event) => {
     `;
   } else if (input.type === "pay_reward_to_winner_of_mmorpg") {
     transaction = `
-      import MMORPG6 from 0xb576a3926d239682
+      import MMORPG8 from 0xb576a3926d239682
 
       transaction(recipient1: Address, recipient2: Address, reward: UFix64) {
         prepare(signer: auth(BorrowValue) &Account) {
-          let MMORPG6Admin = signer.storage.borrow<&MMORPG6.Admin>(from: /storage/MMORPG6Admin)
+          let MMORPG8Admin = signer.storage.borrow<&MMORPG8.Admin>(from: /storage/MMORPG8Admin)
             ?? panic("Could not borrow reference to the Administrator Resource.")
-          MMORPG6Admin.payRewards(recipient1: recipient1, recipient2: recipient2, reward: reward)
+          MMORPG8Admin.payRewards(recipient1: recipient1, recipient2: recipient2, reward: reward)
         }
         execute {
           log("success")

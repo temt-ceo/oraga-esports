@@ -89,9 +89,9 @@
           <div class="notice">
             The difficulty level is exactly the same as in this YouTube video.
           </div>
-          <div><a href="/ride-share">➜ To RideShare demo</a></div>
+          <div class="notice"><a href="/ride-share">➜ To RideShare demo</a></div>
         </div>
-        <div class="game-collection">
+        <div class="game-collection can-scroll">
           <a href="/mmorpg">
             <img src="/assets/MMO RPG.png" alt="MMO RPG" />
           </a>
