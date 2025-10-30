@@ -109,6 +109,17 @@
           <p class="description">
             Swapping resource capabilities is free. Team up and defeat the enemy team! The prize is double the game fee!<br><br><br><br>
           </p>
+          <div>
+            <h2>メディア掲載</h2>
+            <ul>
+              <li>東京新聞: <a target="_blank" href="https://adv.tokyo-np.co.jp/prtimes/article82509/">https://adv.tokyo-np.co.jp/prtimes/article82509/</a></li>
+              <li>毎日新聞: <a target="_blank" href="https://mainichi.jp/articles/20251027/pr2/00m/020/397000c">https://mainichi.jp/articles/20251027/pr2/00m/020/397000c</a></li>
+              <li>品川経済新聞: <a target="_blank" href="https://shinagawa.keizai.biz/release/484564/">https://shinagawa.keizai.biz/release/484564/</a></li>
+              <li>ｅスポーツ専門総合情報サイト: <a target="_blank" href="https://www.besporter.jp/27472/pr/">https://www.besporter.jp/27472/pr/</a></li>
+              <li>NFT Media: <a target="_blank" href="https://nft-media.net/game/tem-esports-mmorpg-tech-disclosure/83585/">https://nft-media.net/tem-esports-mmorpg-tech-disclosure/</a></li>
+              <li><a target="_blank" href="https://prtimes.jp/main/html/rd/p/000000006.000104644.html">企業プレスリリース詳細へ</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -136,6 +147,19 @@
     text-align: center;
     margin: 0;
     padding: 10px;
+    color: rgba(255, 64, 129, 0.7);
+  }
+
+  li {
+    margin-bottom: 8px;
+    font-size: 16px;
+
+    & a {
+      font-size: 13px;
+    }
+  }
+
+  a {
     color: rgba(255, 64, 129, 0.7);
   }
 
