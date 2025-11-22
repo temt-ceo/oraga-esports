@@ -85,7 +85,7 @@
           <p class="description">
             Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. If there were 150 game losers worldwide before you played, the prize paid to you will be ₣151.<br><br><br><br>
           </p>
-          <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/eywOO8flkbg?si=NoaArp-3RasPUJpm" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/eywOO8flkbg?si=NoaArp-3RasPUJpm" title="Oraga eSports Shooting game" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <div class="notice">
             The difficulty level is exactly the same as in this YouTube video.
           </div>
@@ -109,6 +109,7 @@
           <p class="description">
             Swapping resource capabilities is free. Team up and defeat the enemy team! The prize is double the game fee!<br><br><br><br>
           </p>
+          <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/WnteAQNYV8w?si=2-448cnCmLzQDJ9x" title="Oraga eSports MMORPG game" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <div>
             <h2>メディア掲載</h2>
             <ul>
@@ -116,6 +117,7 @@
               <li>毎日新聞: <a target="_blank" href="https://mainichi.jp/articles/20251027/pr2/00m/020/397000c">https://mainichi.jp/articles/20251027/pr2/00m/020/397000c</a></li>
               <li>品川経済新聞: <a target="_blank" href="https://shinagawa.keizai.biz/release/484564/">https://shinagawa.keizai.biz/release/484564/</a></li>
               <li>ｅスポーツ専門総合情報サイト: <a target="_blank" href="https://www.besporter.jp/27472/pr/">https://www.besporter.jp/27472/pr/</a></li>
+              <li>ｅスポーツ専門総合情報サイト: <a target="_blank" href="https://www.besporter.jp/28560/pr/">https://www.besporter.jp/28560/pr/</a></li>
               <li>NFT Media: <a target="_blank" href="https://nft-media.net/game/tem-esports-mmorpg-tech-disclosure/83585/">https://nft-media.net/tem-esports-mmorpg-tech-disclosure/</a></li>
               <li><a target="_blank" href="https://prtimes.jp/main/html/rd/p/000000006.000104644.html">企業プレスリリース詳細へ</a></li>
             </ul>
