@@ -86,10 +86,20 @@
             Example: The game fee is ₣1.1. If someone anywhere in the world won the game immediately before you played, your prize will be ₣1. If there were 150 game losers worldwide before you played, the prize paid to you will be ₣151.<br><br><br><br>
           </p>
           <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/eywOO8flkbg?si=NoaArp-3RasPUJpm" title="Oraga eSports Shooting game" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-          <div class="notice">
-            The difficulty level is exactly the same as in this YouTube video.
+          <div>
+            <h2>メディア掲載</h2>
+            <ul>
+              <li>TEM Technologies Co. 特集記事: <a target="_blank" href="https://www.lifepepper.co.jp/other/reskilling-company-recommend/">https://www.lifepepper.co.jp/other/reskilling-company-recommend/</a></li>
+              <li>ｅスポーツ専門総合情報サイト: <a target="_blank" href="https://www.besporter.jp/27472/pr/">https://www.besporter.jp/27472/pr/</a></li>
+              <li>プレスリリース: <a target="_blank" href="https://prtimes.jp/main/html/rd/p/000000004.000104644.html">https://prtimes.jp/main/html/rd/p/000000004.000104644.html</a></li>
+            </ul>
+            <h3 class="media-sub">その他メディア掲載</h3>
+            <ul>
+              <li>書籍の紹介(日本語): <a target="_blank" href="https://www.amazon.co.jp/dp/B0FWZNT2L1/">https://www.amazon.co.jp/dp/B0FWZNT2L1/</a></li>
+              <li>書籍の紹介(English): <a target="_blank" href="https://www.amazon.com/dp/B0FWZR3S47">https://www.amazon.com/dp/B0FWZR3S47</a></li>
+              <li><a href="/ride-share">➜ To RideShare demo</a></li>
+            </ul>
           </div>
-          <div class="notice"><a href="/ride-share">➜ To RideShare demo</a></div>
         </div>
         <div class="game-collection can-scroll">
           <a href="/mmorpg">
@@ -116,7 +126,6 @@
               <li>東京新聞: <a target="_blank" href="https://adv.tokyo-np.co.jp/prtimes/article82509/">https://adv.tokyo-np.co.jp/prtimes/article82509/</a></li>
               <li>毎日新聞: <a target="_blank" href="https://mainichi.jp/articles/20251027/pr2/00m/020/397000c">https://mainichi.jp/articles/20251027/pr2/00m/020/397000c</a></li>
               <li>品川経済新聞: <a target="_blank" href="https://shinagawa.keizai.biz/release/484564/">https://shinagawa.keizai.biz/release/484564/</a></li>
-              <li>ｅスポーツ専門総合情報サイト: <a target="_blank" href="https://www.besporter.jp/27472/pr/">https://www.besporter.jp/27472/pr/</a></li>
               <li>ｅスポーツ専門総合情報サイト: <a target="_blank" href="https://www.besporter.jp/28560/pr/">https://www.besporter.jp/28560/pr/</a></li>
               <li>NFT Media: <a target="_blank" href="https://nft-media.net/game/tem-esports-mmorpg-tech-disclosure/83585/">https://nft-media.net/tem-esports-mmorpg-tech-disclosure/</a></li>
               <li><a target="_blank" href="https://prtimes.jp/main/html/rd/p/000000006.000104644.html">企業プレスリリース詳細へ</a></li>
@@ -127,7 +136,7 @@
     </div>
     <p class="paragraph sign">
       <span class="allura">Powered by </span><img src="/assets/flow_logo.avif" alt="flow logo" /> Flow blockchain.<br>
-      Copyright © 2025 TEM Technologies Co., LLC. All rights reserved.
+      Copyright © 2026 TEM Technologies Co., LLC. All rights reserved.
     </p>
   </section>
   {/if}
@@ -281,9 +290,8 @@
     & iframe {
       margin-bottom: 50px;
     }
-    & .notice {
-      margin-bottom: 90px;
-      font-size: 14px;
+    & .media-sub {
+      margin-top: 80px;
     }
   }
 
@@ -322,7 +330,7 @@
     }
 
     .game-collection > iframe {
-      margin-bottom: 70px;
+      margin-bottom: 20px;
     }
 
     .paragraph.sign {

@@ -466,7 +466,7 @@ console.log(info)
   <iframe width="{screen.width < 700 ? screen.width * 0.8 : screen.width * 0.4}" height="{screen.width < 700 ? screen.width * 0.45 : screen.width * 0.225}" src="https://www.youtube.com/embed/iIgzPaSjDB4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   <p class="paragraph flex flex-wrap">
     <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
-    Copyright © 2025 TEM Technologies Co., LLC All rights reserved.
+    Copyright © 2026 TEM Technologies Co., LLC All rights reserved.
   </p>
 
   <Dialog bind:dialog={modal}>

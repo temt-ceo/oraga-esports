@@ -738,7 +738,7 @@
     </div>
     <p class="paragraph flex flex-wrap">
       <span class="allura">Powered by Flow blockchain. </span><img src="/assets/flow_logo.avif" alt="flow logo" /><br>
-      <span style="margin-left: 4px; line-height: revert;">Copyright © 2025 TEM Technologies Co., LLC All rights reserved.</span>
+      <span style="margin-left: 4px; line-height: revert;">Copyright © 2026 TEM Technologies Co., LLC All rights reserved.</span>
     </p>
   </div>
   
