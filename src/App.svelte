@@ -16,7 +16,7 @@
   fcl.config({
     'flow.network': 'mainnet',
     'accessNode.api': 'https://rest-mainnet.onflow.org',
-    'discovery.wallet': 'https://blsqui.net/authn',
+    'discovery.wallet': 'https://wallet.blsqui.net/authn',
     'app.detail.title': 'Oraga eSports',
     'app.detail.icon': 'https://oraga-esports.com/assets/MMO%20RPG.png',
   }).load({ flowJSON });
